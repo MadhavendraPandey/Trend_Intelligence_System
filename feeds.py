@@ -50,17 +50,6 @@ FEEDS = {
         "https://arstechnica.com/feed/"
     ],
 
-    "psychology": [
-
-        "https://www.psychologytoday.com/intl/blog/rss.xml",
-
-        "https://www.sciencedaily.com/rss/mind_brain.xml",
-
-        "https://behavioralscientist.org/feed/",
-
-        "https://psyche.co/feed"
-    ],
-
     "business": [
 
         "https://hbr.org/feed",
