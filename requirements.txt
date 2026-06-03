@@ -1,1 +1,4 @@
 feedparser
+trafilatura
+google-genai
+python-dotenv
