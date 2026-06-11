@@ -17,12 +17,12 @@ load_dotenv(PROJECT_ROOT / ".env")
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from filters.duplicate_filter import build_url_index, is_duplicate
 from filters.interest_filter import calculate_relevance
 from filters.content_quality import is_high_quality
 from sources.github_sources import GITHUB_SOURCES
 from stats.stats_manager import increment_stat
-from utils import load_articles, save_articles, create_item
+from storage.sqlite_storage import connect, upsert_article, initialize_database
+from utils import create_item
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
@@ -30,7 +30,6 @@ sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 # Configuration
 
-json_file = PROJECT_ROOT / "articles.json"
 SOURCE_TYPE = "github"
 
 GITHUB_SEARCH_URL = "https://api.github.com/search/repositories"
@@ -200,9 +199,20 @@ Stars:
 # Collection
 
 
+def get_existing_links(connection):
+    cursor = connection.execute("SELECT url FROM articles")
+    return {row["url"] for row in cursor.fetchall()}
+
+
+def is_duplicate(url, existing_links):
+    return url in existing_links
+
+
 def collect_github_items():
-    articles = load_articles(json_file)
-    existing_urls = build_url_index(articles)
+    initialize_database()
+    connection = connect()
+    existing_urls = get_existing_links(connection)
+
     total_new_items = 0
     total_seen = 0
     duplicates = 0
@@ -263,23 +273,20 @@ def collect_github_items():
                     relevance,
                 )
 
-                articles.append(item)
+                upsert_article(item, connection)
+                connection.commit()
+
                 existing_urls.add(url)
                 total_new_items += 1
                 increment_stat(SOURCE_TYPE, "stored")
                 print(f"Saved: {item['title']}")
 
-                if total_new_items % 25 == 0:
-                    save_articles(articles, json_file)
-
-    save_articles(articles, json_file)
-
     print(f"\nFinished. Added {total_new_items} new GitHub items.")
-    print(f"Total items: {len(articles)}")
     print(f"Seen: {total_seen}")
     print(f"Duplicates: {duplicates}")
     print(f"Filtered: {filtered}")
     print(f"Stored: {total_new_items}")
+    return 0
 
 
 if __name__ == "__main__":

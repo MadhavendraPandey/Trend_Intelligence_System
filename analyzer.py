@@ -6,18 +6,19 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from datetime import datetime, timezone
 from pathlib import Path
 
+from storage.sqlite_storage import (
+    connect,
+    save_article_analysis,
+    initialize_database,
+)
 from utils import (
     clean_json_response,
-    load_articles,
-    save_articles,
 )
 
 # Configuration
 # Configuration
 
 PROJECT_ROOT = Path(__file__).resolve().parent
-
-json_file = PROJECT_ROOT / "articles.json"
 
 failed_articles_file = PROJECT_ROOT / "failed_articles.json"
 MAX_ANALYSIS_PER_RUN = 50
@@ -36,11 +37,18 @@ FAST_MODE_REMOVED_FIELDS = [
 
 
 def load_failed_articles():
-    return load_articles(failed_articles_file)
+    if not failed_articles_file.exists():
+        return []
+    with open(failed_articles_file, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except:
+            return []
 
 
 def save_failed_articles(failed_articles):
-    save_articles(failed_articles, failed_articles_file)
+    with open(failed_articles_file, "w", encoding="utf-8") as f:
+        json.dump(failed_articles, f, indent=4, ensure_ascii=False)
 
 
 def get_article_identifier(article):
@@ -159,8 +167,32 @@ def save_checkpoint(articles, processed_count):
     print(f"Checkpoint saved ({processed_count})")
 
 
+def load_articles_from_db(connection):
+    cursor = connection.execute("SELECT * FROM articles")
+    articles = []
+    for row in cursor.fetchall():
+        article = dict(row)
+        article["metadata"] = json.loads(article["metadata_json"])
+        article["filter_data"] = json.loads(article["filter_data_json"])
+
+        # Fetch analysis if exists
+        analysis_cursor = connection.execute(
+            "SELECT analysis_json FROM analysis WHERE article_id = ? ORDER BY created_at DESC LIMIT 1",
+            (article["id"],),
+        )
+        analysis_row = analysis_cursor.fetchone()
+        article["analysis"] = (
+            json.loads(analysis_row["analysis_json"]) if analysis_row else None
+        )
+        articles.append(article)
+    return articles
+
+
 def run_analyzer():
-    articles = load_articles(json_file)
+    initialize_database()
+    connection = connect()
+    articles = load_articles_from_db(connection)
+
     failed_articles = load_failed_articles()
     candidate_articles, skipped_count = get_candidate_articles(articles)
 
@@ -184,11 +216,14 @@ def run_analyzer():
             start_time = time.perf_counter()
 
             try:
-                article["analysis"] = analyze_article(article)
+                analysis = analyze_article(article)
+                save_article_analysis(article["id"], analysis, connection)
+                connection.commit()
+
                 processed_count += 1
                 analysis_time = time.perf_counter() - start_time
                 analysis_times.append(analysis_time)
-                print("Analysis saved")
+                print("Analysis saved to DB")
                 print(f"Analysis time: {analysis_time:.2f} seconds")
                 print_progress(
                     processed_count,
@@ -197,29 +232,20 @@ def run_analyzer():
                     len(candidate_articles),
                 )
 
-                if processed_count % CHECKPOINT_EVERY == 0:
-                    save_checkpoint(articles, processed_count)
-
             except Exception as error:
                 print(f"Analysis failed: {error}")
                 record_failed_article(article, error, failed_articles)
-                save_checkpoint(articles, processed_count)
                 continue
 
     except KeyboardInterrupt:
-        print("\nInterrupted by user. Saving progress...")
-        save_checkpoint(articles, processed_count)
+        print("\nInterrupted by user.")
         save_failed_articles(failed_articles)
-        print("Progress saved. Exiting.")
         return
 
     except Exception as error:
         print(f"\nAnalyzer crashed: {error}")
-        save_checkpoint(articles, processed_count)
         save_failed_articles(failed_articles)
         raise
-
-    save_checkpoint(articles, processed_count)
 
     print_final_summary(
         processed_count, skipped_count, analysis_times, len(candidate_articles)

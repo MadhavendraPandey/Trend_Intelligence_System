@@ -7,77 +7,49 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 
-COMMANDS = {
-    "collect": "main_collector.py",
-    "analyze": "analyzer.py",
-    "report": "reporter.py",
-}
-
-FULL_SEQUENCE = [
-    "collect",
-    "analyze",
-    "report",
-]
-
+from main_collector import run_all_collectors
+from analyzer import run_analyzer
+from reporter import generate_report
 
 def print_separator():
     print("=" * 70)
 
 
-def run_script(mode):
-    script_name = COMMANDS[mode]
-    script_path = PROJECT_ROOT / script_name
-
+def run_step(mode):
     print()
     print_separator()
-    print(f"Starting {mode}: {script_name}")
+    print(f"Starting {mode}")
     print_separator()
 
-    if not script_path.exists():
-        print(f"Missing script: {script_path}")
-        return 1
-
     try:
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(script_path),
-            ],
-            cwd=PROJECT_ROOT,
-            check=False,
-        )
-
+        if mode == "collect":
+            return run_all_collectors()
+        elif mode == "analyze":
+            run_analyzer()
+            return 0
+        elif mode == "report":
+            generate_report()
+            return 0
+        return 1
     except KeyboardInterrupt:
         print(f"\nInterrupted while running {mode}.")
         return 130
-
     except Exception as error:
-        print(f"{mode} failed before starting: {error}")
+        print(f"{mode} failed: {error}")
+        import traceback
+        traceback.print_exc()
         return 1
-
-    if result.returncode != 0:
-        print(f"{mode} failed with exit code {result.returncode}")
-    else:
-        print(f"{mode} completed successfully")
-
-    return result.returncode
 
 
 def run_mode(mode):
     if mode == "full":
-        failures = []
-
-        for step in FULL_SEQUENCE:
-            return_code = run_script(step)
-
+        for step in ["collect", "analyze", "report"]:
+            return_code = run_step(step)
             if return_code != 0:
-                failures.append((step, return_code))
-                break
+                return [(step, return_code)]
+        return []
 
-        return failures
-
-    return_code = run_script(mode)
-
+    return_code = run_step(mode)
     if return_code != 0:
         return [(mode, return_code)]
 

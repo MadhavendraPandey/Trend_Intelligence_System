@@ -5,46 +5,37 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 
+from collectors.rss_collector import collect_rss_items
+from collectors.github_collector import collect_github_items
+from collectors.hackernews_collector import collect_hackernews_items
+from collectors.arxiv_collector import collect_arxiv_items
+# from collectors.reddit_collector import collect_reddit_items
+
 COLLECTORS = [
-    "rss_collector.py",
-    "github_collector.py",
-    # "reddit_collector.py",
-    "hackernews_collector.py",
-    "arxiv_collector.py",
+    ("rss", collect_rss_items),
+    ("github", collect_github_items),
+    ("hackernews", collect_hackernews_items),
+    ("arxiv", collect_arxiv_items),
 ]
-
-
-def run_collector(collector_name):
-    collector_path = PROJECT_ROOT / "collectors" / collector_name
-
-    print()
-    print("=" * 70)
-    print(f"Running {collector_name}")
-    print("=" * 70)
-
-    result = subprocess.run(
-        [
-            sys.executable,
-            str(collector_path),
-        ],
-        cwd=PROJECT_ROOT,
-        check=False,
-    )
-
-    if result.returncode != 0:
-        print(f"{collector_name} failed with exit code {result.returncode}")
-
-    return result.returncode
 
 
 def run_all_collectors():
     failures = []
 
-    for collector_name in COLLECTORS:
-        return_code = run_collector(collector_name)
-
-        if return_code != 0:
-            failures.append(collector_name)
+    for name, collector_func in COLLECTORS:
+        print()
+        print("=" * 70)
+        print(f"Running {name}_collector")
+        print("=" * 70)
+        try:
+            return_code = collector_func()
+            if return_code != 0:
+                failures.append(name)
+        except Exception as e:
+            print(f"{name}_collector failed: {e}")
+            import traceback
+            traceback.print_exc()
+            failures.append(name)
 
     print()
     print("=" * 70)

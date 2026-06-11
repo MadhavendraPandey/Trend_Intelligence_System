@@ -1,10 +1,10 @@
 {
     "rss": {
-        "seen": 8878,
+        "seen": 10264,
         "duplicates_removed": 4436,
-        "quality_removed": 188,
-        "irrelevant_removed": 2758,
-        "stored": 1494
+        "quality_removed": 337,
+        "irrelevant_removed": 3874,
+        "stored": 1614
     },
     "github": {
         "seen": 4751,

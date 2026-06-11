@@ -8,18 +8,15 @@ from engines import signal_strength
 from engines import trend_acceleration
 from engines import opportunity_engine
 from engines import recommendation_engine
+from storage.sqlite_storage import connect, initialize_database
+from storage.snapshot_manager import save_snapshot, get_latest_snapshot
+from stats.stats_manager import get_stats
 
 PROJECT_ROOT = Path(__file__).resolve().parent
-json_file = PROJECT_ROOT / "articles.json"
 reports_dir = PROJECT_ROOT / "reports"
 daily_reports_dir = reports_dir / "daily"
 weekly_reports_dir = reports_dir / "weekly"
 monthly_reports_dir = reports_dir / "monthly"
-
-# Keep engine reads aligned with the reporter's project database path.
-trend_engine.json_file = json_file
-opportunity_engine.json_file = json_file
-
 
 def ensure_report_directories():
     for directory in [
@@ -105,20 +102,36 @@ def build_item_intelligence(article):
     }
 
 
+def load_articles_from_db():
+    initialize_database()
+    connection = connect()
+    cursor = connection.execute("SELECT * FROM articles")
+    articles = []
+    for row in cursor.fetchall():
+        article = dict(row)
+        article["metadata"] = json.loads(article["metadata_json"])
+        article["filter_data"] = json.loads(article["filter_data_json"])
+
+        # Fetch analysis
+        analysis_cursor = connection.execute(
+            "SELECT analysis_json FROM analysis WHERE article_id = ? ORDER BY created_at DESC LIMIT 1",
+            (article["id"],),
+        )
+        analysis_row = analysis_cursor.fetchone()
+        article["analysis"] = (
+            json.loads(analysis_row["analysis_json"]) if analysis_row else None
+        )
+        articles.append(article)
+    return articles
+
+
 def build_report_data():
-
-    articles = load_articles(json_file)
-
+    articles = load_articles_from_db()
     analyzed_items = get_analyzed_items(articles)
-
     filter_data_items = get_filter_data_items(articles)
-
     source_counts = get_source_counts(articles)
-
     total_items = len(articles)
-
     analyzed_count = len(analyzed_items)
-
     coverage = (analyzed_count / total_items) * 100 if total_items else 0
 
     # =====================================
@@ -126,26 +139,29 @@ def build_report_data():
     # =====================================
 
     trends = trend_engine.analyze_trends(articles)
+    signals = signal_strength.analyze_signal_strength(articles, trends)
 
-    signals = signal_strength.analyze_signal_strength(
-        articles,
-        trends,
-    )
+    # Historical Snapshots for Acceleration
+    prev_trends, timestamp = get_latest_snapshot("trends")
+    prev_signals, _ = get_latest_snapshot("signals")
 
-    # No historical snapshots yet
-
-    accelerations = []
-
-    for trend in trends:
-
-        accelerations.append(
-            {
-                "domain": trend["domain"],
-                "theme": trend["theme"],
-                "topic": trend["topic"],
-                "acceleration_score": 0,
-            }
+    if prev_trends and prev_signals:
+        accelerations = trend_acceleration.analyze_acceleration(
+            trends, prev_trends, signals, prev_signals
         )
+    else:
+        accelerations = []
+        for trend in trends:
+            accelerations.append(
+                {
+                    "domain": trend["domain"],
+                    "theme": trend["theme"],
+                    "topic": trend["topic"],
+                    "acceleration_score": 0,
+                    "acceleration_level": "STABLE",
+                    "rank": 0,
+                }
+            )
 
     opportunities = opportunity_engine.analyze_opportunities(
         trends,
@@ -154,6 +170,29 @@ def build_report_data():
     )
 
     recommendations = recommendation_engine.generate_recommendations(opportunities)
+
+    # Save Snapshots for next run
+    save_snapshot("trends", trends)
+    save_snapshot("signals", signals)
+
+    # Opportunity items (analyzed items with opportunity topics)
+    top_opportunity_topics = [o["topic"] for o in opportunities[:10]]
+    top_opportunity_items = []
+    for item in analyzed_items:
+        matched_topics = item.get("filter_data", {}).get("matched_topics", [])
+        for topic in matched_topics:
+            if topic in top_opportunity_topics:
+                # Find opportunity score for this topic
+                opp = next((o for o in opportunities if o["topic"] == topic), None)
+                item["opportunity_score"] = opp["opportunity_score"] if opp else 0
+                top_opportunity_items.append(item)
+                break
+
+    top_opportunity_items = sorted(
+        top_opportunity_items,
+        key=lambda x: x.get("opportunity_score", 0),
+        reverse=True
+    )[:10]
 
     return {
         "header": "TREND INTELLIGENCE REPORT",
@@ -167,15 +206,13 @@ def build_report_data():
         "collection_funnel": get_stats(),
         "top_trends": trends[:10],
         "top_signals": signals[:10],
-        "top_opportunities": opportunities[:10],
+        "top_opportunity_topics": opportunities[:10],
+        "top_opportunity_items": top_opportunity_items,
         "recommendations": recommendations,
         "system_health": {
             "collected_items": total_items,
             "analyzed_items": analyzed_count,
-            "coverage_percent": round(
-                coverage,
-                2,
-            ),
+            "coverage_percent": round(coverage, 2),
         },
     }
 
@@ -190,7 +227,7 @@ def markdown_list(items, empty_message):
 def format_top_trends(topics):
     return markdown_list(
         [
-            f"{index}. {item['topic']} - {item['count']}"
+            f"{index}. {item['topic']} - {item.get('mentions', 0)} mentions (Score: {item.get('trend_score', 0)})"
             for index, item in enumerate(topics, start=1)
         ],
         "No topics found.",
@@ -200,7 +237,7 @@ def format_top_trends(topics):
 def format_topic_scores(topics):
     return markdown_list(
         [
-            f"{index}. {item['topic']} - {format_score(item['score'])}"
+            f"{index}. {item['topic']} - {format_score(item.get('opportunity_score', 0))}"
             for index, item in enumerate(topics, start=1)
         ],
         "No opportunity topics found.",
@@ -214,22 +251,23 @@ def format_opportunity_items(items):
     lines = []
 
     for index, item in enumerate(items, start=1):
-        intelligence = item.get("intelligence") or {}
-        key_points = intelligence.get("key_points") or []
+        analysis = item.get("analysis") or {}
+        key_points = analysis.get("key_points") or []
 
         lines.append(
             f"{index}. {item['title']}\n"
             f"   - Source Type: {item['source_type']}\n"
             f"   - Opportunity Score: "
-            f"{format_score(item['opportunity_score'])}\n"
+            f"{format_score(item.get('opportunity_score', 0))}\n"
             f"   - URL: {item.get('url') or 'No URL'}"
         )
 
-        if intelligence.get("overview"):
-            lines.append(f"   - Overview: {intelligence['overview']}")
+        if analysis.get("summary"):
+            lines.append(f"   - Summary: {analysis['summary']}")
 
-        if intelligence.get("why_it_matters"):
-            lines.append(f"   - Why It Matters: {intelligence['why_it_matters']}")
+        importance = analysis.get("importance") or {}
+        if importance.get("reason"):
+            lines.append(f"   - Importance Reason: {importance['reason']}")
 
         if key_points:
             lines.append("   - Key Points:")

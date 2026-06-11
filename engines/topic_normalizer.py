@@ -222,6 +222,8 @@ LOOKUP = build_lookup()
 # ==========================================================
 
 def normalize_text(text):
+    if not isinstance(text, str):
+        text = str(text or "")
 
     text = (
         text or ""

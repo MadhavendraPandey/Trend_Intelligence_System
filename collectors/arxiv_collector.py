@@ -12,11 +12,11 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from filters.duplicate_filter import build_url_index, is_duplicate
 from filters.interest_filter import calculate_relevance
 from filters.content_quality import is_high_quality
 from stats.stats_manager import increment_stat
-from utils import load_articles, save_articles, create_item
+from storage.sqlite_storage import connect, upsert_article, initialize_database
+from utils import create_item
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
@@ -24,7 +24,6 @@ sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 # Configuration
 
-json_file = PROJECT_ROOT / "articles.json"
 SOURCE_TYPE = "arxiv"
 ARXIV_API_URL = "https://export.arxiv.org/api/query"
 RESULTS_PER_TARGET = 25
@@ -180,9 +179,20 @@ Primary Category:
     )
 
 
+def get_existing_links(connection):
+    cursor = connection.execute("SELECT url FROM articles")
+    return {row["url"] for row in cursor.fetchall()}
+
+
+def is_duplicate(url, existing_links):
+    return url in existing_links
+
+
 def collect_arxiv_items():
-    articles = load_articles(json_file)
-    existing_urls = build_url_index(articles)
+    initialize_database()
+    connection = connect()
+    existing_urls = get_existing_links(connection)
+
     total_seen = 0
     duplicates = 0
     quality_removed = 0
@@ -223,13 +233,13 @@ def collect_arxiv_items():
                 increment_stat(SOURCE_TYPE, "irrelevant_removed")
                 continue
 
-            articles.append(item)
+            upsert_article(item, connection)
+            connection.commit()
+
             existing_urls.add(url)
             stored += 1
             increment_stat(SOURCE_TYPE, "stored")
             print(f"Saved: {item['title']}")
-
-    save_articles(articles, json_file)
 
     print(f"\nFinished. Added {stored} Arxiv items.")
     print(f"Seen: {total_seen}")

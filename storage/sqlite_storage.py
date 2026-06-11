@@ -71,6 +71,19 @@ def initialize_database(db_file=DEFAULT_DB_FILE):
             )
         """)
 
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS snapshots (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
+                snapshot_type TEXT NOT NULL,
+                data_json TEXT NOT NULL
+            )
+        """)
+
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_articles_url ON articles(url)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_topics_topic ON topics(topic)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_snapshots_type_time ON snapshots(snapshot_type, timestamp)")
+
         connection.commit()
 
 
