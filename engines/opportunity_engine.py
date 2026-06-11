@@ -1,109 +1,201 @@
-import json
-from pathlib import Path
+# ==========================================================
+# Configuration
+# ==========================================================
 
-from engines.topic_normalizer import normalize_topics
-
-
-PROJECT_ROOT = (
-    Path(__file__)
-    .resolve()
-    .parent
-    .parent
-)
-
-json_file = PROJECT_ROOT / "articles.json"
+TREND_WEIGHT = 0.30
+SIGNAL_WEIGHT = 0.30
+ACCELERATION_WEIGHT = 0.40
 
 
-def load_articles():
-    if not json_file.exists():
-        return []
-
-    with open(
-        json_file,
-        "r",
-        encoding="utf-8"
-    ) as file:
-        try:
-            return json.load(file)
-        except json.JSONDecodeError:
-            return []
+# ==========================================================
+# Helpers
+# =========================================================
 
 
-def get_analysis_score(article, field_name):
-    analysis = article.get("analysis") or {}
-    field = analysis.get(field_name) or {}
+def build_lookup(records):
 
-    return field.get("score", 0) or 0
+    return {record["topic"]: record for record in records}
 
 
-def has_analysis(article):
-    return isinstance(article.get("analysis"), dict)
+# ==========================================================
+# Opportunity Score
+# ==========================================================
 
 
-def calculate_opportunity_score(article):
-    novelty = get_analysis_score(article, "novelty")
-    actionability = get_analysis_score(article, "actionability")
-    learning_value = get_analysis_score(article, "learning_value")
-    monetization_potential = get_analysis_score(
-        article,
-        "monetization_potential"
+def calculate_opportunity_score(
+    trend_score,
+    signal_strength,
+    acceleration_score,
+):
+
+    return round(
+        (
+            trend_score * TREND_WEIGHT
+            + signal_strength * SIGNAL_WEIGHT
+            + acceleration_score * ACCELERATION_WEIGHT
+        ),
+        2,
     )
-    required_cost = get_analysis_score(article, "required_cost") or 1
-
-    return (
-        novelty
-        + actionability
-        + learning_value
-        + monetization_potential
-    ) / required_cost
 
 
-def get_opportunities(articles):
+# ==========================================================
+# Classification
+# ==========================================================
+
+
+def classify_opportunity(score):
+
+    if score >= 150:
+        return "BREAKOUT"
+
+    if score >= 100:
+        return "HIGH_POTENTIAL"
+
+    if score >= 60:
+        return "WATCHLIST"
+
+    return "LOW_PRIORITY"
+
+
+# ==========================================================
+# Confidence
+# ==========================================================
+
+
+def calculate_confidence(
+    trend_score,
+    signal_strength,
+    acceleration_score,
+):
+
+    non_zero_signals = sum(
+        [
+            trend_score > 0,
+            signal_strength > 0,
+            acceleration_score > 0,
+        ]
+    )
+
+    if non_zero_signals == 3:
+        return "HIGH"
+
+    if non_zero_signals == 2:
+        return "MEDIUM"
+
+    return "LOW"
+
+
+# ==========================================================
+# Explanation
+# ==========================================================
+
+
+def build_reason(
+    trend_score,
+    signal_strength,
+    acceleration_score,
+):
+
+    strongest = max(
+        [
+            ("trend activity", trend_score),
+            ("signal strength", signal_strength),
+            ("acceleration", acceleration_score),
+        ],
+        key=lambda x: x[1],
+    )
+
+    return f"Driven primarily by {strongest[0]}"
+
+
+# ==========================================================
+# Main Engine
+# ==========================================================
+
+
+def analyze_opportunities(
+    trends,
+    signals,
+    accelerations,
+):
+
+    signal_lookup = build_lookup(signals)
+
+    acceleration_lookup = build_lookup(accelerations)
+
     opportunities = []
 
-    for article in articles:
-        if not has_analysis(article):
-            continue
+    for trend in trends:
+        topic = trend["topic"]
 
-        opportunity = article.copy()
-        opportunity["opportunity_score"] = calculate_opportunity_score(article)
-        opportunities.append(opportunity)
+        signal = signal_lookup.get(
+            topic,
+            {},
+        )
+
+        acceleration = acceleration_lookup.get(
+            topic,
+            {},
+        )
+
+        trend_score = trend.get(
+            "trend_score",
+            0,
+        )
+
+        signal_strength = signal.get(
+            "signal_strength",
+            0,
+        )
+
+        acceleration_score = acceleration.get(
+            "acceleration_score",
+            0,
+        )
+
+        opportunity_score = calculate_opportunity_score(
+            trend_score,
+            signal_strength,
+            acceleration_score,
+        )
+
+        opportunity_level = classify_opportunity(opportunity_score)
+
+        confidence = calculate_confidence(
+            trend_score,
+            signal_strength,
+            acceleration_score,
+        )
+
+        opportunities.append(
+            {
+                "domain": trend["domain"],
+                "theme": trend["theme"],
+                "topic": topic,
+                "trend_score": trend_score,
+                "signal_strength": signal_strength,
+                "acceleration_score": acceleration_score,
+                "opportunity_score": opportunity_score,
+                "opportunity_level": opportunity_level,
+                "confidence": confidence,
+                "reason": build_reason(
+                    trend_score,
+                    signal_strength,
+                    acceleration_score,
+                ),
+            }
+        )
+
+    opportunities = sorted(
+        opportunities,
+        key=lambda x: x["opportunity_score"],
+        reverse=True,
+    )
+
+    for rank, item in enumerate(
+        opportunities,
+        start=1,
+    ):
+        item["rank"] = rank
 
     return opportunities
-
-
-def get_top_opportunities(articles, limit=20):
-    opportunities = get_opportunities(articles)
-
-    return sorted(
-        opportunities,
-        key=lambda article: article.get("opportunity_score", 0),
-        reverse=True
-    )[:limit]
-
-
-def get_topic_opportunities(articles):
-    topic_scores = {}
-
-    for article in get_opportunities(articles):
-        filter_data = article.get("filter_data") or {}
-        matched_topics = filter_data.get("matched_topics") or []
-        matched_topics = normalize_topics(matched_topics)
-        opportunity_score = article.get("opportunity_score", 0)
-
-        for topic in matched_topics:
-            topic_scores[topic] = (
-                topic_scores.get(topic, 0)
-                + opportunity_score
-            )
-
-    return [
-        {
-            "topic": topic,
-            "score": score,
-        }
-        for topic, score in sorted(
-            topic_scores.items(),
-            key=lambda item: (-item[1], item[0])
-        )
-    ]

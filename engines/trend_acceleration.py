@@ -1,156 +1,222 @@
-import json
-from datetime import datetime, timedelta, timezone
-from email.utils import parsedate_to_datetime
-from pathlib import Path
 
-from engines.topic_normalizer import normalize_topics
+# ==========================================================
+# Configuration
+# ==========================================================
 
-
-PROJECT_ROOT = (
-    Path(__file__)
-    .resolve()
-    .parent
-    .parent
-)
-
-json_file = PROJECT_ROOT / "articles.json"
-DEFAULT_GROWTH_WINDOW_DAYS = 7
+TREND_GROWTH_WEIGHT = 0.70
+SIGNAL_GROWTH_WEIGHT = 0.30
 
 
-def load_items():
-    if not json_file.exists():
-        return []
-
-    with open(
-        json_file,
-        "r",
-        encoding="utf-8"
-    ) as file:
-        try:
-            return json.load(file)
-        except json.JSONDecodeError:
-            return []
+# ==========================================================
+# Helpers
+# ==========================================================
 
 
-def parse_datetime(value):
-    if not value:
-        return None
+def build_lookup(records):
 
-    if isinstance(value, datetime):
-        return value
-
-    try:
-        parsed = parsedate_to_datetime(value)
-        if parsed.tzinfo is None:
-            parsed = parsed.replace(tzinfo=timezone.utc)
-        return parsed.astimezone(timezone.utc)
-    except (TypeError, ValueError):
-        pass
-
-    try:
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
-        if parsed.tzinfo is None:
-            parsed = parsed.replace(tzinfo=timezone.utc)
-        return parsed.astimezone(timezone.utc)
-    except (AttributeError, ValueError):
-        return None
+    return {record["topic"]: record for record in records}
 
 
-def get_article_datetime(article):
-    metadata = article.get("metadata") or {}
-
-    for field_name in [
-        "date",
-        "published_at",
-        "created_at",
-        "updated_at",
-        "pushed_at",
-    ]:
-        parsed = parse_datetime(article.get(field_name))
-        if parsed:
-            return parsed
-
-        parsed = parse_datetime(metadata.get(field_name))
-        if parsed:
-            return parsed
-
-    return None
+# ==========================================================
+# Growth Calculation
+# ==========================================================
 
 
-def get_topic_counts_by_timeframe(days):
-    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
-    topic_counts = {}
+def calculate_growth(
+    current_value,
+    previous_value,
+):
 
-    for article in load_items():
-        article_datetime = get_article_datetime(article)
+    if previous_value <= 0:
+        if current_value > 0:
+            return 100.0
 
-        if not article_datetime or article_datetime < cutoff:
-            continue
+        return 0.0
 
-        filter_data = article.get("filter_data") or {}
-        matched_topics = normalize_topics(
-            filter_data.get("matched_topics") or []
+    growth = ((current_value - previous_value) / previous_value) * 100
+
+    return round(growth, 2)
+
+
+# ==========================================================
+# Acceleration Score
+# ==========================================================
+
+
+def calculate_acceleration_score(
+    trend_growth,
+    signal_growth,
+):
+
+    return round(
+        (trend_growth * TREND_GROWTH_WEIGHT) + (signal_growth * SIGNAL_GROWTH_WEIGHT),
+        2,
+    )
+
+
+# ==========================================================
+# Classification
+# ==========================================================
+
+
+def classify_acceleration(score):
+
+    if score >= 100:
+        return "EXPLODING"
+
+    if score >= 50:
+        return "RAPID"
+
+    if score >= 20:
+        return "GROWING"
+
+    if score > 0:
+        return "STABLE"
+
+    return "DECLINING"
+
+
+# ==========================================================
+# Confidence
+# ==========================================================
+
+
+def calculate_confidence(
+    current_trend_score,
+    current_signal_strength,
+):
+
+    if current_trend_score >= 100 and current_signal_strength >= 80:
+        return "HIGH"
+
+    if current_trend_score >= 40 and current_signal_strength >= 30:
+        return "MEDIUM"
+
+    return "LOW"
+
+
+# ==========================================================
+# Explanation
+# ==========================================================
+
+
+def build_reason(
+    trend_growth,
+    signal_growth,
+):
+
+    if trend_growth > signal_growth:
+        return "Momentum driven primarily by trend growth"
+
+    if signal_growth > trend_growth:
+        return "Momentum driven primarily by signal growth"
+
+    return "Trend and signal growth are increasing together"
+
+
+# ==========================================================
+# Main Engine
+# ==========================================================
+
+
+def analyze_acceleration(
+    current_trends,
+    previous_trends,
+    current_signals,
+    previous_signals,
+):
+
+    trend_lookup = build_lookup(previous_trends)
+
+    signal_lookup = build_lookup(previous_signals)
+
+    current_signal_lookup = build_lookup(current_signals)
+
+    results = []
+
+    for current in current_trends:
+        topic = current["topic"]
+
+        previous = trend_lookup.get(
+            topic,
+            {},
         )
 
-        for topic in matched_topics:
-            topic_counts[topic] = topic_counts.get(topic, 0) + 1
-
-    return topic_counts
-
-
-def calculate_growth_rate(previous_count, current_count):
-    if previous_count == 0:
-        if current_count == 0:
-            return 0.0
-
-        return float(current_count * 100)
-
-    return ((current_count - previous_count) / previous_count) * 100
-
-
-def get_topic_counts_between(start_datetime, end_datetime):
-    topic_counts = {}
-
-    for article in load_items():
-        article_datetime = get_article_datetime(article)
-
-        if not article_datetime:
-            continue
-
-        if article_datetime < start_datetime or article_datetime >= end_datetime:
-            continue
-
-        filter_data = article.get("filter_data") or {}
-        matched_topics = normalize_topics(
-            filter_data.get("matched_topics") or []
+        current_trend_score = current.get(
+            "trend_score",
+            0,
         )
 
-        for topic in matched_topics:
-            topic_counts[topic] = topic_counts.get(topic, 0) + 1
+        previous_trend_score = previous.get(
+            "trend_score",
+            0,
+        )
 
-    return topic_counts
+        trend_growth = calculate_growth(
+            current_trend_score,
+            previous_trend_score,
+        )
 
+        current_signal = current_signal_lookup.get(
+            topic,
+            {},
+        )
 
-def get_fastest_growing_topics(limit=20):
-    now = datetime.now(timezone.utc)
-    window = timedelta(days=DEFAULT_GROWTH_WINDOW_DAYS)
+        previous_signal = signal_lookup.get(
+            topic,
+            {},
+        )
 
-    current_counts = get_topic_counts_between(now - window, now)
-    previous_counts = get_topic_counts_between(now - (window * 2), now - window)
-    topics = set(current_counts) | set(previous_counts)
+        current_signal_strength = current_signal.get(
+            "signal_strength",
+            0,
+        )
 
-    growth_results = []
+        previous_signal_strength = previous_signal.get(
+            "signal_strength",
+            0,
+        )
 
-    for topic in topics:
-        growth_results.append({
-            "topic": topic,
-            "growth_rate": calculate_growth_rate(
-                previous_counts.get(topic, 0),
-                current_counts.get(topic, 0)
-            )
-        })
+        signal_growth = calculate_growth(
+            current_signal_strength,
+            previous_signal_strength,
+        )
 
-    return sorted(
-        growth_results,
-        key=lambda item: (-item["growth_rate"], item["topic"])
-    )[:limit]
+        acceleration_score = calculate_acceleration_score(
+            trend_growth,
+            signal_growth,
+        )
+
+        results.append(
+            {
+                "domain": current["domain"],
+                "theme": current["theme"],
+                "topic": topic,
+                "trend_growth": trend_growth,
+                "signal_growth": signal_growth,
+                "acceleration_score": acceleration_score,
+                "acceleration_level": classify_acceleration(acceleration_score),
+                "confidence": calculate_confidence(
+                    current_trend_score,
+                    current_signal_strength,
+                ),
+                "reason": build_reason(
+                    trend_growth,
+                    signal_growth,
+                ),
+            }
+        )
+
+    results = sorted(
+        results,
+        key=lambda x: x["acceleration_score"],
+        reverse=True,
+    )
+
+    for rank, item in enumerate(
+        results,
+        start=1,
+    ):
+        item["rank"] = rank
+
+    return results

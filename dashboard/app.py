@@ -3,18 +3,6 @@ from collections import Counter
 from pathlib import Path
 
 import streamlit as st
-
-
-PROJECT_ROOT = (
-    Path(__file__)
-    .resolve()
-    .parent
-    .parent
-)
-
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
 from engines.opportunity_engine import (
     get_topic_opportunities,
     get_top_opportunities,
@@ -22,6 +10,12 @@ from engines.opportunity_engine import (
 from engines.recommendation_engine import generate_recommendations
 from engines.trend_engine import get_top_topics
 from utils import load_articles
+
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 
 json_file = PROJECT_ROOT / "articles.json"
@@ -38,13 +32,9 @@ def get_source_type(article):
 
 def render_overview(articles):
     analyzed = [
-        article for article in articles
-        if isinstance(article.get("analysis"), dict)
+        article for article in articles if isinstance(article.get("analysis"), dict)
     ]
-    with_filter_data = [
-        article for article in articles
-        if article.get("filter_data")
-    ]
+    with_filter_data = [article for article in articles if article.get("filter_data")]
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Total Items", len(articles))
@@ -59,10 +49,7 @@ def render_trends():
 
 def render_opportunities(articles):
     st.subheader("Topic Opportunities")
-    st.dataframe(
-        get_topic_opportunities(articles)[:25],
-        use_container_width=True
-    )
+    st.dataframe(get_topic_opportunities(articles)[:25], use_container_width=True)
 
     st.subheader("Top Opportunity Items")
     rows = [
@@ -79,24 +66,15 @@ def render_opportunities(articles):
 def render_recommendations(articles):
     topic_opportunities = get_topic_opportunities(articles)
     top_topics = get_top_topics(limit=25)
-    recommendations = generate_recommendations(
-        topic_opportunities,
-        top_topics
-    )
+    recommendations = generate_recommendations(topic_opportunities, top_topics)
 
     for section in ["build", "learn", "monitor"]:
         st.subheader(section.title())
-        st.dataframe(
-            recommendations[section],
-            use_container_width=True
-        )
+        st.dataframe(recommendations[section], use_container_width=True)
 
 
 def render_source_statistics(articles):
-    source_counts = Counter(
-        get_source_type(article)
-        for article in articles
-    )
+    source_counts = Counter(get_source_type(article) for article in articles)
     rows = [
         {
             "source_type": source_type,
@@ -110,10 +88,7 @@ def render_source_statistics(articles):
 
 
 def main():
-    st.set_page_config(
-        page_title="Trend Intelligence Dashboard",
-        layout="wide"
-    )
+    st.set_page_config(page_title="Trend Intelligence Dashboard", layout="wide")
     st.title("Trend Intelligence Dashboard")
 
     articles = load_dashboard_articles()
@@ -125,7 +100,7 @@ def main():
             "Opportunities",
             "Recommendations",
             "Source Statistics",
-        ]
+        ],
     )
 
     if page == "Overview":

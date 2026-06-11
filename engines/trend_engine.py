@@ -1,80 +1,197 @@
-import json
-from pathlib import Path
+from collections import defaultdict
 
-from engines.topic_normalizer import normalize_topics
-
-
-PROJECT_ROOT = (
-    Path(__file__)
-    .resolve()
-    .parent
-    .parent
+from engines.topic_normalizer import (
+    normalize_text,
 )
 
-json_file = PROJECT_ROOT / "articles.json"
+# ==========================================================
+# Configuration
+# ==========================================================
+
+MENTION_WEIGHT = 1
+SOURCE_WEIGHT = 10
+CATEGORY_WEIGHT = 5
 
 
-def load_items():
-    if not json_file.exists():
-        return []
-
-    with open(
-        json_file,
-        "r",
-        encoding="utf-8"
-    ) as file:
-        try:
-            return json.load(file)
-        except json.JSONDecodeError:
-            return []
+# ==========================================================
+# Helpers
+# ==========================================================
 
 
-def get_topic_counts():
-    topic_counts = {}
+def build_trends(items):
 
-    for item in load_items():
-        filter_data = item.get("filter_data") or {}
-        matched_topics = filter_data.get("matched_topics") or []
-        matched_topics = normalize_topics(matched_topics)
+    trends = {}
 
-        for topic in matched_topics:
-            topic_counts[topic] = topic_counts.get(topic, 0) + 1
-
-    return [
-        {
-            "topic": topic,
-            "count": count,
-        }
-        for topic, count in sorted(
-            topic_counts.items(),
-            key=lambda item: (-item[1], item[0])
+    for item in items:
+        content = item.get(
+            "content",
+            "",
         )
-    ]
 
-
-def get_top_topics(limit=20):
-    return get_topic_counts()[:limit]
-
-
-def get_top_relevance_topics(limit=20):
-    topic_scores = {}
-
-    for item in load_items():
-        filter_data = item.get("filter_data") or {}
-        matched_topics = filter_data.get("matched_topics") or []
-        matched_topics = normalize_topics(matched_topics)
-        relevance_score = filter_data.get("relevance_score") or 0
-
-        for topic in matched_topics:
-            topic_scores[topic] = topic_scores.get(topic, 0) + relevance_score
-
-    return [
-        {
-            "topic": topic,
-            "count": count,
-        }
-        for topic, count in sorted(
-            topic_scores.items(),
-            key=lambda item: (-item[1], item[0])
+        source_type = item.get(
+            "source_type",
+            "unknown",
         )
-    ][:limit]
+
+        category = item.get(
+            "category",
+            "unknown",
+        )
+
+        matches = normalize_text(content)
+
+        for match in matches:
+            topic = match["topic"]
+
+            if topic not in trends:
+                trends[topic] = {
+                    "domain": match["domain"],
+                    "theme": match["theme"],
+                    "topic": topic,
+                    "mentions": 0,
+                    "sources": set(),
+                    "categories": set(),
+                    "entities": defaultdict(int),
+                }
+
+            trends[topic]["mentions"] += 1
+
+            trends[topic]["sources"].add(source_type)
+
+            trends[topic]["categories"].add(category)
+
+            trends[topic]["entities"][match["matched_entity"]] += 1
+
+    return trends
+
+
+# ==========================================================
+# Scoring
+# ==========================================================
+
+
+def calculate_trend_score(
+    mentions,
+    source_count,
+    category_count,
+):
+
+    return round(
+        (mentions * MENTION_WEIGHT)
+        + (source_count * SOURCE_WEIGHT)
+        + (category_count * CATEGORY_WEIGHT),
+        2,
+    )
+
+
+# ==========================================================
+# Classification
+# ==========================================================
+
+
+def classify_trend(trend_score):
+
+    if trend_score >= 100:
+        return "DOMINANT"
+
+    if trend_score >= 60:
+        return "STRONG"
+
+    if trend_score >= 30:
+        return "EMERGING"
+
+    return "WEAK"
+
+
+# ==========================================================
+# Confidence
+# ==========================================================
+
+
+def calculate_confidence(
+    source_count,
+    category_count,
+):
+
+    if source_count >= 4 and category_count >= 3:
+        return "HIGH"
+
+    if source_count >= 2 and category_count >= 2:
+        return "MEDIUM"
+
+    return "LOW"
+
+
+# ==========================================================
+# Ranking
+# ==========================================================
+
+
+def rank_trends(trends):
+
+    results = []
+
+    for topic, data in trends.items():
+        mentions = data["mentions"]
+
+        source_count = len(data["sources"])
+
+        category_count = len(data["categories"])
+
+        trend_score = calculate_trend_score(
+            mentions,
+            source_count,
+            category_count,
+        )
+
+        top_entities = sorted(
+            data["entities"].items(),
+            key=lambda x: x[1],
+            reverse=True,
+        )[:10]
+
+        results.append(
+            {
+                "domain": data["domain"],
+                "theme": data["theme"],
+                "topic": topic,
+                "mentions": mentions,
+                "source_count": source_count,
+                "category_count": category_count,
+                "source_types": sorted(list(data["sources"])),
+                "categories": sorted(list(data["categories"])),
+                "top_entities": [entity for entity, _ in top_entities],
+                "trend_score": trend_score,
+                "trend_level": classify_trend(trend_score),
+                "confidence": calculate_confidence(
+                    source_count,
+                    category_count,
+                ),
+            }
+        )
+
+    results = sorted(
+        results,
+        key=lambda x: x["trend_score"],
+        reverse=True,
+    )
+
+    for rank, trend in enumerate(
+        results,
+        start=1,
+    ):
+        trend["rank"] = rank
+
+    return results
+
+
+# ==========================================================
+# Main Engine
+# ==========================================================
+
+
+def analyze_trends(items):
+
+    trends = build_trends(items)
+
+    return rank_trends(trends)

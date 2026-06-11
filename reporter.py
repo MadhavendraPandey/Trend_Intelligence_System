@@ -3,12 +3,11 @@ from collections import Counter
 from datetime import date
 from pathlib import Path
 
+from engines import trend_engine
+from engines import signal_strength
+from engines import trend_acceleration
 from engines import opportunity_engine
 from engines import recommendation_engine
-from engines import trend_engine
-from stats.stats_manager import get_stats
-from utils import load_articles
-
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 json_file = PROJECT_ROOT / "articles.json"
@@ -52,16 +51,12 @@ def get_source_type(article):
 
 def get_analyzed_items(articles):
     return [
-        article for article in articles
-        if isinstance(article.get("analysis"), dict)
+        article for article in articles if isinstance(article.get("analysis"), dict)
     ]
 
 
 def get_filter_data_items(articles):
-    return [
-        article for article in articles
-        if article.get("filter_data")
-    ]
+    return [article for article in articles if article.get("filter_data")]
 
 
 def get_source_counts(articles):
@@ -103,10 +98,7 @@ def build_item_intelligence(article):
         "novelty": get_score_detail(analysis, "novelty"),
         "actionability": get_score_detail(analysis, "actionability"),
         "learning_value": get_score_detail(analysis, "learning_value"),
-        "monetization_potential": get_score_detail(
-            analysis,
-            "monetization_potential"
-        ),
+        "monetization_potential": get_score_detail(analysis, "monetization_potential"),
         "required_cost": get_score_detail(analysis, "required_cost"),
         "key_points": analysis.get("key_points") or [],
         "why_it_matters": analysis.get("why_it_matters", ""),
@@ -114,30 +106,54 @@ def build_item_intelligence(article):
 
 
 def build_report_data():
+
     articles = load_articles(json_file)
+
     analyzed_items = get_analyzed_items(articles)
+
     filter_data_items = get_filter_data_items(articles)
+
     source_counts = get_source_counts(articles)
 
     total_items = len(articles)
+
     analyzed_count = len(analyzed_items)
-    coverage = (
-        (analyzed_count / total_items) * 100
-        if total_items
-        else 0
+
+    coverage = (analyzed_count / total_items) * 100 if total_items else 0
+
+    # =====================================
+    # Engines
+    # =====================================
+
+    trends = trend_engine.analyze_trends(articles)
+
+    signals = signal_strength.analyze_signal_strength(
+        articles,
+        trends,
     )
 
-    top_topics = trend_engine.get_top_topics(limit=10)
-    topic_opportunities = opportunity_engine.get_topic_opportunities(articles)
-    top_opportunity_topics = topic_opportunities[:10]
-    top_opportunity_items = opportunity_engine.get_top_opportunities(
-        articles,
-        limit=10
+    # No historical snapshots yet
+
+    accelerations = []
+
+    for trend in trends:
+
+        accelerations.append(
+            {
+                "domain": trend["domain"],
+                "theme": trend["theme"],
+                "topic": trend["topic"],
+                "acceleration_score": 0,
+            }
+        )
+
+    opportunities = opportunity_engine.analyze_opportunities(
+        trends,
+        signals,
+        accelerations,
     )
-    recommendations = recommendation_engine.generate_recommendations(
-        topic_opportunities,
-        top_topics
-    )
+
+    recommendations = recommendation_engine.generate_recommendations(opportunities)
 
     return {
         "header": "TREND INTELLIGENCE REPORT",
@@ -149,27 +165,17 @@ def build_report_data():
             "source_counts": source_counts,
         },
         "collection_funnel": get_stats(),
-        "top_trends": top_topics,
-        "top_opportunity_topics": top_opportunity_topics,
-        "top_opportunity_items": [
-            {
-                "title": item.get("title", "Untitled"),
-                "source_type": get_source_type(item),
-                "opportunity_score": item.get("opportunity_score", 0),
-                "url": item.get("url") or item.get("link"),
-                "intelligence": build_item_intelligence(item),
-            }
-            for item in top_opportunity_items
-        ],
-        "recommendations": {
-            "build": recommendations["build"],
-            "learn": recommendations["learn"],
-            "monitor": recommendations["monitor"],
-        },
+        "top_trends": trends[:10],
+        "top_signals": signals[:10],
+        "top_opportunities": opportunities[:10],
+        "recommendations": recommendations,
         "system_health": {
             "collected_items": total_items,
             "analyzed_items": analyzed_count,
-            "coverage_percent": round(coverage, 2),
+            "coverage_percent": round(
+                coverage,
+                2,
+            ),
         },
     }
 
@@ -187,7 +193,7 @@ def format_top_trends(topics):
             f"{index}. {item['topic']} - {item['count']}"
             for index, item in enumerate(topics, start=1)
         ],
-        "No topics found."
+        "No topics found.",
     )
 
 
@@ -197,7 +203,7 @@ def format_topic_scores(topics):
             f"{index}. {item['topic']} - {format_score(item['score'])}"
             for index, item in enumerate(topics, start=1)
         ],
-        "No opportunity topics found."
+        "No opportunity topics found.",
     )
 
 
@@ -223,16 +229,11 @@ def format_opportunity_items(items):
             lines.append(f"   - Overview: {intelligence['overview']}")
 
         if intelligence.get("why_it_matters"):
-            lines.append(
-                f"   - Why It Matters: {intelligence['why_it_matters']}"
-            )
+            lines.append(f"   - Why It Matters: {intelligence['why_it_matters']}")
 
         if key_points:
             lines.append("   - Key Points:")
-            lines.extend(
-                f"     - {point}"
-                for point in key_points
-            )
+            lines.extend(f"     - {point}" for point in key_points)
 
     return "\n".join(lines)
 
@@ -281,8 +282,7 @@ def build_markdown_report(report_data):
     source_counts = overview["source_counts"]
     source_count_lines = (
         "\n".join(
-            f"- {source_type}: {count}"
-            for source_type, count in source_counts.items()
+            f"- {source_type}: {count}" for source_type, count in source_counts.items()
         )
         if source_counts
         else "- none: 0"
@@ -342,17 +342,9 @@ def write_report_files(report_data):
     ensure_report_directories()
     markdown_path, json_path = get_report_paths()
 
-    markdown_path.write_text(
-        build_markdown_report(report_data),
-        encoding="utf-8"
-    )
+    markdown_path.write_text(build_markdown_report(report_data), encoding="utf-8")
     json_path.write_text(
-        json.dumps(
-            report_data,
-            indent=4,
-            ensure_ascii=False
-        ),
-        encoding="utf-8"
+        json.dumps(report_data, indent=4, ensure_ascii=False), encoding="utf-8"
     )
 
     return markdown_path, json_path

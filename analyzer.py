@@ -12,21 +12,22 @@ from utils import (
     save_articles,
 )
 
-
+# Configuration
 # Configuration
 
 PROJECT_ROOT = Path(__file__).resolve().parent
-json_file = PROJECT_ROOT / "articles.json"
-failed_articles_file = PROJECT_ROOT / "failed_articles.json"
 
-MAX_ANALYSIS_PER_RUN = 100
-CHECKPOINT_EVERY = 25
-MAX_RETRIES = 3
-ANALYSIS_TIMEOUT_SECONDS = 120
+json_file = PROJECT_ROOT / "articles.json"
+
+failed_articles_file = PROJECT_ROOT / "failed_articles.json"
+MAX_ANALYSIS_PER_RUN = 50
+CHECKPOINT_EVERY = 10
+MAX_RETRIES = 2
+ANALYSIS_TIMEOUT_SECONDS = 45
 FAST_ANALYSIS_MODE = True
-FAST_CONTENT_LIMIT = 1200
-STANDARD_CONTENT_LIMIT = 3000
-MINIMUM_RELEVANCE_SCORE = 3
+FAST_CONTENT_LIMIT = 600
+STANDARD_CONTENT_LIMIT = 1500
+MINIMUM_RELEVANCE_SCORE = 25
 FAST_MODE_REMOVED_FIELDS = [
     "overview",
     "key_points",
@@ -44,34 +45,32 @@ def save_failed_articles(failed_articles):
 
 def get_article_identifier(article):
     return (
-        article.get("url")
-        or article.get("link")
-        or article.get("title")
-        or "unknown"
+        article.get("url") or article.get("link") or article.get("title") or "unknown"
     )
 
 
 def record_failed_article(article, error, failed_articles):
-    failed_articles.append({
-        "identifier": get_article_identifier(article),
-        "title": article.get("title", "Untitled"),
-        "source_type": article.get("source_type", "rss"),
-        "error": str(error),
-        "failed_at": datetime.now(timezone.utc).isoformat(),
-    })
+    failed_articles.append(
+        {
+            "identifier": get_article_identifier(article),
+            "title": article.get("title", "Untitled"),
+            "source_type": article.get("source_type", "rss"),
+            "error": str(error),
+            "failed_at": datetime.now(timezone.utc).isoformat(),
+        }
+    )
     save_failed_articles(failed_articles)
 
 
 def analyze_with_timeout(content):
+
     from models.qwen import analyze
 
-    executor = ThreadPoolExecutor(max_workers=1)
-    future = executor.submit(analyze, content)
+    with ThreadPoolExecutor(max_workers=1) as executor:
 
-    try:
+        future = executor.submit(analyze, content)
+
         return future.result(timeout=ANALYSIS_TIMEOUT_SECONDS)
-    finally:
-        executor.shutdown(wait=False, cancel_futures=True)
 
 
 def get_content_limit():
@@ -81,70 +80,76 @@ def get_content_limit():
     return STANDARD_CONTENT_LIMIT
 
 
-def trim_fast_analysis_fields(analysis):
-    if not FAST_ANALYSIS_MODE:
-        return analysis
-
-    for field_name in FAST_MODE_REMOVED_FIELDS:
-        analysis.pop(field_name, None)
-
-    return analysis
-
-
 def get_relevance_score(article):
     filter_data = article.get("filter_data") or {}
-
     return filter_data.get("relevance_score", 0) or 0
 
 
-def get_unanalyzed_articles(articles):
-    unanalyzed_articles = [
-        article for article in articles
-        if article.get("analysis") is None
-    ]
+def get_priority(article):
+    relevance_score = get_relevance_score(article)
+    source_quality = article.get("source_quality", 0) or 0
 
+    return relevance_score + source_quality
+
+
+def get_unanalyzed_articles(articles):
+
+    unanalyzed_articles = [
+        article for article in articles if article.get("analysis") is None
+    ]
     return sorted(
         unanalyzed_articles,
-        key=get_relevance_score,
-        reverse=True
+        key=get_priority,
+        reverse=True,
     )
 
 
 def get_candidate_articles(articles):
-    unanalyzed_articles = get_unanalyzed_articles(articles)
-    candidate_articles = [
-        article for article in unanalyzed_articles
-        if get_relevance_score(article) >= MINIMUM_RELEVANCE_SCORE
-    ]
-    skipped_count = len(unanalyzed_articles) - len(candidate_articles)
 
-    return candidate_articles, skipped_count
+    unanalyzed_articles = get_unanalyzed_articles(articles)
+
+    candidate_articles = [
+        article
+        for article in unanalyzed_articles
+        if get_priority(article) >= MINIMUM_RELEVANCE_SCORE
+    ]
+
+    skipped_count = len(unanalyzed_articles) - len(candidate_articles)
+    return (candidate_articles, skipped_count)
 
 
 def analyze_article(article):
+
+    content = article.get("content", "")[: get_content_limit()]
+
     last_error = None
-    content_limit = get_content_limit()
 
     for attempt in range(1, MAX_RETRIES + 1):
+
         try:
-            response = analyze_with_timeout(
-                article.get("content", "")[:content_limit]
-            )
+
+            response = analyze_with_timeout(content)
+
             response = clean_json_response(response)
-            analysis = json.loads(response)
 
-            return trim_fast_analysis_fields(analysis)
+            return json.loads(response)
 
-        except TimeoutError as error:
+        except TimeoutError:
+
             last_error = (
-                f"Analysis timed out after "
-                f"{ANALYSIS_TIMEOUT_SECONDS} seconds"
+                f"Analysis timed out "
+                f"after "
+                f"{ANALYSIS_TIMEOUT_SECONDS}"
+                f" seconds"
             )
-            print(f"Attempt {attempt} failed: {last_error}")
+
+            print(f"Attempt " f"{attempt} " f"failed: " f"{last_error}")
 
         except Exception as error:
+
             last_error = error
-            print(f"Attempt {attempt} failed: {error}")
+
+            print(f"Attempt " f"{attempt} " f"failed: " f"{error}")
 
     raise RuntimeError(last_error)
 
@@ -158,8 +163,6 @@ def run_analyzer():
     articles = load_articles(json_file)
     failed_articles = load_failed_articles()
     candidate_articles, skipped_count = get_candidate_articles(articles)
-    processed_count = 0
-    analysis_times = []
 
     print(f"Loaded {len(articles)} articles")
     print(f"FAST_ANALYSIS_MODE: {FAST_ANALYSIS_MODE}")
@@ -167,6 +170,9 @@ def run_analyzer():
     print(f"Minimum relevance score: {MINIMUM_RELEVANCE_SCORE}")
     print(f"Candidate articles: {len(candidate_articles)}")
     print(f"Articles skipped: {skipped_count}")
+
+    processed_count = 0
+    analysis_times = []
 
     try:
         for article in candidate_articles:
@@ -188,7 +194,7 @@ def run_analyzer():
                     processed_count,
                     skipped_count,
                     analysis_times,
-                    len(candidate_articles)
+                    len(candidate_articles),
                 )
 
                 if processed_count % CHECKPOINT_EVERY == 0:
@@ -196,11 +202,7 @@ def run_analyzer():
 
             except Exception as error:
                 print(f"Analysis failed: {error}")
-                record_failed_article(
-                    article,
-                    error,
-                    failed_articles
-                )
+                record_failed_article(article, error, failed_articles)
                 save_checkpoint(articles, processed_count)
                 continue
 
@@ -220,10 +222,7 @@ def run_analyzer():
     save_checkpoint(articles, processed_count)
 
     print_final_summary(
-        processed_count,
-        skipped_count,
-        analysis_times,
-        len(candidate_articles)
+        processed_count, skipped_count, analysis_times, len(candidate_articles)
     )
 
 
@@ -234,31 +233,19 @@ def get_average_analysis_time(analysis_times):
     return sum(analysis_times) / len(analysis_times)
 
 
-def get_estimated_remaining_time(
-    processed_count,
-    analysis_times,
-    total_candidates
-):
+def get_estimated_remaining_time(processed_count, analysis_times, total_candidates):
     average_time = get_average_analysis_time(analysis_times)
     remaining_count = max(
-        0,
-        min(total_candidates, MAX_ANALYSIS_PER_RUN) - processed_count
+        0, min(total_candidates, MAX_ANALYSIS_PER_RUN) - processed_count
     )
 
     return average_time * remaining_count
 
 
-def print_progress(
-    processed_count,
-    skipped_count,
-    analysis_times,
-    total_candidates
-):
+def print_progress(processed_count, skipped_count, analysis_times, total_candidates):
     average_time = get_average_analysis_time(analysis_times)
     estimated_remaining = get_estimated_remaining_time(
-        processed_count,
-        analysis_times,
-        total_candidates
+        processed_count, analysis_times, total_candidates
     )
 
     print(f"Articles processed: {processed_count}")
@@ -268,18 +255,10 @@ def print_progress(
 
 
 def print_final_summary(
-    processed_count,
-    skipped_count,
-    analysis_times,
-    total_candidates
+    processed_count, skipped_count, analysis_times, total_candidates
 ):
     print("\nFinished.")
-    print_progress(
-        processed_count,
-        skipped_count,
-        analysis_times,
-        total_candidates
-    )
+    print_progress(processed_count, skipped_count, analysis_times, total_candidates)
 
 
 if __name__ == "__main__":

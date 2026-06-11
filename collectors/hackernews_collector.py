@@ -5,25 +5,20 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
-from urllib.parse import urlparse
 
-PROJECT_ROOT = (
-    Path(__file__)
-    .resolve()
-    .parent
-    .parent
-)
+from filters.content_quality import is_high_quality
+from filters.duplicate_filter import build_url_index, is_duplicate
+from filters.interest_filter import calculate_relevance
+from stats.stats_manager import increment_stat
+from utils import create_item, load_articles, save_articles
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from filters.duplicate_filter import build_url_index, is_duplicate
-from filters.interest_filter import calculate_relevance
-from filters.content_quality import is_high_quality
-from stats.stats_manager import increment_stat
-from utils import load_articles, save_articles,create_item
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
@@ -99,15 +94,16 @@ def fetch_top_story_items():
 
 
 def fetch_search_items(query):
-    params = urlencode({
-        "query": query,
-        "tags": "story",
-        "hitsPerPage": SEARCH_LIMIT,
-    })
+    params = urlencode(
+        {
+            "query": query,
+            "tags": "story",
+            "hitsPerPage": SEARCH_LIMIT,
+        }
+    )
     payload = fetch_json(f"{HN_SEARCH_URL}?{params}") or {}
 
     return payload.get("hits", [])
-
 
 
 def normalize_hn_item(
@@ -115,75 +111,33 @@ def normalize_hn_item(
     category,
     target_name,
 ):
-    item_id = (
-        raw_item.get("id")
-        or raw_item.get("objectID")
-    )
+    item_id = raw_item.get("id") or raw_item.get("objectID")
 
-    title = (
-        raw_item.get("title")
-        or raw_item.get("story_title")
-        or ""
-    )
+    title = raw_item.get("title") or raw_item.get("story_title") or ""
 
-    author = (
-        raw_item.get("by")
-        or raw_item.get("author")
-        or "unknown"
-    )
+    author = raw_item.get("by") or raw_item.get("author") or "unknown"
 
-    external_url = (
-        raw_item.get("url")
-        or raw_item.get("story_url")
-    )
+    external_url = raw_item.get("url") or raw_item.get("story_url")
     source_domain = "news.ycombinator.com"
 
     if external_url:
-        source_domain = (
-            urlparse(external_url)
-            .netloc
-            .replace("www.", "")
-            .lower()
-        )
+        source_domain = urlparse(external_url).netloc.replace("www.", "").lower()
 
-
-    hn_url = (
-        f"https://news.ycombinator.com/"
-        f"item?id={item_id}"
-    )
+    hn_url = f"https://news.ycombinator.com/item?id={item_id}"
 
     url = external_url or hn_url
 
-    score = (
-        raw_item.get("score")
-        or raw_item.get("points")
-        or 0
-    )
+    score = raw_item.get("score") or raw_item.get("points") or 0
 
-    comments = raw_item.get(
-        "descendants"
-    )
+    comments = raw_item.get("descendants")
 
     if comments is None:
-        comments = raw_item.get(
-            "num_comments",
-            0
-        )
+        comments = raw_item.get("num_comments", 0)
 
-    created_at = raw_item.get(
-        "created_at"
-    )
+    created_at = raw_item.get("created_at")
 
-    if (
-        not created_at
-        and raw_item.get("time")
-    ):
-        created_at = (
-            datetime.fromtimestamp(
-                raw_item["time"],
-                timezone.utc
-            ).isoformat()
-        )
+    if not created_at and raw_item.get("time"):
+        created_at = datetime.fromtimestamp(raw_item["time"], timezone.utc).isoformat()
 
     content = f"""
 Title:
@@ -209,59 +163,31 @@ Author:
 {target_name}
 """
 
-    relevance = calculate_relevance(
-        filter_text
-    )
+    relevance = calculate_relevance(filter_text)
 
     return create_item(
         source_type="hackernews",
-
         category=category,
-
         title=title,
-
         content=content,
-
         url=url,
-
         metadata={
-             "source_domain":
-                source_domain,
-            "story_id":
-                item_id,
-
-            "author":
-                author,
-
-            "score":
-                score,
-
-            "comments":
-                comments,
-
-            "created_at":
-                created_at,
-
-            "collection_target":
-                target_name,
-
-            "hn_url":
-                hn_url,
-
-            "external_url":
-                external_url,
+            "source_domain": source_domain,
+            "story_id": item_id,
+            "author": author,
+            "score": score,
+            "comments": comments,
+            "created_at": created_at,
+            "collection_target": target_name,
+            "hn_url": hn_url,
+            "external_url": external_url,
         },
-
         filter_data={
-            "relevance_score":
-                relevance["score"],
-
-            "matched_topics":
-                relevance[
-                    "matched_topics"
-                ],
+            "relevance_score": relevance["score"],
+            "matched_topics": relevance["matched_topics"],
         },
     )
+
 
 def collect_hackernews_items():
     articles = load_articles(json_file)
@@ -287,11 +213,7 @@ def collect_hackernews_items():
         for raw_item in raw_items:
             total_seen += 1
             increment_stat(SOURCE_TYPE, "seen")
-            item = normalize_hn_item(
-                raw_item,
-                target["category"],
-                target_name
-            )
+            item = normalize_hn_item(raw_item, target["category"], target_name)
             url = item.get("url")
 
             if not url:

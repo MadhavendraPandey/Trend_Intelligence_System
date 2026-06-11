@@ -1,15 +1,9 @@
-# Imports
-
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-PROJECT_ROOT = (
-    Path(__file__)
-    .resolve()
-    .parent
-    .parent
-)
+# Ensure project root is on sys.path before importing local modules
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -27,14 +21,13 @@ from reddit_client import (
 )
 from sources.reddit_sources import REDDIT_SOURCES
 from stats.stats_manager import increment_stat
-from utils import load_articles, save_articles, create_item
+from utils import create_item, load_articles, save_articles
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 
 # Configuration
-
 json_file = PROJECT_ROOT / "articles.json"
 SOURCE_TYPE = "reddit"
 POSTS_PER_SUBREDDIT = 25
@@ -82,15 +75,9 @@ def merge_posts(posts):
             existing_post = merged_by_key[post_key]
             existing_data = existing_post.setdefault("data", {})
             duplicate_data = post.get("data", {})
-            existing_listings = existing_data.setdefault(
-                "collection_listings",
-                []
-            )
+            existing_listings = existing_data.setdefault("collection_listings", [])
 
-            for listing_type in duplicate_data.get(
-                "collection_listings",
-                []
-            ):
+            for listing_type in duplicate_data.get("collection_listings", []):
                 if listing_type not in existing_listings:
                     existing_listings.append(listing_type)
 
@@ -105,10 +92,7 @@ def merge_posts(posts):
 
 
 def build_filter_text(data, top_comments):
-    comment_text = "\n".join(
-        comment.get("body", "")
-        for comment in top_comments
-    )
+    comment_text = "\n".join(comment.get("body", "") for comment in top_comments)
 
     return f"""
 Title:
@@ -158,10 +142,7 @@ def reddit_post_to_item(post, category, relevance, top_comments=None):
     created_at = data.get("created_at")
 
     if not created_at and created_utc:
-        created_at = datetime.fromtimestamp(
-            created_utc,
-            timezone.utc
-        ).isoformat()
+        created_at = datetime.fromtimestamp(created_utc, timezone.utc).isoformat()
 
     content = f"""
 Title:
@@ -184,24 +165,14 @@ Engagement Score:
 """
 
     return create_item(
-    source_type="reddit",
-
-    category=category,
-
-    title=title,
-
-    content=content,
-
-    url=url,
-
-    metadata={
-        ...
-    },
-
-    filter_data={
-        ...
-    },
-)
+        source_type="reddit",
+        category=category,
+        title=title,
+        content=content,
+        url=url,
+        metadata={...},
+        filter_data={...},
+    )
 
 
 def collect_reddit_items():
@@ -225,10 +196,7 @@ def collect_reddit_items():
 
             for listing_type in LISTING_TYPES:
                 listing_posts = fetch_subreddit_posts(
-                    reddit,
-                    subreddit,
-                    listing_type,
-                    POSTS_PER_SUBREDDIT
+                    reddit, subreddit, listing_type, POSTS_PER_SUBREDDIT
                 )
 
                 for post in listing_posts:
@@ -274,10 +242,7 @@ def collect_reddit_items():
 
                 top_comments = []
                 if data.get("score", 0) >= 50:
-                    top_comments = fetch_top_comments(
-                        data.get("submission"),
-                        limit=3
-                    )
+                    top_comments = fetch_top_comments(data.get("submission"), limit=3)
 
                 filter_text = build_filter_text(data, top_comments)
 
@@ -288,12 +253,7 @@ def collect_reddit_items():
                     increment_stat(SOURCE_TYPE, "irrelevant_removed")
                     continue
 
-                item = reddit_post_to_item(
-                    post,
-                    category,
-                    relevance,
-                    top_comments
-                )
+                item = reddit_post_to_item(post, category, relevance, top_comments)
 
                 articles.append(item)
                 existing_urls.add(url)

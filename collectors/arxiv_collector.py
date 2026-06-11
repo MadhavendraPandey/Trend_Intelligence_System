@@ -7,12 +7,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-PROJECT_ROOT = (
-    Path(__file__)
-    .resolve()
-    .parent
-    .parent
-)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -21,7 +16,7 @@ from filters.duplicate_filter import build_url_index, is_duplicate
 from filters.interest_filter import calculate_relevance
 from filters.content_quality import is_high_quality
 from stats.stats_manager import increment_stat
-from utils import load_articles, save_articles,create_item
+from utils import load_articles, save_articles, create_item
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
@@ -59,15 +54,16 @@ ATOM_NAMESPACE = {
 }
 
 
-
 def fetch_arxiv_entries(query):
-    params = urlencode({
-        "search_query": query,
-        "start": 0,
-        "max_results": RESULTS_PER_TARGET,
-        "sortBy": "submittedDate",
-        "sortOrder": "descending",
-    })
+    params = urlencode(
+        {
+            "search_query": query,
+            "start": 0,
+            "max_results": RESULTS_PER_TARGET,
+            "sortBy": "submittedDate",
+            "sortOrder": "descending",
+        }
+    )
     request = Request(
         f"{ARXIV_API_URL}?{params}",
         headers={
@@ -113,65 +109,37 @@ def get_authors(entry):
 
     return authors
 
+
 def get_primary_category(entry):
-    category = entry.find(
-        "arxiv:primary_category",
-        ATOM_NAMESPACE
-    )
+    category = entry.find("arxiv:primary_category", ATOM_NAMESPACE)
 
     if category is None:
         return ""
 
-    return category.attrib.get(
-        "term",
-        ""
-    )
+    return category.attrib.get("term", "")
 
-def arxiv_entry_to_item(
-    entry,
-    category,
-    target_name
-):
-    title = get_text(
-        entry,
-        "atom:title"
-    )
 
-    abstract = get_text(
-        entry,
-        "atom:summary"
-    )
+def arxiv_entry_to_item(entry, category, target_name):
+    title = get_text(entry, "atom:title")
 
-    url = get_text(
-        entry,
-        "atom:id"
-    )
+    abstract = get_text(entry, "atom:summary")
 
-    authors = get_authors(
-        entry
-    )
+    url = get_text(entry, "atom:id")
 
-    published = get_text(
-        entry,
-        "atom:published"
-    )
+    authors = get_authors(entry)
 
-    primary_category = (
-        get_primary_category(
-            entry
-        )
-    )
+    published = get_text(entry, "atom:published")
+
+    primary_category = get_primary_category(entry)
 
     filter_text = f"""
     {title}
     {abstract}
-    {' '.join(authors)}
+    {" ".join(authors)}
     {primary_category}
     """
 
-    relevance = calculate_relevance(
-        filter_text
-    )
+    relevance = calculate_relevance(filter_text)
 
     content = f"""
 Title:
@@ -192,48 +160,22 @@ Primary Category:
 
     return create_item(
         source_type="arxiv",
-
         category=category,
-
         title=title,
-
         content=content,
-
         url=url,
-
         metadata={
-
-            "abstract":
-                abstract,
-
-            "source_domain": 
-                "arxiv.org",
-
-            "authors":
-                authors,
-
-            "author_count":
-                len(authors),
-
-            "published":
-                published,
-
-            "primary_category":
-                primary_category,
-
-            "collection_target":
-                target_name,
+            "abstract": abstract,
+            "source_domain": "arxiv.org",
+            "authors": authors,
+            "author_count": len(authors),
+            "published": published,
+            "primary_category": primary_category,
+            "collection_target": target_name,
         },
-
         filter_data={
-
-            "relevance_score":
-                relevance["score"],
-
-            "matched_topics":
-                relevance[
-                    "matched_topics"
-                ],
+            "relevance_score": relevance["score"],
+            "matched_topics": relevance["matched_topics"],
         },
     )
 
@@ -257,11 +199,7 @@ def collect_arxiv_items():
         for entry in entries:
             total_seen += 1
             increment_stat(SOURCE_TYPE, "seen")
-            item = arxiv_entry_to_item(
-                entry,
-                target["category"],
-                target_name
-            )
+            item = arxiv_entry_to_item(entry, target["category"], target_name)
             url = item.get("url")
 
             if not url:
