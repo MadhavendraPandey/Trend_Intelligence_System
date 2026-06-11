@@ -268,6 +268,16 @@ def get_estimated_remaining_time(processed_count, analysis_times, total_candidat
     return average_time * remaining_count
 
 
+def load_articles(json_file):
+    """Legacy stub to prevent ImportErrors in untracked files"""
+    return []
+
+
+def save_articles(articles, json_file):
+    """Legacy stub to prevent ImportErrors in untracked files"""
+    pass
+
+
 def print_progress(processed_count, skipped_count, analysis_times, total_candidates):
     average_time = get_average_analysis_time(analysis_times)
     estimated_remaining = get_estimated_remaining_time(

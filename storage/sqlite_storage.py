@@ -11,7 +11,6 @@ PROJECT_ROOT = (
 )
 
 DEFAULT_DB_FILE = PROJECT_ROOT / "trend_intelligence.db"
-DEFAULT_JSON_FILE = PROJECT_ROOT / "articles.json"
 
 
 def connect(db_file=DEFAULT_DB_FILE):
@@ -199,8 +198,8 @@ def save_article_signal(article_id, signal_strength, signal_data, connection):
     )
 
 
-def load_json_articles(json_file=DEFAULT_JSON_FILE):
-    if not json_file.exists():
+def load_json_articles(json_file):
+    if not json_file or not Path(json_file).exists():
         return []
 
     with open(json_file, "r", encoding="utf-8") as file:
@@ -211,9 +210,13 @@ def load_json_articles(json_file=DEFAULT_JSON_FILE):
 
 
 def migrate_json_to_sqlite(
-    json_file=DEFAULT_JSON_FILE,
+    json_file,
     db_file=DEFAULT_DB_FILE
 ):
+    if not json_file:
+        print("No JSON file specified for migration.")
+        return 0
+
     initialize_database(db_file)
     articles = load_json_articles(json_file)
 
