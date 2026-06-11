@@ -224,6 +224,7 @@ def run_analyzer():
     print_final_summary(
         processed_count, skipped_count, analysis_times, len(candidate_articles)
     )
+    return 0
 
 
 def get_average_analysis_time(analysis_times):
@@ -262,4 +263,4 @@ def print_final_summary(
 
 
 if __name__ == "__main__":
-    run_analyzer()
+    raise SystemExit(run_analyzer())

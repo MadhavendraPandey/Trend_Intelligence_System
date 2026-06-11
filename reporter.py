@@ -375,8 +375,8 @@ def generate_report():
     print(f"Markdown file: {markdown_path}")
     print(f"JSON file: {json_path}")
 
-    return report_data
+    return 0
 
 
 if __name__ == "__main__":
-    generate_report()
+    raise SystemExit(generate_report())
