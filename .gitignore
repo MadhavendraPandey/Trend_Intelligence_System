@@ -1,5 +1,5 @@
 .env
-article.json
+articles.json
 .venv/
 __pycache__/
 *.pyc

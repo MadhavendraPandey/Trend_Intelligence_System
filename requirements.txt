@@ -2,3 +2,5 @@ feedparser
 trafilatura
 google-genai
 python-dotenv
+praw
+streamlit

@@ -1,169 +1,159 @@
 # Trend Intelligence System
 
-A personal intelligence platform designed to reduce information overload and identify emerging developments in AI, cybersecurity, startups, and technology.
+A personal intelligence platform for collecting, filtering, and analyzing information from AI, cybersecurity, startups, developer tools, and technology sources.
 
-The goal is to automatically collect information from multiple sources, extract the important signals, generate structured analysis, and build a searchable knowledge base for future trend detection.
-
----
-
-## Problem
-
-Every day hundreds of articles, research papers, startup announcements, and security reports are published.
-
-Manually tracking them is slow, inconsistent, and difficult to scale.
-
-This project aims to automate the intelligence gathering process by creating a pipeline that:
-
-* Collects information from trusted sources
-* Extracts article content
-* Removes duplicates
-* Uses AI to analyze articles
-* Stores structured intelligence for future trend analysis
+The goal is to reduce information overload and identify emerging trends, signals, and opportunities before they become mainstream.
 
 ---
 
-## Current Capabilities
+## Features
 
-### RSS Feed Ingestion
+### Collectors
 
-Collects articles from multiple sources including:
+* RSS Feeds
+* GitHub
+* arXiv
+* Hacker News
+* Reddit (Work In Progress)
 
-* The Hacker News
-* Bleeping Computer
-* TechCrunch Startups
-* Hugging Face Blog
+### Filters
 
-### Content Extraction
+* Duplicate Filter
+* Interest Filter
+* Content Quality Filter
+* Source Quality Filter
 
-Downloads article pages and extracts the main content using Trafilatura.
+### Intelligence Layer
 
-### Deduplication
-
-Prevents previously processed articles from being analyzed multiple times.
-
-### AI-Powered Analysis
-
-Uses Gemini to generate structured intelligence including:
-
-* Overview
-* Tags
-* Importance Score
-* Key Points
-* Why It Matters
-
-### JSON Knowledge Storage
-
-Stores articles and analysis in a structured JSON format for future processing.
+* Topic Normalization
+* Trend Detection
+* Signal Strength Analysis
+* Opportunity Discovery
+* Recommendation Engine
 
 ---
 
-## Current Pipeline
+## Architecture
 
-RSS Sources
-↓
-Feed Parsing
-↓
-Content Extraction
-↓
-Deduplication
-↓
-AI Analysis
-↓
-Structured JSON Storage
-
----
-
-## Example Intelligence Output
-
-```json
-{
-  "overview": "...",
-  "tags": [
-    "AI",
-    "Cybersecurity"
-  ],
-  "importance": 4,
-  "key_points": [
-    "...",
-    "...",
-    "..."
-  ],
-  "why_it_matters": "..."
-}
+```text
+Collectors
+    ↓
+Filters
+    ↓
+Intelligence Engines
+    ↓
+Reports & Insights
 ```
-
----
-
-## Technology Stack
-
-* Python
-* Feedparser
-* Trafilatura
-* Gemini API
-* JSON
-* python-dotenv
 
 ---
 
 ## Installation
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/YOUR_USERNAME/Trend_Intelligence.git
 
-cd Trend_Intelligence_System
+cd Trend_Intelligence
+
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+
+# Linux / Mac
+source .venv/bin/activate
 
 pip install -r requirements.txt
 ```
 
+---
+
+## Environment Variables
+
 Create a `.env` file:
 
 ```env
-GEMINI_API_KEY=your_api_key_here
+GITHUB_TOKEN=your_github_token
 ```
 
-Run:
+---
+
+## Usage
 
 ```bash
-python collector.py
+python main.py -h
 ```
+
+Available modes:
+
+```text
+collect   -> Collect data from all sources
+
+analyze   -> Run intelligence engines
+
+report    -> Generate reports
+
+full      -> Run complete pipeline
+```
+
+Examples:
+
+```bash
+python main.py collect
+
+python main.py analyze
+
+python main.py report
+
+python main.py full
+```
+
+---
+
+## Project Structure
+
+```text
+collectors/
+filters/
+engines/
+reports/
+sources/
+stats/
+utils.py
+main.py
+```
+
+---
+
+## Current Status
+
+✅ RSS Collector
+
+✅ GitHub Collector
+
+✅ arXiv Collector
+
+✅ Hacker News Collector
+
+🚧 Reddit Collector
+
+🚧 Trend Engine Improvements
+
+🚧 Opportunity Discovery Engine
 
 ---
 
 ## Roadmap
 
-### Version 3
-
-* Better project structure
-* Logging
-* Error handling
-* Feed management improvements
-
-### Version 4
-
-* Topic classification
-* Trend clustering
-* Signal scoring
-
-### Version 5
-
-* Vector database
-* Semantic search
-* Knowledge retrieval
-
-### Version 6
-
-* Trend detection engine
-* Weekly intelligence reports
-* Automated alerts
-
-### Version 7
-
-* Dashboard and visualization layer
+* Cross-source trend detection
+* Trend acceleration scoring
+* Opportunity ranking
+* Strategic recommendation generation
+* Dashboard & visualization layer
 
 ---
 
-## Project Status
+## Purpose
 
-Active development.
+This project is not a news aggregator.
 
-This project is being built incrementally as a practical exercise in data engineering, automation, AI systems, cybersecurity intelligence collection, and trend analysis.
+It is being built as a personal Trend Intelligence System capable of discovering high-signal developments across technology, AI, cybersecurity, and startups.

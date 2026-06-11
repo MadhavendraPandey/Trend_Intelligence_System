@@ -1,0 +1,203 @@
+INTERESTS = {
+"AI Agents": {
+    "weight": 10,
+    "aliases": [
+        "ai agent",
+        "ai agents",
+        "agentic ai",
+        "agentic system",
+        "autonomous agent",
+        "autonomous agents",
+        "multi-agent",
+        "multi agent",
+        "agent framework",
+        "agent orchestration",
+        "agent workflow",
+        "agent memory",
+        "agent runtime",
+        "agent platform",
+        "agent infrastructure"
+    ]
+},
+"Open Source AI": {
+    "weight": 9,
+    "aliases": [
+        "open source ai",
+        "llama",
+        "mistral",
+        "qwen",
+        "deepseek",
+        "ollama",
+        "vllm",
+        "local llm",
+        "open weights",
+        "self hosted ai"
+    ]
+},
+"AI Infrastructure": {
+    "weight": 9,
+    "aliases": [
+        "inference",
+        "llm serving",
+        "embedding",
+        "vector database",
+        "vector search",
+        "rag",
+        "retrieval augmented generation",
+        "gpu cluster",
+        "gpu infrastructure",
+        "model deployment",
+        "model serving"
+    ]
+},
+"Developer AI Tools": {
+    "weight": 9,
+    "aliases": [
+        "cursor",
+        "windsurf",
+        "claude code",
+        "codex",
+        "code generation",
+        "coding agent",
+        "ai coding",
+        "developer ai",
+        "code assistant"
+    ]
+},
+"Offensive Security": {
+    "weight": 10,
+    "aliases": [
+        "red team",
+        "penetration testing",
+        "pentesting",
+        "exploit",
+        "exploit development",
+        "vulnerability research",
+        "bug bounty",
+        "reverse engineering",
+        "adversary simulation"
+    ]
+},
+"Defensive Security": {
+    "weight": 10,
+    "aliases": [
+        "blue team",
+        "soc",
+        "siem",
+        "threat hunting",
+        "detection engineering",
+        "incident response",
+        "security operations"
+    ]
+},
+"Threat Intelligence": {
+    "weight": 9,
+    "aliases": [
+        "threat intelligence",
+        "ioc",
+        "ttp",
+        "attack campaign",
+        "apt",
+        "malware analysis",
+        "osint"
+    ]
+},
+"Cloud Security": {
+    "weight": 8,
+    "aliases": [
+        "cloud security",
+        "aws security",
+        "azure security",
+        "gcp security",
+        "kubernetes security",
+        "container security"
+    ]
+},
+"Startups": {
+    "weight": 9,
+    "aliases": [
+        "startup",
+        "founder",
+        "cofounder",
+        "venture capital",
+        "seed funding",
+        "series a",
+        "product market fit",
+        "yc",
+        "y combinator"
+    ]
+},
+"SaaS": {
+    "weight": 9,
+    "aliases": [
+        "saas",
+        "software as a service",
+        "subscription software",
+        "b2b software",
+        "enterprise software"
+    ]
+},
+"Business Strategy": {
+    "weight": 8,
+    "aliases": [
+        "business model",
+        "distribution",
+        "growth strategy",
+        "competitive advantage",
+        "market opportunity",
+        "monetization"
+    ]
+},
+"Automation": {
+    "weight": 9,
+    "aliases": [
+        "automation",
+        "workflow automation",
+        "browser automation",
+        "business automation",
+        "process automation",
+        "rpa",
+        "n8n",
+        "zapier"
+    ]
+},
+"Leverage": {
+    "weight": 10,
+    "aliases": [
+        "distribution",
+        "audience",
+        "platform",
+        "network effects",
+        "automation",
+        "scalability",
+        "leverage"
+    ]
+},
+"Opportunity Signals": {
+    "weight": 10,
+    "aliases": [
+        "pain point",
+        "market gap",
+        "underserved market",
+        "growing demand",
+        "customer demand",
+        "market need",
+        "business opportunity"
+    ]
+}
+   
+}
+
+
+GOALS = [
+
+    "Build Valuable Projects",
+
+    "Spot Emerging Trends Early",
+
+    "Generate Ideas",
+
+    "Develop High Income Skills"
+
+    "Learn Faster Than Average"
+]

@@ -1,0 +1,37 @@
+{
+    "rss": {
+        "seen": 2211,
+        "duplicates_removed": 0,
+        "quality_removed": 59,
+        "irrelevant_removed": 1052,
+        "stored": 1100
+    },
+    "github": {
+        "seen": 1681,
+        "duplicates_removed": 122,
+        "quality_removed": 908,
+        "irrelevant_removed": 543,
+        "stored": 108
+    },
+    "reddit": {
+        "seen": 0,
+        "duplicates_removed": 0,
+        "quality_removed": 0,
+        "irrelevant_removed": 0,
+        "stored": 0
+    },
+    "hackernews": {
+        "seen": 120,
+        "duplicates_removed": 3,
+        "quality_removed": 115,
+        "irrelevant_removed": 2,
+        "stored": 0
+    },
+    "arxiv": {
+        "seen": 100,
+        "duplicates_removed": 6,
+        "quality_removed": 0,
+        "irrelevant_removed": 80,
+        "stored": 14
+    }
+}
