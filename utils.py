@@ -4,6 +4,59 @@ import time
 from pathlib import Path
 from datetime import datetime, timezone
 
+# load Articles
+
+
+def load_articles(json_file):
+    json_file = Path(json_file)
+
+    if not json_file.exists():
+        return []
+
+    with open(json_file, "r", encoding="utf-8") as file:
+        try:
+            return json.load(file)
+
+        except json.JSONDecodeError:
+            return []
+
+
+# Save Articles
+
+
+def save_articles(articles, json_file):
+    json_file = Path(json_file).resolve()
+    temp_file = json_file.with_suffix(json_file.suffix + ".tmp")
+
+    last_error = None
+
+    for attempt in range(5):
+        try:
+            with open(temp_file, "w", encoding="utf-8") as file:
+
+                json.dump(articles, file, indent=4, ensure_ascii=False)
+
+            try:
+                temp_file.replace(json_file)
+            except PermissionError:
+                with open(json_file, "w", encoding="utf-8") as file:
+
+                    json.dump(articles, file, indent=4, ensure_ascii=False)
+
+                try:
+                    temp_file.unlink()
+                except FileNotFoundError:
+                    pass
+
+            return
+
+        except OSError as error:
+            last_error = error
+            time.sleep(0.5 * (attempt + 1))
+
+    raise last_error
+
+
 # Clean JSON Response
 
 

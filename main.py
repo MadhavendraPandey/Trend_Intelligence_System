@@ -11,6 +11,13 @@ from main_collector import run_all_collectors
 from analyzer import run_analyzer
 from reporter import generate_report
 
+FULL_SEQUENCE = [
+    "collect",
+    "analyze",
+    "report",
+]
+
+
 def print_separator():
     print("=" * 70)
 
@@ -30,26 +37,34 @@ def run_step(mode):
         elif mode == "report":
             generate_report()
             return 0
-        return 1
+        else:
+            print(f"Unknown mode: {mode}")
+            return 1
+
     except KeyboardInterrupt:
         print(f"\nInterrupted while running {mode}.")
         return 130
+
     except Exception as error:
         print(f"{mode} failed: {error}")
-        import traceback
-        traceback.print_exc()
         return 1
 
 
 def run_mode(mode):
     if mode == "full":
-        for step in ["collect", "analyze", "report"]:
+        failures = []
+
+        for step in FULL_SEQUENCE:
             return_code = run_step(step)
+
             if return_code != 0:
-                return [(step, return_code)]
-        return []
+                failures.append((step, return_code))
+                break
+
+        return failures
 
     return_code = run_step(mode)
+
     if return_code != 0:
         return [(mode, return_code)]
 

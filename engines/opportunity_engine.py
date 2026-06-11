@@ -199,3 +199,14 @@ def analyze_opportunities(
         item["rank"] = rank
 
     return opportunities
+
+
+def get_topic_opportunities(trends, signals, accelerations):
+    """Legacy helper for the reporter."""
+    return analyze_opportunities(trends, signals, accelerations)
+
+
+def get_top_opportunities(trends, signals, accelerations, limit=10):
+    """Legacy helper for the reporter."""
+    opps = analyze_opportunities(trends, signals, accelerations)
+    return opps[:limit]

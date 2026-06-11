@@ -195,3 +195,9 @@ def analyze_trends(items):
     trends = build_trends(items)
 
     return rank_trends(trends)
+
+
+def get_top_topics(items, limit=10):
+    """Legacy helper for the reporter."""
+    trends = analyze_trends(items)
+    return trends[:limit]

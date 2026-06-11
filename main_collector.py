@@ -27,14 +27,13 @@ def run_all_collectors():
         print("=" * 70)
         print(f"Running {name}_collector")
         print("=" * 70)
+
         try:
             return_code = collector_func()
             if return_code != 0:
                 failures.append(name)
         except Exception as e:
-            print(f"{name}_collector failed: {e}")
-            import traceback
-            traceback.print_exc()
+            print(f"{name}_collector failed with error: {e}")
             failures.append(name)
 
     print()

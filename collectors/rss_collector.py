@@ -19,12 +19,9 @@ from sources.rss_sources import FEEDS
 from stats.stats_manager import (
     increment_stat,
 )
-from storage.sqlite_storage import (
-    connect,
-    upsert_article,
-    initialize_database,
-)
 from utils import (
+    load_articles,
+    save_articles,
     create_item,
 )
 
@@ -32,16 +29,9 @@ from utils import (
 # Configuration
 # ==========================================================
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+json_file = PROJECT_ROOT / "articles.json"
 
 SOURCE_TYPE = "rss"
-
-def get_existing_links(connection):
-    cursor = connection.execute("SELECT url FROM articles")
-    return {row["url"] for row in cursor.fetchall()}
-
-
-def is_duplicate(url, existing_links):
-    return url in existing_links
 
 
 # ==========================================================
@@ -50,9 +40,9 @@ def is_duplicate(url, existing_links):
 
 
 def collect_rss_items():
-    initialize_database()
-    connection = connect()
-    existing_links = get_existing_links(connection)
+    articles = load_articles(json_file)
+
+    existing_links = build_url_index(articles)
 
     print(f"Loaded {len(existing_links)} existing articles")
 
@@ -188,8 +178,7 @@ def collect_rss_items():
                     },
                 )
 
-                upsert_article(article_data, connection)
-                connection.commit()
+                articles.append(article_data)
 
                 existing_links.add(link)
 
@@ -200,10 +189,14 @@ def collect_rss_items():
                 print(f"Saved: {title}")
 
     # ==========================================================
-    # Summary
+    # Save
     # ==========================================================
 
+    save_articles(articles, json_file)
+
     print(f"\nFinished. Added {total_new_articles} new articles.")
+
+    print(f"Total articles: {len(articles)}")
 
     print(f"Seen: {total_seen}")
 
