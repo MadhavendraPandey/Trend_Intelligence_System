@@ -1,51 +1,70 @@
-# Trend Intelligence System
+# 🚀 Trend Intelligence System
 
-A personal intelligence platform for collecting, filtering, and analyzing information from AI, cybersecurity, startups, developer tools, and technology sources.
+A personal intelligence platform that collects, analyzes, and organizes information from AI, cybersecurity, startup, and technology ecosystems.
 
-The goal is to reduce information overload and identify emerging trends, signals, and opportunities before they become mainstream.
-
----
+The goal is to reduce information overload and transform raw information into structured intelligence, trend signals, and actionable insights.
 
 ## Features
 
-### Collectors
+### Data Collection
 
-* RSS Feeds
-* GitHub
-* arXiv
-* Hacker News
-* Reddit (Work In Progress)
-
-### Filters
-
-* Duplicate Filter
-* Interest Filter
-* Content Quality Filter
-* Source Quality Filter
+* RSS feed monitoring
+* GitHub trend tracking
+* arXiv research collection
+* Hacker News monitoring
 
 ### Intelligence Layer
 
-* Topic Normalization
-* Trend Detection
-* Signal Strength Analysis
-* Opportunity Discovery
-* Recommendation Engine
-
----
+* Content extraction
+* Duplicate detection
+* LLM-powered analysis
+* Topic normalization
+* Trend scoring
+* Opportunity detection
+* Intelligence report generation
 
 ## Architecture
 
 ```text
-Collectors
-    ↓
-Filters
-    ↓
-Intelligence Engines
-    ↓
-Reports & Insights
+Sources
+(RSS, GitHub, arXiv, HN)
+        ↓
+Data Collection
+        ↓
+Deduplication
+        ↓
+Content Extraction
+        ↓
+LLM Analysis
+        ↓
+Trend & Signal Scoring
+        ↓
+Reports
 ```
 
----
+## Project Structure
+
+```text
+.
+├── main.py
+├── analyzer.py
+├── reporter.py
+│
+├── collectors/
+│   ├── rss_collector.py
+│   ├── github_collector.py
+│   ├── arxiv_collector.py
+│   └── hackernews_collector.py
+│
+├── engines/
+│   ├── trend_engine.py
+│   ├── signal_engine.py
+│   └── opportunity_engine.py
+│
+├── reports/
+├── stats/
+└── utils.py
+```
 
 ## Installation
 
@@ -65,95 +84,101 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
----
+## Model Setup
 
-## Environment Variables
+### Local Models (Ollama)
+
+Install Ollama and pull the default model:
+
+```bash
+ollama pull qwen2.5:3b
+ollama serve
+```
+
+### API-Based Models
 
 Create a `.env` file:
 
 ```env
-GITHUB_TOKEN=your_github_token
+LLM_PROVIDER=gemini
+API_KEY=your_api_key
+MODEL_NAME=gemini-2.5-flash
 ```
 
----
+Supported providers:
+
+* Gemini
+* OpenAI
+* Anthropic
+* Groq
+* OpenRouter
+* Together AI
+
+## Environment Variables
+
+```env
+GITHUB_TOKEN=your_github_token
+
+LLM_PROVIDER=gemini
+API_KEY=your_api_key
+MODEL_NAME=gemini-2.5-flash
+```
 
 ## Usage
 
-```bash
-python main.py -h
-```
-
-Available modes:
-
-```text
-collect   -> Collect data from all sources
-
-analyze   -> Run intelligence engines
-
-report    -> Generate reports
-
-full      -> Run complete pipeline
-```
-
-Examples:
+Run the complete pipeline:
 
 ```bash
-python main.py collect
-
-python main.py analyze
-
-python main.py report
-
 python main.py full
 ```
 
----
+Or execute individual stages:
 
-## Project Structure
-
-```text
-collectors/
-filters/
-engines/
-reports/
-sources/
-stats/
-utils.py
-main.py
+```bash
+python main.py collect
+python main.py analyze
+python main.py report
 ```
-
----
 
 ## Current Status
 
-✅ RSS Collector
+### V1 Stable
 
-✅ GitHub Collector
-
-✅ arXiv Collector
-
-✅ Hacker News Collector
-
-🚧 Reddit Collector
-
-🚧 Trend Engine Improvements
-
-🚧 Opportunity Discovery Engine
-
----
+* Multi-source collection
+* LLM analysis pipeline
+* Trend scoring
+* Opportunity detection
+* Report generation
 
 ## Roadmap
 
-* Cross-source trend detection
-* Trend acceleration scoring
-* Opportunity ranking
-* Strategic recommendation generation
-* Dashboard & visualization layer
+### V2
 
----
+* SQLite integration
+* Improved caching
+* Better deduplication
 
-## Purpose
+### V3
 
-This project is not a news aggregator.
+* Vector database integration
+* Semantic search
+* Knowledge retrieval
 
-It is being built as a personal Trend Intelligence System capable of discovering high-signal developments across technology, AI, cybersecurity, and startups.
+### V4
+
+* Trend clustering
+* Topic evolution tracking
+* Signal acceleration detection
+
+### V5
+
+* Dashboard
+* Interactive visualizations
+* Automated alerts
+
+## License
+
+MIT License.
+
+```
+```

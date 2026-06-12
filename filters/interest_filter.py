@@ -3,10 +3,7 @@ import re
 from interests_goals import INTERESTS
 from engines.topic_normalizer import normalize_topic
 
-
-# ==========================================================
 # Precomputed Topic Configuration
-# ==========================================================
 
 TOPIC_MAP = {}
 
@@ -18,11 +15,7 @@ for topic, config in INTERESTS.items():
     compiled_patterns = []
 
     for alias in aliases:
-        compiled_patterns.append(
-            re.compile(
-                rf"\b{re.escape(alias.lower())}\b"
-            )
-        )
+        compiled_patterns.append(re.compile(rf"\b{re.escape(alias.lower())}\b"))
 
     TOPIC_MAP[topic] = {
         "weight": weight,
@@ -31,9 +24,8 @@ for topic, config in INTERESTS.items():
     }
 
 
-# ==========================================================
 # Topic Detection
-# ==========================================================
+
 
 def detect_topics(text):
 
@@ -52,31 +44,21 @@ def detect_topics(text):
 
         for pattern in patterns:
 
-            matches = len(
-                pattern.findall(text)
-            )
+            matches = len(pattern.findall(text))
 
             total_matches += matches
 
         if total_matches == 0:
             continue
 
-        normalized_topic = normalize_topic(
-            topic
-        )
+        normalized_topic = normalize_topic(topic)
 
         if normalized_topic not in matched_topics:
-            matched_topics.append(
-                normalized_topic
-            )
+            matched_topics.append(normalized_topic)
 
-        topic_scores[
-            normalized_topic
-        ] = weight
+        topic_scores[normalized_topic] = weight
 
-        topic_match_counts[
-            normalized_topic
-        ] = total_matches
+        topic_match_counts[normalized_topic] = total_matches
 
     return (
         matched_topics,
@@ -85,9 +67,8 @@ def detect_topics(text):
     )
 
 
-# ==========================================================
 # Relevance Calculation
-# ==========================================================
+
 
 def calculate_relevance(text):
 
@@ -97,52 +78,26 @@ def calculate_relevance(text):
         topic_match_counts,
     ) = detect_topics(text)
 
-    relevance_score = sum(
-        topic_scores.values()
-    )
+    relevance_score = sum(topic_scores.values())
 
     return {
-
         # Backward compatibility
         "score": relevance_score,
-
         # Explicit naming
-        "relevance_score":
-            relevance_score,
-
-        "matched_topics":
-            matched_topics,
-
-        "topic_scores":
-            topic_scores,
-
-        "topic_match_counts":
-            topic_match_counts,
-
-        "topic_count":
-            len(matched_topics),
-
-        "is_relevant":
-            relevance_score > 0,
+        "relevance_score": relevance_score,
+        "matched_topics": matched_topics,
+        "topic_scores": topic_scores,
+        "topic_match_counts": topic_match_counts,
+        "topic_count": len(matched_topics),
+        "is_relevant": relevance_score > 0,
     }
 
 
-# ==========================================================
 # Boolean Relevance Check
-# ==========================================================
 
-def is_relevant(
-    text,
-    minimum_score=1
-):
 
-    relevance = calculate_relevance(
-        text
-    )
+def is_relevant(text, minimum_score=1):
 
-    return (
-        relevance[
-            "relevance_score"
-        ]
-        >= minimum_score
-    )
+    relevance = calculate_relevance(text)
+
+    return relevance["relevance_score"] >= minimum_score

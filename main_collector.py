@@ -2,37 +2,36 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 PROJECT_ROOT = Path(__file__).resolve().parent
 
 COLLECTORS = [
-    "rss_collector.py",
-    "github_collector.py",
-    # "reddit_collector.py",
-    "hackernews_collector.py",
-    "arxiv_collector.py",
+    "collectors.rss_collector",
+    "collectors.github_collector",
+    # "collectors.reddit_collector",
+    "collectors.hackernews_collector",
+    "collectors.arxiv_collector",
 ]
 
 
-def run_collector(collector_name):
-    collector_path = PROJECT_ROOT / "collectors" / collector_name
+def run_collector(module_name):
 
     print()
     print("=" * 70)
-    print(f"Running {collector_name}")
+    print(f"Running {module_name}")
     print("=" * 70)
 
     result = subprocess.run(
         [
             sys.executable,
-            str(collector_path),
+            "-m",
+            module_name,
         ],
         cwd=PROJECT_ROOT,
         check=False,
     )
 
     if result.returncode != 0:
-        print(f"{collector_name} failed with exit code {result.returncode}")
+        print(f"{module_name} failed with exit code {result.returncode}")
 
     return result.returncode
 

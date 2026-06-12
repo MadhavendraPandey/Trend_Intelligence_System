@@ -4,19 +4,15 @@ from engines.topic_normalizer import (
     normalize_text,
 )
 
-# ==========================================================
-# Configuration
-# ==========================================================
-
+  # Configuration
+  
 MENTION_WEIGHT = 1
 SOURCE_WEIGHT = 10
 CATEGORY_WEIGHT = 5
 
 
-# ==========================================================
-# Helpers
-# ==========================================================
-
+  # Helpers
+  
 
 def build_trends(items):
 
@@ -65,10 +61,8 @@ def build_trends(items):
     return trends
 
 
-# ==========================================================
-# Scoring
-# ==========================================================
-
+  # Scoring
+  
 
 def calculate_trend_score(
     mentions,
@@ -84,10 +78,8 @@ def calculate_trend_score(
     )
 
 
-# ==========================================================
-# Classification
-# ==========================================================
-
+  # Classification
+  
 
 def classify_trend(trend_score):
 
@@ -103,10 +95,8 @@ def classify_trend(trend_score):
     return "WEAK"
 
 
-# ==========================================================
-# Confidence
-# ==========================================================
-
+  # Confidence
+  
 
 def calculate_confidence(
     source_count,
@@ -122,10 +112,8 @@ def calculate_confidence(
     return "LOW"
 
 
-# ==========================================================
-# Ranking
-# ==========================================================
-
+  # Ranking
+  
 
 def rank_trends(trends):
 
@@ -185,10 +173,8 @@ def rank_trends(trends):
     return results
 
 
-# ==========================================================
-# Main Engine
-# ==========================================================
-
+  # Main Engine
+  
 
 def analyze_trends(items):
 

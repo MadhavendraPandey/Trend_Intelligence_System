@@ -1,7 +1,5 @@
-# ==========================================================
-# Source Weights
-# ==========================================================
-
+  # Source Weights
+  
 SOURCE_WEIGHTS = {
     "arxiv": 10,
     "github": 8,
@@ -10,10 +8,8 @@ SOURCE_WEIGHTS = {
     "reddit": 4,
 }
 
-# ==========================================================
-# Helpers
-# ==========================================================
-
+  # Helpers
+  
 
 def get_source_weight(source_type):
 
@@ -23,10 +19,8 @@ def get_source_weight(source_type):
     )
 
 
-# ==========================================================
-# Build Signal Data
-# ==========================================================
-
+  # Build Signal Data
+  
 
 def build_signal_data(
     items,
@@ -87,10 +81,8 @@ def build_signal_data(
     return topic_signals
 
 
-# ==========================================================
-# Signal Strength
-# ==========================================================
-
+  # Signal Strength
+  
 
 def calculate_signal_strength(signal):
 
@@ -108,10 +100,8 @@ def calculate_signal_strength(signal):
     )
 
 
-# ==========================================================
-# Classification
-# ==========================================================
-
+  # Classification
+  
 
 def classify_signal(strength):
 
@@ -127,10 +117,8 @@ def classify_signal(strength):
     return "WEAK"
 
 
-# ==========================================================
-# Confidence
-# ==========================================================
-
+  # Confidence
+  
 
 def calculate_confidence(signal):
 
@@ -145,10 +133,8 @@ def calculate_confidence(signal):
     return "LOW"
 
 
-# ==========================================================
-# Explanation
-# ==========================================================
-
+  # Explanation
+  
 
 def build_reason(signal):
 
@@ -169,10 +155,8 @@ def build_reason(signal):
     return ", ".join(reasons)
 
 
-# ==========================================================
-# Main Engine
-# ==========================================================
-
+  # Main Engine
+  
 
 def analyze_signal_strength(
     items,

@@ -1,10 +1,8 @@
 import re
 
 
-# ==========================================================
-# Topic Hierarchy
-# ==========================================================
-
+  # Topic Hierarchy
+  
 TOPIC_HIERARCHY = {
 
     "Artificial Intelligence": {
@@ -178,10 +176,8 @@ TOPIC_HIERARCHY = {
 }
 
 
-# ==========================================================
-# Build Lookup Once
-# ==========================================================
-
+  # Build Lookup Once
+  
 def build_lookup():
 
     lookup = {}
@@ -217,10 +213,8 @@ def build_lookup():
 LOOKUP = build_lookup()
 
 
-# ==========================================================
-# Normalize Text
-# ==========================================================
-
+  # Normalize Text
+  
 def normalize_text(text):
 
     text = (
@@ -273,10 +267,8 @@ def normalize_text(text):
     return matches
 
 
-# ==========================================================
-# Normalize Topic List
-# ==========================================================
-
+  # Normalize Topic List
+  
 def normalize_topics(topic_list):
 
     results = []
@@ -290,10 +282,8 @@ def normalize_topics(topic_list):
     return results
 
 
-# ==========================================================
-# Backward Compatibility
-# ==========================================================
-
+  # Backward Compatibility
+  
 def normalize_topic(topic):
 
     matches = normalize_text(topic)

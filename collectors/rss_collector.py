@@ -25,9 +25,7 @@ from utils import (
     create_item,
 )
 
-# ==========================================================
-# Configuration
-# ==========================================================
+# Configurati
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 json_file = PROJECT_ROOT / "articles.json"
 
@@ -40,9 +38,7 @@ existing_links = build_url_index(articles)
 print(f"Loaded {len(existing_links)} existing articles")
 
 
-# ==========================================================
 # Extraction
-# ==========================================================
 
 
 def extract_article(url):
@@ -55,9 +51,7 @@ def extract_article(url):
     return trafilatura.extract(downloaded)
 
 
-# ==========================================================
 # Collection
-# ==========================================================
 
 total_seen = 0
 total_new_articles = 0
@@ -96,9 +90,7 @@ for category, feed_urls in FEEDS.items():
 
             tags = " ".join(tag.get("term", "") for tag in article.get("tags", []))
 
-            # ==================================================
             # Duplicate Check
-            # ==================================================
 
             if is_duplicate(link, existing_links):
                 increment_stat(SOURCE_TYPE, "duplicates_removed")
@@ -107,9 +99,7 @@ for category, feed_urls in FEEDS.items():
 
                 continue
 
-            # ==================================================
             # Relevance Check
-            # ==================================================
 
             filter_text = f"""
             {title}
@@ -128,9 +118,7 @@ for category, feed_urls in FEEDS.items():
 
                 continue
 
-            # ==================================================
             # Content Extraction
-            # ==================================================
 
             try:
                 content = extract_article(link)
@@ -149,9 +137,7 @@ for category, feed_urls in FEEDS.items():
 
                 continue
 
-            # ==================================================
             # Content Quality
-            # ==================================================
 
             if not is_high_quality(content):
                 increment_stat(SOURCE_TYPE, "quality_removed")
@@ -160,15 +146,11 @@ for category, feed_urls in FEEDS.items():
 
                 continue
 
-            # ==================================================
             # Metadata
-            # ==================================================
 
             source_domain = urlparse(link).netloc.replace("www.", "").lower()
 
-            # ==================================================
             # Storage
-            # ==================================================
 
             article_data = create_item(
                 source_type="rss",
@@ -202,9 +184,7 @@ for category, feed_urls in FEEDS.items():
             print(f"Saved: {title}")
 
 
-# ==========================================================
 # Save
-# ==========================================================
 
 save_articles(articles, json_file)
 

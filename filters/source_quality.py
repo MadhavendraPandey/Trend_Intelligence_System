@@ -1,8 +1,4 @@
-
-
-# ==========================================================
 # Domain Trust Scores
-# ==========================================================
 
 TRUSTED_DOMAINS = {
 
@@ -36,9 +32,9 @@ TRUSTED_DOMAINS = {
 }
 
 
-# ==========================================================
+
 # Source Type Baseline
-# ==========================================================
+
 
 SOURCE_BASELINES = {
 
@@ -54,9 +50,7 @@ SOURCE_BASELINES = {
 }
 
 
-# ==========================================================
 # Domain Quality
-# ==========================================================
 
 def get_domain_score(item):
 
@@ -76,9 +70,7 @@ def get_domain_score(item):
     )
 
 
-# ==========================================================
 # Metadata Completeness
-# ==========================================================
 
 def get_metadata_score(item):
 
@@ -97,9 +89,9 @@ def get_metadata_score(item):
 
     score = 0
 
-    # ------------------
+
     # RSS
-    # ------------------
+
 
     if source_type == "rss":
 
@@ -116,9 +108,9 @@ def get_metadata_score(item):
         ):
             score += 1
 
-    # ------------------
+    
     # GitHub
-    # ------------------
+    
 
     elif source_type == "github":
 
@@ -141,10 +133,8 @@ def get_metadata_score(item):
             "updated_at"
         ):
             score += 1
-
-    # ------------------
     # Arxiv
-    # ------------------
+    
 
     elif source_type == "arxiv":
 
@@ -163,9 +153,9 @@ def get_metadata_score(item):
         ):
             score += 1
 
-    # ------------------
+    
     # Hacker News
-    # ------------------
+    
 
     elif source_type == "hackernews":
 
@@ -184,9 +174,9 @@ def get_metadata_score(item):
         ):
             score += 1
 
-    # ------------------
+
     # Reddit
-    # ------------------
+
 
     elif source_type == "reddit":
 
@@ -208,9 +198,7 @@ def get_metadata_score(item):
     return score
 
 
-# ==========================================================
 # Main Source Quality Engine
-# ==========================================================
 
 def calculate_source_quality(item):
 
@@ -260,9 +248,7 @@ def calculate_source_quality(item):
     }
 
 
-# ==========================================================
 # Attach Score To Item
-# ==========================================================
 
 def enrich_source_quality(item):
 
