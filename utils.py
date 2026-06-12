@@ -57,7 +57,7 @@ def save_articles(articles, json_file):
     raise last_error
 
 
-# Clean JSON Response
+# Clean JSON_Response
 
 
 def clean_json_response(response):
