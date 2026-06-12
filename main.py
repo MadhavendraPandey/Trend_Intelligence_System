@@ -4,7 +4,6 @@ import sys
 import time
 from pathlib import Path
 
-
 PROJECT_ROOT = Path(__file__).resolve().parent
 
 COMMANDS = {
@@ -96,7 +95,7 @@ def parse_args():
             "report",
             "full",
         ],
-        help="Pipeline mode to run"
+        help="Pipeline mode to run",
     )
 
     return parser.parse_args()

@@ -47,7 +47,7 @@ def run_all_collectors():
 
     print()
     print("=" * 70)
-    print("Collection complete")
+    print("Collection  complete")
     print("=" * 70)
 
     if failures:

@@ -114,7 +114,7 @@ for category, feed_urls in FEEDS.items():
 
                 increment_stat(SOURCE_TYPE, "irrelevant_removed")
 
-                print("Filtered: no interest match")
+                print(f"Filtered: no interest match -> {title} ")
 
                 continue
 

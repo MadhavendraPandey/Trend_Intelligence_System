@@ -119,11 +119,8 @@ def get_candidate_articles(articles):
 
 
 def analyze_article(article):
-
     content = article.get("content", "")[: get_content_limit()]
-
     last_error = None
-
     for attempt in range(1, MAX_RETRIES + 1):
 
         try:

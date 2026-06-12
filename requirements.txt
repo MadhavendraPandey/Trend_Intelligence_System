@@ -1,5 +1,8 @@
 feedparser
 trafilatura
-python-dotenv
+requests
 praw
-streamlit
+ollama
+python-dotenv
+python-dateutil
+

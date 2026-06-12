@@ -1,12 +1,11 @@
-  # Configuration
-  
+# Configuration
+
 TREND_WEIGHT = 0.30
 SIGNAL_WEIGHT = 0.30
 ACCELERATION_WEIGHT = 0.40
 
 
-  # Helpers
-
+# Helpers
 
 
 def build_lookup(records):
@@ -14,8 +13,8 @@ def build_lookup(records):
     return {record["topic"]: record for record in records}
 
 
-  # Opportunity Score
-  
+# Opportunity Score
+
 
 def calculate_opportunity_score(
     trend_score,
@@ -33,8 +32,8 @@ def calculate_opportunity_score(
     )
 
 
-  # Classification
-  
+# Classification
+
 
 def classify_opportunity(score):
 
@@ -50,8 +49,8 @@ def classify_opportunity(score):
     return "LOW_PRIORITY"
 
 
-  # Confidence
-  
+# Confidence
+
 
 def calculate_confidence(
     trend_score,
@@ -76,8 +75,8 @@ def calculate_confidence(
     return "LOW"
 
 
-  # Explanation
-  
+# Explanation
+
 
 def build_reason(
     trend_score,
@@ -97,8 +96,8 @@ def build_reason(
     return f"Driven primarily by {strongest[0]}"
 
 
-  # Main Engine
-  
+# Main Engine
+
 
 def analyze_opportunities(
     trends,

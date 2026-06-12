@@ -97,7 +97,5 @@ def calculate_relevance(text):
 
 
 def is_relevant(text, minimum_score=1):
-
     relevance = calculate_relevance(text)
-
     return relevance["relevance_score"] >= minimum_score

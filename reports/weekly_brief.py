@@ -64,7 +64,6 @@ def format_opportunity_items(items):
 
     return "\n".join(lines)
 
-
 def format_recommendations(items):
     if not items:
         return "- No recommendations yet."

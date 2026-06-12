@@ -46,7 +46,7 @@ def get_source_counts(articles):
 
         source_type = article.get(
             "source_type",
-            "unknown",
+            "Unknown",
         )
 
         counts[source_type] += 1

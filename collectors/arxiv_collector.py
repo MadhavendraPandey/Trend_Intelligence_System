@@ -179,7 +179,6 @@ Primary Category:
         },
     )
 
-
 def collect_arxiv_items():
     articles = load_articles(json_file)
     existing_urls = build_url_index(articles)

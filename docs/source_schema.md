@@ -1,6 +1,6 @@
 # Universal Intelligence Item Schema
 
-All collectors should eventually output the same top-level structure so filters, analyzers, reporters, and future storage layers can work without caring where an item came from.
+All collectors should eventually output the same top-level structure so filters, analyzers, reporters, and future storage layers can work without caring where an item came from
 
 ## Canonical Shape
 
