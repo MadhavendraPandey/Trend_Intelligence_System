@@ -3,21 +3,23 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-5);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-8);
 }
 
 .page-heading h2 {
-  max-width: 720px;
-  margin: 4px 0 0;
-  font-size: 22px;
-  font-weight: 650;
+  max-width: 800px;
+  margin: var(--space-2) 0 0;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--text-soft);
 }
 
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--space-3);
-  margin-bottom: var(--space-5);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
 }
 
 .metric-grid.compact {
@@ -26,31 +28,34 @@
 
 .detail-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--space-5);
-  margin-bottom: var(--space-5);
+  grid-template-columns: 1.6fr 1fr;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
 }
 
 .stack {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-6);
 }
 
 .record-list {
   display: grid;
-  grid-template-columns: 130px minmax(0, 1fr);
-  gap: 10px 14px;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 12px 16px;
   margin: 0;
 }
 
 .record-list dt {
   color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .record-list dd {
   min-width: 0;
   margin: 0;
   overflow-wrap: anywhere;
+  font-size: 14px;
 }
 
 .trace-strip,
@@ -67,47 +72,54 @@
 
 .trace-strip span,
 .trace-inline a {
+  display: inline-flex;
+  align-items: center;
   border: 1px solid var(--border);
-  border-radius: 999px;
-  background: rgba(139, 215, 196, 0.065);
+  border-radius: 6px;
+  background: var(--bg-subtle);
   color: var(--text-soft);
-  padding: 5px 9px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .trace-strip span:not(:last-child)::after {
-  content: "->";
-  margin-left: 9px;
+  content: "→";
+  margin-left: 12px;
   color: var(--text-muted);
+  font-weight: 400;
 }
 
 .trace-strip.reverse span {
-  background: rgba(242, 201, 125, 0.055);
+  background: var(--surface-soft);
 }
 
 .trace-block {
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: var(--space-4);
-  background: rgba(255, 255, 255, 0.025);
+  padding: var(--space-5);
+  background: var(--bg-subtle);
 }
 
 .trace-block + .trace-block {
-  margin-top: var(--space-3);
+  margin-top: var(--space-4);
 }
 
 .trace-card {
-  padding: var(--space-5);
+  padding: var(--space-6);
 }
 
 .trace-card h3 {
   margin: 0 0 var(--space-2);
-  font-size: 16px;
-  font-weight: 650;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .trace-card p {
-  margin: 0 0 var(--space-3);
+  margin: 0 0 var(--space-4);
   color: var(--text-soft);
+  font-size: 14px;
 }
 
 .nested-list {
@@ -119,24 +131,39 @@
 .nested-row {
   display: grid;
   grid-template-columns: 140px minmax(0, 1fr);
-  gap: var(--space-3);
+  gap: var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: var(--space-3);
-  background: rgba(255, 255, 255, 0.025);
+  padding: var(--space-4);
+  background: var(--bg-subtle);
+  transition: all 0.2s ease;
+}
+
+.nested-row:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-soft);
+}
+
+.nested-row strong {
+  font-weight: 600;
+  color: var(--text);
 }
 
 .nested-row small {
-  grid-column: 2;
+  display: block;
+  margin-top: 2px;
   color: var(--text-muted);
+  font-size: 12px;
 }
 
 .pager {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-4);
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
   color: var(--text-muted);
+  font-size: 13px;
 }
 
 .muted-text,
@@ -144,9 +171,9 @@
   color: var(--text-muted);
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 1200px) {
   .metric-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .detail-grid {
@@ -154,23 +181,19 @@
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .page-heading {
     align-items: stretch;
     flex-direction: column;
+    margin-bottom: var(--space-6);
   }
 
-  .metric-grid,
-  .metric-grid.compact {
+  .metric-grid {
     grid-template-columns: 1fr;
   }
 
   .record-list,
   .nested-row {
     grid-template-columns: 1fr;
-  }
-
-  .nested-row small {
-    grid-column: auto;
   }
 }

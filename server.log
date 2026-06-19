@@ -1,0 +1,32 @@
+/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+INFO:     Started server process [382707]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:3000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:48430 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48430 - "GET /static/css/tokens.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48436 - "GET /static/css/layout.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48444 - "GET /static/css/components.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48458 - "GET /static/css/pages.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48464 - "GET /static/js/theme.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57536 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57536 - "GET /static/css/tokens.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57550 - "GET /static/css/layout.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57564 - "GET /static/css/components.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57578 - "GET /static/css/pages.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57588 - "GET /static/js/theme.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57588 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51862 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51870 - "GET /static/css/layout.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51862 - "GET /static/css/tokens.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /static/css/components.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51890 - "GET /static/css/pages.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51900 - "GET /static/js/theme.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51900 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57588 - "GET /candidates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57588 - "GET /static/css/components.css HTTP/1.1" 304 Not Modified
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [215058]
