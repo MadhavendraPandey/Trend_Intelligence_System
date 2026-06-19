@@ -19,6 +19,46 @@
         </main>
       </div>
     </div>
+    <script>
+      // Theme switcher functionality
+      function applyTheme(theme) {
+        const root = document.documentElement;
+        
+        // Remove all theme classes
+        root.classList.remove('theme-dark', 'theme-light', 'theme-system');
+        
+        // Apply selected theme
+        if (theme === 'system') {
+          const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          root.classList.add(`theme-${systemPrefersDark ? 'dark' : 'light'}`);
+        } else {
+          root.classList.add(`theme-${theme}`);
+        }
+        
+        // Save to localStorage
+        localStorage.setItem('theme', theme);
+        
+        // Update select element
+        const select = document.getElementById('theme-select');
+        if (select) {
+          select.value = theme;
+        }
+      }
+      
+      function initTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        applyTheme(savedTheme);
+        
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+          if (localStorage.getItem('theme') === 'system') {
+            applyTheme('system');
+          }
+        });
+      }
+      
+      // Initialize theme on load
+      document.addEventListener('DOMContentLoaded', initTheme);
+    </script>
   </body>
 </html>
-
