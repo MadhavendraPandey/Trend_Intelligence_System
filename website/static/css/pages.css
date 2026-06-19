@@ -89,6 +89,9 @@
   border-radius: var(--radius);
   padding: var(--space-4);
   background: rgba(255, 255, 255, 0.025);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .trace-block + .trace-block {
@@ -97,6 +100,11 @@
 
 .trace-card {
   padding: var(--space-5);
+  border-radius: var(--radius);
+  background: rgba(18, 20, 24, 0.6);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .trace-card h3 {
@@ -124,6 +132,9 @@
   border-radius: var(--radius-sm);
   padding: var(--space-3);
   background: rgba(255, 255, 255, 0.025);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .nested-row small {

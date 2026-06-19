@@ -1,7 +1,7 @@
 :root {
   color-scheme: dark;
-  --bg: #070809;
-  --bg-elevated: #0d0f12;
+  --bg: #0a0b0d;
+  --bg-elevated: #121417;
   --surface: rgba(18, 20, 24, 0.92);
   --surface-soft: rgba(24, 27, 32, 0.78);
   --surface-hover: rgba(33, 37, 43, 0.86);
@@ -45,6 +45,7 @@ body {
   margin: 0;
   background:
     radial-gradient(circle at 40% -10%, rgba(139, 215, 196, 0.1), transparent 32rem),
+    radial-gradient(circle at 60% 100%, rgba(242, 201, 125, 0.05), transparent 32rem),
     linear-gradient(180deg, #0a0b0d 0%, var(--bg) 36%);
   color: var(--text);
   font-family: var(--font);
