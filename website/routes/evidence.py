@@ -51,4 +51,3 @@ def register_routes(app):
             active="evidence",
             title=f"Evidence {evidence_id}",
         )
-

@@ -52,4 +52,3 @@ def register_routes(app):
             active="groups",
             title=f"Group {group_id}",
         )
-

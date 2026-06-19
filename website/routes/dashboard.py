@@ -76,4 +76,3 @@ def _placeholder(request, section_name, active):
         active=active,
         title=section_name,
     )
-
