@@ -3,21 +3,21 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-5);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-6);
 }
 
 .page-heading h2 {
   max-width: 720px;
   margin: 4px 0 0;
-  font-size: 22px;
-  font-weight: 650;
+  font-size: 24px;
+  font-weight: 700;
 }
 
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--space-3);
-  margin-bottom: var(--space-5);
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 
 .metric-grid.compact {
@@ -28,12 +28,12 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--space-5);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-6);
 }
 
 .stack {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-5);
 }
 
 .record-list {
@@ -62,7 +62,7 @@
 }
 
 .trace-strip {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .trace-strip span,
@@ -72,6 +72,7 @@
   background: rgba(139, 215, 196, 0.065);
   color: var(--text-soft);
   padding: 5px 9px;
+  font-weight: 500;
 }
 
 .trace-strip span:not(:last-child)::after {
@@ -86,67 +87,70 @@
 
 .trace-block {
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
   background: rgba(255, 255, 255, 0.025);
   box-shadow: 
-    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .trace-block + .trace-block {
-  margin-top: var(--space-3);
+  margin-top: var(--space-4);
 }
 
 .trace-card {
   padding: var(--space-5);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   background: rgba(18, 20, 24, 0.6);
   box-shadow: 
-    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .trace-card h3 {
-  margin: 0 0 var(--space-2);
+  margin: 0 0 var(--space-3);
   font-size: 16px;
   font-weight: 650;
 }
 
 .trace-card p {
-  margin: 0 0 var(--space-3);
+  margin: 0 0 var(--space-4);
   color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .nested-list {
   display: grid;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
+  gap: var(--space-3);
+  margin-top: var(--space-5);
 }
 
 .nested-row {
   display: grid;
   grid-template-columns: 140px minmax(0, 1fr);
-  gap: var(--space-3);
+  gap: var(--space-4);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
   background: rgba(255, 255, 255, 0.025);
   box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .nested-row small {
   grid-column: 2;
   color: var(--text-muted);
+  font-size: 14px;
 }
 
 .pager {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
   color: var(--text-muted);
 }
 
