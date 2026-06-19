@@ -140,7 +140,8 @@
 }
 
 .searchbar input:focus {
-  border-color: rgba(139, 215, 196, 0.48);
+  border-color: var(--saffron-strong);
+  box-shadow: 0 0 0 3px rgba(255, 183, 64, 0.2);
 }
 
 .searchbar button,

@@ -94,8 +94,8 @@
 
 .nav-item.active {
   background: linear-gradient(90deg, rgba(255, 183, 64, 0.15) 0%, rgba(255, 183, 64, 0.05) 100%);
-  color: var(--accent-strong);
-  border-left: 3px solid var(--accent-strong);
+  color: var(--saffron-strong);
+  border-left: 3px solid var(--saffron);
 }
 
 .nav-item.active::before {
@@ -105,7 +105,7 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background: var(--accent-strong);
+  background: var(--saffron);
   border-radius: 0 3px 3px 0;
 }
 
