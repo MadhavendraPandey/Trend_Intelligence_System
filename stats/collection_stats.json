@@ -1,17 +1,17 @@
 {
     "rss": {
-        "seen": 23143,
-        "duplicates_removed": 5998,
-        "quality_removed": 308,
-        "irrelevant_removed": 14645,
-        "stored": 2189
+        "seen": 29810,
+        "duplicates_removed": 6993,
+        "quality_removed": 369,
+        "irrelevant_removed": 20227,
+        "stored": 2218
     },
     "github": {
-        "seen": 8618,
-        "duplicates_removed": 3412,
-        "quality_removed": 43,
-        "irrelevant_removed": 3070,
-        "stored": 2093
+        "seen": 11079,
+        "duplicates_removed": 4890,
+        "quality_removed": 60,
+        "irrelevant_removed": 3915,
+        "stored": 2214
     },
     "reddit": {
         "seen": 0,
@@ -21,17 +21,17 @@
         "stored": 0
     },
     "hackernews": {
-        "seen": 1080,
-        "duplicates_removed": 155,
-        "quality_removed": 0,
-        "irrelevant_removed": 861,
-        "stored": 64
+        "seen": 1440,
+        "duplicates_removed": 210,
+        "quality_removed": 1,
+        "irrelevant_removed": 1144,
+        "stored": 85
     },
     "arxiv": {
-        "seen": 1025,
-        "duplicates_removed": 420,
+        "seen": 1325,
+        "duplicates_removed": 543,
         "quality_removed": 14,
-        "irrelevant_removed": 414,
-        "stored": 177
+        "irrelevant_removed": 556,
+        "stored": 212
     }
 }

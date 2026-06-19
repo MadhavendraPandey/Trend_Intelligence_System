@@ -4,19 +4,7 @@ import sys
 import time
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parent
-
-COMMANDS = {
-    "collect": "main_collector.py",
-    "analyze": "analyzer.py",
-    "report": "reporter.py",
-}
-
-FULL_SEQUENCE = [
-    "collect",
-    "analyze",
-    "report",
-]
+from modules.trend.config import COMMANDS, FULL_SEQUENCE, PROJECT_ROOT
 
 
 def print_separator():
@@ -89,6 +77,8 @@ def parse_args():
     )
     parser.add_argument(
         "mode",
+        nargs="?",
+        default="full",
         choices=[
             "collect",
             "analyze",

@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from datetime import datetime, timezone
 from pathlib import Path
 
-from utils import (
+from core.utils import (
     clean_json_response,
     load_articles,
     save_articles,
@@ -64,7 +64,7 @@ def record_failed_article(article, error, failed_articles):
 
 def analyze_with_timeout(content):
 
-    from models.qwen import analyze
+    from core.models.qwen import analyze
 
     with ThreadPoolExecutor(max_workers=1) as executor:
 

@@ -1,0 +1,35 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+
+{% block content %}
+  <section class="page-heading">
+    <div>
+      <p class="eyebrow">Operational overview</p>
+      <h2>Inspection surface for posts, evidence, groups, and candidates.</h2>
+    </div>
+  </section>
+
+  <section class="metric-grid">
+    {{ card.metric("Posts", summary.total_posts) }}
+    {{ card.metric("Evidence", summary.total_evidence) }}
+    {{ card.metric("Groups", summary.total_groups) }}
+    {{ card.metric("Candidates", summary.total_candidates) }}
+    {{ card.metric("Latest run", summary.latest_run) }}
+  </section>
+
+  {% call card.panel("Traceability model", "Every candidate should remain explainable through its source observations.") %}
+    <div class="trace-strip">
+      <span>Candidate</span>
+      <span>Group</span>
+      <span>Evidence</span>
+      <span>Post</span>
+    </div>
+    <div class="trace-strip reverse">
+      <span>Post</span>
+      <span>Evidence</span>
+      <span>Group</span>
+      <span>Candidate</span>
+    </div>
+  {% endcall %}
+{% endblock %}
+

@@ -1,0 +1,202 @@
+.eyebrow {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.system-pill,
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-soft);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.muted-pill,
+.neutral {
+  color: var(--text-muted);
+}
+
+.status-generated,
+.status-open,
+.status-active,
+.status-started {
+  border-color: rgba(139, 215, 196, 0.26);
+  color: var(--accent-strong);
+}
+
+.status-accepted,
+.status-validated {
+  border-color: rgba(146, 217, 155, 0.28);
+  color: var(--success);
+}
+
+.status-rejected,
+.status-failed {
+  border-color: rgba(240, 138, 138, 0.28);
+  color: var(--danger);
+}
+
+.status-reviewed,
+.status-imported {
+  border-color: rgba(242, 201, 125, 0.28);
+  color: var(--warning);
+}
+
+.panel,
+.table-panel,
+.trace-card,
+.metric-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.panel-header {
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-5) var(--space-5) var(--space-4);
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.panel-header p {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+}
+
+.panel-body {
+  padding: var(--space-5);
+}
+
+.metric-card {
+  padding: var(--space-4);
+}
+
+.metric-card span,
+.metric-card small {
+  display: block;
+  color: var(--text-muted);
+}
+
+.metric-card strong {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--text);
+  font-size: 24px;
+  font-weight: 680;
+  overflow-wrap: anywhere;
+}
+
+.metric-card small {
+  margin-top: var(--space-1);
+  font-size: 12px;
+}
+
+.searchbar {
+  display: flex;
+  gap: var(--space-2);
+  width: min(460px, 100%);
+}
+
+.searchbar input {
+  min-width: 0;
+  flex: 1;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  padding: 0 12px;
+  outline: none;
+}
+
+.searchbar input:focus {
+  border-color: rgba(139, 215, 196, 0.48);
+}
+
+.searchbar button,
+.pager a {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-soft);
+  color: var(--text);
+  padding: 0 12px;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.searchbar button:hover,
+.pager a:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  border-bottom: 1px solid var(--border);
+  padding: 11px 14px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table th {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.data-table tr:hover td {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.data-table a {
+  color: var(--accent-strong);
+}
+
+.wide-cell {
+  min-width: 280px;
+  max-width: 680px;
+}
+
+.empty-cell,
+.empty-state {
+  color: var(--text-muted);
+}
+
+.empty-state {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.empty-state strong {
+  display: block;
+  color: var(--text-soft);
+}
+
+.empty-state p {
+  margin: 4px 0 0;
+}

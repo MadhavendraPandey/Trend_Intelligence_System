@@ -1,15 +1,25 @@
-import json
+"""Collection statistics facade backed by SQLite.
+
+Purpose:
+    Preserve the existing `increment_stat` and `get_stats` API while removing
+    runtime dependency on `stats/collection_stats.json`.
+
+Architecture notes:
+    Collectors call this module as before. Persistence is delegated to
+    `SourceRunRepository`, keeping SQL inside repositories.
+
+Future extension guidance:
+    Replace this facade with explicit source run lifecycle calls once
+    collectors are refactored around repository-backed source runs.
+"""
+
 from pathlib import Path
 
+from core.storage import SQLiteStorage
+from database.repositories import SourceRunRepository
 
-PROJECT_ROOT = (
-    Path(__file__)
-    .resolve()
-    .parent
-    .parent
-)
-
-STATS_FILE = PROJECT_ROOT / "stats" / "collection_stats.json"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_DB_FILE = PROJECT_ROOT / "database" / "intelligence_platform.sqlite"
 
 METRICS = [
     "seen",
@@ -28,6 +38,11 @@ DEFAULT_SOURCES = [
 ]
 
 
+def _repository():
+    storage = SQLiteStorage(db_file=DEFAULT_DB_FILE)
+    return storage, SourceRunRepository(storage)
+
+
 def build_empty_source_stats():
     return {
         metric: 0
@@ -35,60 +50,22 @@ def build_empty_source_stats():
     }
 
 
-def ensure_stats_file():
-    STATS_FILE.parent.mkdir(parents=True, exist_ok=True)
-
-    if not STATS_FILE.exists():
-        save_stats({})
-
-
-def normalize_stats(stats):
-    normalized_stats = {}
-
-    for source in DEFAULT_SOURCES:
-        normalized_stats[source] = build_empty_source_stats()
-
-    for source, source_stats in (stats or {}).items():
-        normalized_stats.setdefault(source, build_empty_source_stats())
-        normalized_stats[source].update(source_stats or {})
-
-    return normalized_stats
-
-
-def load_stats():
-    ensure_stats_file()
-
-    try:
-        with STATS_FILE.open("r", encoding="utf-8") as file:
-            return normalize_stats(json.load(file))
-
-    except json.JSONDecodeError:
-        stats = normalize_stats({})
-        save_stats(stats)
-        return stats
-
-
-def save_stats(stats):
-    STATS_FILE.parent.mkdir(parents=True, exist_ok=True)
-
-    with STATS_FILE.open("w", encoding="utf-8") as file:
-        json.dump(
-            normalize_stats(stats),
-            file,
-            indent=4,
-            ensure_ascii=False
-        )
-
-
 def increment_stat(source, metric):
     if metric not in METRICS:
         raise ValueError(f"Unknown collection stat metric: {metric}")
 
-    stats = load_stats()
-    source_stats = stats.setdefault(source, build_empty_source_stats())
-    source_stats[metric] += 1
-    save_stats(stats)
+    storage, repository = _repository()
+
+    try:
+        repository.increment_stat(source, metric)
+    finally:
+        storage.close()
 
 
 def get_stats():
-    return load_stats()
+    storage, repository = _repository()
+
+    try:
+        return repository.get_stats(DEFAULT_SOURCES)
+    finally:
+        storage.close()

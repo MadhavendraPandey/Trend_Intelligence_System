@@ -1,0 +1,32 @@
+<aside class="sidebar" aria-label="Primary navigation">
+  <a class="brand" href="/">
+    <span class="brand-mark">IW</span>
+    <span>
+      <strong>Intelligence</strong>
+      <small>Workbench</small>
+    </span>
+  </a>
+
+  <nav class="nav-stack">
+    <a class="nav-item {% if active_nav == 'dashboard' %}active{% endif %}" href="/">Dashboard</a>
+
+    <div class="nav-section">Data</div>
+    <a class="nav-item {% if active_nav == 'sources' %}active{% endif %}" href="/sources">Sources</a>
+    <a class="nav-item {% if active_nav == 'posts' %}active{% endif %}" href="/posts">Posts</a>
+    <a class="nav-item {% if active_nav == 'runs' %}active{% endif %}" href="/runs">Runs</a>
+
+    <div class="nav-section">Intelligence</div>
+    <a class="nav-item {% if active_nav == 'evidence' %}active{% endif %}" href="/evidence">Evidence</a>
+    <a class="nav-item {% if active_nav == 'groups' %}active{% endif %}" href="/groups">Groups</a>
+    <a class="nav-item {% if active_nav == 'candidates' %}active{% endif %}" href="/candidates">Candidates</a>
+
+    <div class="nav-section">Review</div>
+    <a class="nav-item {% if active_nav == 'validation' %}active{% endif %}" href="/validation">Validation Queue <span>planned</span></a>
+    <a class="nav-item {% if active_nav == 'decisions' %}active{% endif %}" href="/decisions">Decisions <span>planned</span></a>
+
+    <div class="nav-section">System</div>
+    <a class="nav-item {% if active_nav == 'metrics' %}active{% endif %}" href="/metrics">Metrics <span>planned</span></a>
+    <a class="nav-item {% if active_nav == 'settings' %}active{% endif %}" href="/settings">Settings <span>planned</span></a>
+  </nav>
+</aside>
+

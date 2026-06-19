@@ -2,15 +2,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+from modules.trend.config import COLLECTOR_MODULES
+
 PROJECT_ROOT = Path(__file__).resolve().parent
 
-COLLECTORS = [
-    "collectors.rss_collector",
-    "collectors.github_collector",
-    # "collectors.reddit_collector",
-    "collectors.hackernews_collector",
-    "collectors.arxiv_collector",
-]
+COLLECTORS = COLLECTOR_MODULES
 
 
 def run_collector(module_name):

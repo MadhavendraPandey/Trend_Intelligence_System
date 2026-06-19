@@ -3,3 +3,6 @@ articles.json
 .venv/
 __pycache__/
 *.pyc
+.aider*
+database/*.sqlite
+database/*.sqlite-*

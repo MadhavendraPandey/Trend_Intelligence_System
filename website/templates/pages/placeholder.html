@@ -1,0 +1,8 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+
+{% block content %}
+  {% call card.panel(section_name, "Reserved workbench section") %}
+    <p class="muted-copy">{{ message }}</p>
+  {% endcall %}
+{% endblock %}

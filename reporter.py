@@ -3,17 +3,18 @@ from collections import Counter
 from datetime import date
 from pathlib import Path
 
-from engines import trend_engine
-from engines import signal_strength
-from engines import opportunity_engine
-from engines import recommendation_engine
+from modules.trend.engines import trend_engine
+from modules.trend.engines import signal_engine
+from modules.trend.engines import opportunity_engine
+from modules.trend.engines import recommendation_engine
 
-from utils import load_articles
+from core.storage import SQLiteStorage
+from database.repositories import PostRepository
 from stats.stats_manager import get_stats
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 
-json_file = PROJECT_ROOT / "articles.json"
+sqlite_file = PROJECT_ROOT / "database" / "intelligence_platform.sqlite"
 
 reports_dir = PROJECT_ROOT / "reports"
 
@@ -52,6 +53,54 @@ def get_source_counts(articles):
         counts[source_type] += 1
 
     return dict(counts)
+
+
+def decode_json_field(value, default=None):
+    if value is None:
+        return default
+
+    if isinstance(value, (dict, list)):
+        return value
+
+    try:
+        return json.loads(value)
+    except (TypeError, json.JSONDecodeError):
+        return default
+
+
+def post_to_article(post):
+    article = decode_json_field(post.get("raw_json"), default={}) or {}
+
+    if not isinstance(article, dict):
+        article = {}
+
+    article.setdefault("source_type", post.get("source_type"))
+    article.setdefault("category", post.get("category"))
+    article.setdefault("title", post.get("title"))
+    article.setdefault("content", post.get("content") or "")
+    article.setdefault("url", post.get("url") or post.get("canonical_url"))
+    article.setdefault("metadata", decode_json_field(post.get("metadata_json"), default={}) or {})
+    article.setdefault("analysis", decode_json_field(post.get("analysis_json")))
+    article.setdefault("filter_data", decode_json_field(post.get("filter_data_json"), default={}) or {})
+
+    return article
+
+
+def load_articles_from_sqlite(db_file=sqlite_file):
+    if not Path(db_file).exists():
+        return []
+
+    storage = SQLiteStorage(db_file=db_file)
+
+    try:
+        repository = PostRepository(storage)
+        return [post_to_article(post) for post in repository.iter_all()]
+    finally:
+        storage.close()
+
+
+def load_report_articles():
+    return load_articles_from_sqlite()
 
 
 def format_top_trends(trends):
@@ -132,15 +181,16 @@ def format_recommendations(items):
     return "\n".join(lines)
 
 
-def build_report_data():
+def build_report_data(articles=None, prefer_sqlite=True):
 
-    articles = load_articles(json_file)
+    if articles is None:
+        articles = load_report_articles()
 
     analyzed_articles = [article for article in articles if article.get("analysis")]
 
     trends = trend_engine.analyze_trends(articles)
 
-    signals = signal_strength.analyze_signal_strength(
+    signals = signal_engine.analyze_signal_strength(
         articles,
         trends,
     )
