@@ -29,6 +29,8 @@
   --space-5: 20px;
   --space-6: 24px;
   --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
   --content-max: 1440px;
 }
 
@@ -49,9 +51,9 @@ body {
     linear-gradient(180deg, #0a0b0d 0%, var(--bg) 36%);
   color: var(--text);
   font-family: var(--font);
-  font-size: 14px;
-  line-height: 1.5;
-  letter-spacing: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
 }
 
 a {
@@ -73,7 +75,7 @@ code {
   background: rgba(255, 255, 255, 0.04);
   color: var(--text-soft);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 button,
