@@ -3,112 +3,35 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ page_title }} | {{ app_name }}</title>
+    <title>{{ page_title }} | Intelligence Workbench</title>
     <link rel="stylesheet" href="{{ request.url_for('static', path='css/tokens.css') }}">
     <link rel="stylesheet" href="{{ request.url_for('static', path='css/layout.css') }}">
     <link rel="stylesheet" href="{{ request.url_for('static', path='css/components.css') }}">
     <link rel="stylesheet" href="{{ request.url_for('static', path='css/pages.css') }}">
+    <script defer src="{{ request.url_for('static', path='js/theme.js') }}"></script>
   </head>
   <body>
     <div class="shell">
-      <!-- Top Navigation Bar -->
-      <nav class="topbar">
-        <div class="topbar-brand">
-          <a class="brand" href="/">
-            <span class="brand-mark">IW</span>
-            <span>
-              <strong>Intelligence</strong>
-              <small>Workbench</small>
-            </span>
-          </a>
-        </div>
-        
-        <div class="topbar-nav">
-          <a class="nav-item {% if active_nav == 'dashboard' %}active{% endif %}" href="/">Dashboard</a>
-          
-          <div class="nav-section">Data</div>
-          <a class="nav-item {% if active_nav == 'sources' %}active{% endif %}" href="/sources">Sources</a>
-          <a class="nav-item {% if active_nav == 'posts' %}active{% endif %}" href="/posts">Posts</a>
-          <a class="nav-item {% if active_nav == 'runs' %}active{% endif %}" href="/runs">Runs</a>
+      <div class="nav-container">
+        {% include "components/nav.html" %}
+      </div>
 
-          <div class="nav-section">Intelligence</div>
-          <a class="nav-item {% if active_nav == 'evidence' %}active{% endif %}" href="/evidence">Evidence</a>
-          <a class="nav-item {% if active_nav == 'groups' %}active{% endif %}" href="/groups">Groups</a>
-          <a class="nav-item {% if active_nav == 'candidates' %}active{% endif %}" href="/candidates">Candidates</a>
-
-          <div class="nav-section">Review</div>
-          <a class="nav-item {% if active_nav == 'validation' %}active{% endif %}" href="/validation">Validation Queue <span>planned</span></a>
-          <a class="nav-item {% if active_nav == 'decisions' %}active{% endif %}" href="/decisions">Decisions <span>planned</span></a>
-
-          <div class="nav-section">System</div>
-          <a class="nav-item {% if active_nav == 'metrics' %}active{% endif %}" href="/metrics">Metrics <span>planned</span></a>
-          <a class="nav-item {% if active_nav == 'settings' %}active{% endif %}" href="/settings">Settings <span>planned</span></a>
-        </div>
-        
-        <div class="topbar-actions">
-          <select id="theme-select" class="theme-selector">
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="system">System</option>
-          </select>
-        </div>
-      </nav>
-      
       <div class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Intelligence Workbench</p>
+            <h1>{{ page_title }}</h1>
+          </div>
+          <div class="topbar-actions">
+            <span class="system-pill">V2.0</span>
+            <span class="system-pill muted-pill">SQLite</span>
+          </div>
+        </header>
+
         <main class="content page-enter">
           {% block content %}{% endblock %}
         </main>
       </div>
     </div>
-    
-    <script>
-      // Theme switcher functionality
-      function applyTheme(theme) {
-        const root = document.documentElement;
-        
-        // Remove all theme classes
-        root.classList.remove('theme-dark', 'theme-light', 'theme-system');
-        
-        // Apply selected theme
-        if (theme === 'system') {
-          const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          root.classList.add(`theme-${systemPrefersDark ? 'dark' : 'light'}`);
-        } else {
-          root.classList.add(`theme-${theme}`);
-        }
-        
-        // Save to localStorage
-        localStorage.setItem('theme', theme);
-        
-        // Update select element
-        const select = document.getElementById('theme-select');
-        if (select) {
-          select.value = theme;
-        }
-      }
-      
-      function initTheme() {
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        applyTheme(savedTheme);
-        
-        // Listen for system theme changes
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-          if (localStorage.getItem('theme') === 'system') {
-            applyTheme('system');
-          }
-        });
-        
-        // Set up theme selector event listener
-        const select = document.getElementById('theme-select');
-        if (select) {
-          select.addEventListener('change', (e) => {
-            applyTheme(e.target.value);
-          });
-        }
-      }
-      
-      // Initialize theme on load
-      document.addEventListener('DOMContentLoaded', initTheme);
-    </script>
   </body>
 </html>

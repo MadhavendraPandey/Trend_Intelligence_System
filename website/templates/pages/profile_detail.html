@@ -1,0 +1,219 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+{% import "components/badge.html" as badge %}
+{% import "components/empty_state.html" as empty %}
+
+{% block content %}
+  <div class="split-layout">
+    <div class="split-main">
+      {% call card.panel("Friction Profile", "Durable Intelligence Identity") %}
+        <dl class="record-list">
+          <dt>ID</dt><dd>#{{ profile.id }}</dd>
+          <dt>Title</dt><dd>{{ profile.title }}</dd>
+          <dt>Description</dt><dd>{{ profile.description or "" }}</dd>
+          <dt>Status</dt><dd>{{ badge.status(profile.status) }}</dd>
+          <dt>Candidate</dt><dd><a href="/candidates/{{ profile.candidate_friction_id }}">Candidate #{{ profile.candidate_friction_id }}</a></dd>
+        </dl>
+      {% endcall %}
+    </div>
+
+    <div class="split-side">
+      {% if profile.latest_classification %}
+      {% call card.panel("Maturity Intelligence", profile.latest_classification) %}
+        <div class="maturity-status">
+           <div class="status-indicator {{ profile.latest_classification | lower }}"></div>
+           <strong>{{ profile.latest_classification }}</strong>
+        </div>
+        <p class="summary-text">{{ profile.latest_classification_reasoning }}</p>
+        {% if snapshots %}
+        <div class="mini-timeline">
+           {% for s in snapshots[:5] %}
+           <div class="timeline-tick" title="{{ s.snapshot_at }}: {{ s.evidence_count }} obs"></div>
+           {% endfor %}
+        </div>
+        {% endif %}
+      {% endcall %}
+      {% endif %}
+
+      {% call card.panel("Validation Proof", "Evidence-backed discovery") %}
+        <div class="validation-summary">
+          <p class="summary-text">{{ profile.validation_summary or "Validation summary pending..." }}</p>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-mini">
+            <span class="metric-value">{{ profile.evidence_count }}</span>
+            <span class="metric-label">Observations</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value">{{ profile.source_count }}</span>
+            <span class="metric-label">Sources</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value">{{ profile.group_count }}</span>
+            <span class="metric-label">Groups</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value">{{ profile.post_count }}</span>
+            <span class="metric-label">Posts</span>
+          </div>
+        </div>
+      {% endcall %}
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-link active" onclick="openTab(event, 'Traceability')">Traceability Chain</button>
+    <button class="tab-link" onclick="openTab(event, 'Relationships')">Relationships Graph</button>
+    <button class="tab-link" onclick="openTab(event, 'Timeline')">Evolution Timeline</button>
+    <button class="tab-link" onclick="openTab(event, 'Contradictions')">Contradiction Intelligence</button>
+  </div>
+
+  <section id="Traceability" class="tab-content active stack">
+    <header class="section-header">
+      <h3>Traceability Chain</h3>
+      <p class="muted-text">Full evidence path from Profile back to Source.</p>
+    </header>
+
+    {% for trace in trace_groups %}
+      <article class="trace-card">
+        <div class="trace-strip">
+          <span>Profile #{{ profile.id }}</span>
+          <span>Group #{{ trace.group.id }}</span>
+          <span>Evidence</span>
+          <span>Post</span>
+          <span>Source</span>
+        </div>
+
+        <h3><a href="/groups/{{ trace.group.id }}">{{ trace.group.title }}</a></h3>
+        <p>{{ trace.group.description or "" }}</p>
+
+        <div class="nested-list">
+          {% for item in trace.evidence_members %}
+            <div class="nested-row">
+              <div>
+                <strong>Evidence #{{ item.evidence.evidence_id }}</strong>
+                <p class="observation-text">{{ item.evidence.observation }}</p>
+                <div class="trace-inline">
+                  {% if item.post %}
+                    <span class="tag">Post: {{ item.post.title }}</span>
+                  {% endif %}
+                  {% if item.source %}
+                    <span class="tag">Source: {{ item.source.name }} ({{ item.source.source_type }})</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="row-actions">
+                <a href="/evidence/{{ item.evidence.evidence_id }}" class="action-link">Inspect Evidence →</a>
+              </div>
+            </div>
+          {% else %}
+            {{ empty.empty_state("No evidence members", "This group has no linked evidence.") }}
+          {% endfor %}
+        </div>
+      </article>
+    {% else %}
+      {{ empty.empty_state("No supporting groups", "This profile has no evidence group links.") }}
+    {% endfor %}
+  </section>
+
+  <section id="Relationships" class="tab-content stack">
+    <header class="section-header">
+      <h3>Inter-Friction Relationships</h3>
+      <p class="muted-text">Connections to other frictions discovered in the reality graph.</p>
+    </header>
+
+    <div class="nested-list">
+      {% for item in relationships %}
+        <div class="nested-row">
+          <div class="flex-1">
+            <strong>{{ item.other.title }}</strong>
+            <span class="badge">{{ item.rel.relationship_type }}</span>
+            <p>{{ item.rel.explanation }}</p>
+          </div>
+          <div class="row-actions">
+            <a href="/frictions/{{ item.other.id }}" class="action-link">View Related →</a>
+          </div>
+        </div>
+      {% else %}
+        {{ empty.empty_state("No relationships", "No inter-friction links have been discovered for this profile.") }}
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="Timeline" class="tab-content stack">
+    <header class="section-header">
+      <h3>Evolution Timeline</h3>
+      <p class="muted-text">Immutable historical snapshots of this friction's state.</p>
+    </header>
+
+    <div class="timeline">
+      {% for s in snapshots %}
+        <div class="timeline-item">
+          <div class="timeline-date">{{ s.snapshot_at }}</div>
+          <div class="timeline-content">
+            <h4>{{ s.classification or "State Captured" }}</h4>
+            <p>{{ s.classification_reasoning or "Standard snapshot for temporal tracking." }}</p>
+            <div class="trace-inline">
+               <span class="tag">Evidence: {{ s.evidence_count }}</span>
+               <span class="tag">Sources: {{ s.source_count }}</span>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        {{ empty.empty_state("No history", "No snapshots have been recorded yet.") }}
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="Contradictions" class="tab-content stack">
+    <header class="section-header">
+      <h3>Contradiction Intelligence</h3>
+      <p class="muted-text">Direct links to evidence that conflicts with this friction's core claim.</p>
+    </header>
+
+    {% if profile.contradiction_summary %}
+      <div class="banner warning">
+        <strong>Conflict Detected</strong>
+        <p>{{ profile.contradiction_summary }}</p>
+      </div>
+    {% endif %}
+
+    <div class="nested-list">
+      {% for contra in contradictions %}
+        <div class="nested-row">
+          <div class="flex-1">
+            <strong>Evidence #{{ contra.evidence_id }}</strong>
+            <p class="observation-text">{{ contra.observation }}</p>
+            <div class="reasoning-box">
+              <small>REASONING:</small>
+              <p>{{ contra.reasoning }}</p>
+            </div>
+          </div>
+          <div class="row-actions">
+             <a href="/evidence/{{ contra.evidence_id }}" class="action-link">Inspect Evidence →</a>
+          </div>
+        </div>
+      {% else %}
+        {{ empty.empty_state("No contradictions", "No conflicting evidence has been observed for this profile.") }}
+      {% endfor %}
+    </div>
+  </section>
+
+  <script>
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tab-content");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+        tabcontent[i].classList.remove("active");
+      }
+      tablinks = document.getElementsByClassName("tab-link");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      document.getElementById(tabName).classList.add("active");
+      evt.currentTarget.className += " active";
+    }
+  </script>
+{% endblock %}

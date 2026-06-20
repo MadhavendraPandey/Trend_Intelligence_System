@@ -35,6 +35,13 @@ class FrictionCandidateRepository:
         "description",
         "status",
         "metadata_json",
+        "evidence_count",
+        "source_count",
+        "group_count",
+        "post_count",
+        "recurrence_count",
+        "contradiction_count",
+        "validation_summary",
     }
 
     def __init__(self, storage):
@@ -258,6 +265,78 @@ class FrictionCandidateRepository:
             ).fetchone()
 
         return row[0]
+
+    def calculate_validation_metrics(self, candidate_id):
+        """Calculate evidence-backed validation metrics for a candidate."""
+        # evidence_count
+        evidence_count = self.connection.execute(
+            """
+            SELECT COUNT(DISTINCT egm.evidence_id)
+            FROM friction_candidate_groups fcg
+            JOIN evidence_group_members egm ON egm.group_id = fcg.evidence_group_id
+            WHERE fcg.friction_candidate_id = ?
+            """,
+            (candidate_id,),
+        ).fetchone()[0]
+
+        # source_count
+        source_count = self.connection.execute(
+            """
+            SELECT COUNT(DISTINCT p.source_id)
+            FROM friction_candidate_groups fcg
+            JOIN evidence_group_members egm ON egm.group_id = fcg.evidence_group_id
+            JOIN evidence e ON e.evidence_id = egm.evidence_id
+            JOIN posts p ON p.id = e.post_id
+            WHERE fcg.friction_candidate_id = ?
+            """,
+            (candidate_id,),
+        ).fetchone()[0]
+
+        # group_count
+        group_count = self.connection.execute(
+            """
+            SELECT COUNT(DISTINCT evidence_group_id)
+            FROM friction_candidate_groups
+            WHERE friction_candidate_id = ?
+            """,
+            (candidate_id,),
+        ).fetchone()[0]
+
+        # post_count
+        post_count = self.connection.execute(
+            """
+            SELECT COUNT(DISTINCT e.post_id)
+            FROM friction_candidate_groups fcg
+            JOIN evidence_group_members egm ON egm.group_id = fcg.evidence_group_id
+            JOIN evidence e ON e.evidence_id = egm.evidence_id
+            WHERE fcg.friction_candidate_id = ?
+            """,
+            (candidate_id,),
+        ).fetchone()[0]
+
+        # contradiction_count (count of 'rejected' validation events for linked evidence)
+        contradiction_count = self.connection.execute(
+            """
+            SELECT COUNT(DISTINCT ve.validation_event_id)
+            FROM friction_candidate_groups fcg
+            JOIN evidence_group_members egm ON egm.group_id = fcg.evidence_group_id
+            JOIN validation_events ve ON ve.evidence_id = egm.evidence_id
+            WHERE fcg.friction_candidate_id = ? AND ve.action = 'rejected'
+            """,
+            (candidate_id,),
+        ).fetchone()[0]
+
+        # recurrence_count (proxy: post_count for now, or sum of occurrences if we had them)
+        recurrence_count = post_count
+
+        return {
+            "evidence_count": evidence_count,
+            "source_count": source_count,
+            "group_count": group_count,
+            "post_count": post_count,
+            "recurrence_count": recurrence_count,
+            "contradiction_count": contradiction_count,
+        }
 
     def _validate_status(self, status):
         if status not in self.ALLOWED_STATUSES:

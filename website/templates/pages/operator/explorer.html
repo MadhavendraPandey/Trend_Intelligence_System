@@ -1,0 +1,31 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+
+{% block content %}
+  <header class="section-header">
+    <h1>Database Explorer</h1>
+    <p class="muted-text">Direct visibility into the underlying SQLite storage layer.</p>
+  </header>
+
+  <section class="grid-3">
+    {% for table in tables %}
+      <a href="/operator/explorer/{{ table }}" class="panel-link">
+        {% call card.panel(table, "") %}
+           <div class="table-info">
+              <span class="badge">View Records</span>
+           </div>
+        {% endcall %}
+      </a>
+    {% endfor %}
+  </section>
+
+  <style>
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-5);
+    }
+    .panel-link { text-decoration: none; color: inherit; }
+    .table-info { display: flex; justify-content: flex-end; padding-top: var(--space-2); }
+  </style>
+{% endblock %}

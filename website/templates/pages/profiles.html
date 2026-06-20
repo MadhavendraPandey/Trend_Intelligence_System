@@ -1,0 +1,43 @@
+{% extends "layouts/app.html" %}
+{% import "components/table.html" as table %}
+{% import "components/empty_state.html" as empty %}
+
+{% block content %}
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Intelligence Discovery</p>
+      <h2>Friction Profiles</h2>
+    </div>
+  </header>
+
+  <section class="panel">
+    {% if profiles %}
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Profile</th>
+            <th>Validation Summary</th>
+            <th class="numeric">Evidence</th>
+            <th class="numeric">Sources</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in profiles %}
+            <tr>
+              <td>
+                <div class="primary-cell">
+                  <a href="/frictions/{{ row.profile.id }}">{{ row.profile.title }}</a>
+                </div>
+              </td>
+              <td class="muted-copy">{{ row.profile.validation_summary or "" }}</td>
+              <td class="numeric">{{ row.profile.evidence_count }}</td>
+              <td class="numeric">{{ row.profile.source_count }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      {{ empty.empty_state("No friction profiles", "Validated candidates have not been promoted to profiles yet.") }}
+    {% endif %}
+  </section>
+{% endblock %}

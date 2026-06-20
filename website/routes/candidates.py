@@ -52,3 +52,4 @@ def register_routes(app):
             active="candidates",
             title=f"Candidate {candidate_id}",
         )
+

@@ -1,0 +1,49 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+
+{% block content %}
+  <header class="section-header">
+    <div class="breadcrumb">
+       <a href="/operator/explorer">Explorer</a> / <a href="/operator/explorer/{{ table }}">{{ table }}</a> / #{{ row_id }}
+    </div>
+    <h1>Record Inspector: {{ table }} #{{ row_id }}</h1>
+    <p class="muted-text">Deep inspection of raw database record.</p>
+  </header>
+
+  <div class="split-layout">
+    <div class="split-main">
+      {% call card.panel("Raw Data", "All column values") %}
+        <dl class="record-list">
+          {% for key, val in row.items() %}
+            <dt>{{ key }}</dt>
+            <dd>
+               {% if val is none %}
+                  <span class="muted-text">NULL</span>
+               {% else %}
+                  {{ val }}
+               {% endif %}
+            </dd>
+          {% endfor %}
+        </dl>
+      {% endcall %}
+    </div>
+
+    <div class="split-side">
+       {% call card.panel("Automated Discovery", "Detected relationships") %}
+          <div class="nested-list no-margin">
+             {% for rel in relationships %}
+                <div class="status-row">
+                   <div class="flex-1">
+                      <strong>{{ rel.column }}</strong>
+                      <small>Links to {{ rel.table }} #{{ rel.id }}</small>
+                   </div>
+                   <a href="/operator/explorer/{{ rel.table }}/{{ rel.id }}" class="badge">Inspect →</a>
+                </div>
+             {% else %}
+                <p class="muted-text">No foreign key relationships detected.</p>
+             {% endfor %}
+          </div>
+       {% endcall %}
+    </div>
+  </div>
+{% endblock %}

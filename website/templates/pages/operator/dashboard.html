@@ -1,0 +1,83 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+
+{% block content %}
+  <header class="section-header">
+    <h1>System Health</h1>
+    <p class="muted-text">Real-time operational awareness for the Friction Intelligence Platform.</p>
+  </header>
+
+  <section class="metric-grid">
+    {{ card.metric("Database Size", (summary.db_size_mb | string) + " MB", "Total SQLite storage footprint") }}
+    {{ card.metric("Total Tables", summary.total_tables, "Introspection metadata") }}
+    {{ card.metric("Friction Profiles", summary.table_counts.friction_profiles, "Total intelligence hub records") }}
+    {{ card.metric("Reality Links", summary.table_counts.friction_relationships, "Inter-friction connections") }}
+  </section>
+
+  <div class="detail-grid">
+    <section class="stack">
+      {% call card.panel("Data Quality Alerts", "Detected orphaned or inconsistent records.") %}
+        <div class="nested-list no-margin">
+          {% for alert in orphans %}
+            <div class="status-row">
+              <div class="status-indicator active"></div>
+              <div class="flex-1">
+                <strong>{{ alert.entity }}</strong>
+                <small>{{ alert.issue }}</small>
+              </div>
+              <span class="badge status-failed">{{ alert.count }} records</span>
+            </div>
+          {% else %}
+             <div class="empty-inline">
+                <span class="badge status-validated">No quality issues detected</span>
+             </div>
+          {% endfor %}
+        </div>
+      {% endcall %}
+
+      {% call card.panel("Latest Pipeline Run", "Operational status of the last extraction cycle.") %}
+         {% if summary.latest_run %}
+            <dl class="record-list">
+               <dt>Run ID</dt><dd>#{{ summary.latest_run.id }}</dd>
+               <dt>Started At</dt><dd>{{ summary.latest_run.started_at }}</dd>
+               <dt>Status</dt><dd><span class="badge">{{ summary.latest_run.status }}</span></dd>
+               <dt>Items Processed</dt><dd>{{ summary.latest_run.items_stored }}</dd>
+            </dl>
+         {% else %}
+            <p class="muted-text">No run history found.</p>
+         {% endif %}
+      {% endcall %}
+    </section>
+
+    <section class="stack">
+       {% call card.panel("Operations Quick Actions", "Direct system management tools.") %}
+          <div class="nested-list no-margin">
+            <a href="/operator/explorer" class="action-row">
+               <div class="action-icon">DB</div>
+               <div class="flex-1">
+                 <strong>Database Explorer</strong>
+                 <small>Browse and search raw records across all tables</small>
+               </div>
+               <span class="action-arrow">→</span>
+            </a>
+            <a href="/operator/sql" class="action-row">
+               <div class="action-icon">SQL</div>
+               <div class="flex-1">
+                 <strong>SQL Studio</strong>
+                 <small>Execute custom read-only queries against live data</small>
+               </div>
+               <span class="action-arrow">→</span>
+            </a>
+            <a href="/operator/quality" class="action-row">
+               <div class="action-icon">QA</div>
+               <div class="flex-1">
+                 <strong>Quality Dashboard</strong>
+                 <small>In-depth integrity and orphan inspection</small>
+               </div>
+               <span class="action-arrow">→</span>
+            </a>
+          </div>
+       {% endcall %}
+    </section>
+  </div>
+{% endblock %}

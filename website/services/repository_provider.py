@@ -22,30 +22,40 @@ from database.repositories import (
     EvidenceGroupRepository,
     EvidenceRepository,
     FrictionCandidateRepository,
+    FrictionProfileRepository,
     PostRepository,
     SourceRepository,
     SourceRunRepository,
+    OperatorRepository,
 )
 
 
 @contextmanager
 def repository_scope(request):
     """Yield initialized repositories and close SQLite afterward."""
+    repos = get_repositories(request)
+    try:
+        yield repos
+    finally:
+        repos["storage"].close()
+
+
+def get_repositories(request):
+    """Return initialized repositories for a request."""
     storage = SQLiteStorage(
         db_file=request.app.state.db_file,
         migrations_dir=request.app.state.migrations_dir,
     )
     storage.initialize()
-    try:
-        yield {
-            "storage": storage,
-            "posts": PostRepository(storage),
-            "evidence": EvidenceRepository(storage),
-            "groups": EvidenceGroupRepository(storage),
-            "candidates": FrictionCandidateRepository(storage),
-            "sources": SourceRepository(storage),
-            "runs": SourceRunRepository(storage),
-        }
-    finally:
-        storage.close()
+    return {
+        "storage": storage,
+        "posts": PostRepository(storage),
+        "evidence": EvidenceRepository(storage),
+        "groups": EvidenceGroupRepository(storage),
+        "candidates": FrictionCandidateRepository(storage),
+        "profiles": FrictionProfileRepository(storage),
+        "sources": SourceRepository(storage),
+        "runs": SourceRunRepository(storage),
+        "operator": OperatorRepository(storage),
+    }
 
