@@ -44,3 +44,16 @@ def register_routes(app):
             active="frictions",
             title=data["profile"]["title"],
         )
+
+    @app.get("/graph", response_class=HTMLResponse)
+    def view_graph(request: Request):
+        with repository_scope(request) as repos:
+            data = workbench_queries.graph_page(repos)
+
+        return render(
+            request,
+            "pages/graph.html",
+            data,
+            active="graph",
+            title="Reality Graph",
+        )

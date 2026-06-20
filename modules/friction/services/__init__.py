@@ -27,6 +27,9 @@ from modules.friction.services.friction_candidate_generation_service import (
 from modules.friction.services.profile_service import FrictionProfileService
 from modules.friction.services.traceability_service import TraceabilityService
 from modules.friction.services.validation_service import FrictionValidationService
+from modules.friction.services.evolution_service import EvolutionService
+from modules.friction.services.relationship_service import RelationshipService
+from modules.friction.services.contradiction_service import ContradictionService
 from modules.friction.services.llm_evidence_grouping_service import (
     LLMEvidenceGroupingService,
     LLMGroupingValidationError,
@@ -42,4 +45,7 @@ __all__ = [
     "FrictionValidationService",
     "FrictionProfileService",
     "TraceabilityService",
+    "EvolutionService",
+    "RelationshipService",
+    "ContradictionService",
 ]

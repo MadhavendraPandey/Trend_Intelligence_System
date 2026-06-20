@@ -1,0 +1,40 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+
+{% block content %}
+  <header class="section-header">
+    <h1>Schema Explorer</h1>
+    <p class="muted-text">Live structural overview of the Intelligence Platform database.</p>
+  </header>
+
+  <section class="stack">
+    {% for table, columns in schema.items() %}
+      {% call card.panel("Table: " + table, (columns | length | string) + " columns") %}
+         <table class="data-table">
+            <thead>
+               <tr>
+                  <th>CID</th>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Not Null</th>
+                  <th>Default</th>
+                  <th>PK</th>
+               </tr>
+            </thead>
+            <tbody>
+               {% for col in columns %}
+                  <tr>
+                     <td>{{ col.cid }}</td>
+                     <td><strong>{{ col.name }}</strong></td>
+                     <td><code>{{ col.type }}</code></td>
+                     <td>{{ 'Yes' if col.notnull else 'No' }}</td>
+                     <td>{{ col.dflt_value or '-' }}</td>
+                     <td>{{ 'PK' if col.pk else '-' }}</td>
+                  </tr>
+               {% endfor %}
+            </tbody>
+         </table>
+      {% endcall %}
+    {% endfor %}
+  </section>
+{% endblock %}

@@ -23,7 +23,8 @@
     <div class="nav-dropdown">
       <button class="nav-link">Intelligence</button>
       <div class="nav-dropdown-content">
-        <a class="nav-link {% if active_nav == 'intelligence' and page_title == 'Friction Profiles' %}active{% endif %}" href="/frictions">Friction Profiles</a>
+        <a class="nav-link {% if active_nav == 'frictions' %}active{% endif %}" href="/frictions">Friction Profiles</a>
+        <a class="nav-link {% if active_nav == 'graph' %}active{% endif %}" href="/graph">Reality Graph</a>
         <a class="nav-link {% if active_nav == 'evidence' %}active{% endif %}" href="/evidence">Evidence</a>
         <a class="nav-link {% if active_nav == 'groups' %}active{% endif %}" href="/groups">Groups</a>
         <a class="nav-link {% if active_nav == 'candidates' %}active{% endif %}" href="/candidates">Candidates</a>
@@ -37,6 +38,17 @@
         <a class="nav-link {% if active_nav == 'decisions' %}active{% endif %}" href="/decisions">Decisions</a>
         <a class="nav-link {% if active_nav == 'metrics' %}active{% endif %}" href="/metrics">Metrics</a>
         <a class="nav-link {% if active_nav == 'settings' %}active{% endif %}" href="/settings">Settings</a>
+      </div>
+    </div>
+
+    <div class="nav-dropdown">
+      <button class="nav-link">Operations</button>
+      <div class="nav-dropdown-content">
+        <a class="nav-link {% if active_nav == 'operator' %}active{% endif %}" href="/operator">Operator Console</a>
+        <a class="nav-link" href="/operator/explorer">Data Explorer</a>
+        <a class="nav-link" href="/operator/sql">SQL Studio</a>
+        <a class="nav-link" href="/operator/quality">Data Quality</a>
+        <a class="nav-link" href="/operator/schema">Schema Browser</a>
       </div>
     </div>
   </div>
@@ -73,7 +85,8 @@
 
       <div class="mobile-menu-section">
         <div class="mobile-menu-label">Intelligence</div>
-        <a class="mobile-nav-link {% if active_nav == 'intelligence' and page_title == 'Friction Profiles' %}active{% endif %}" href="/frictions">Friction Profiles</a>
+        <a class="mobile-nav-link {% if active_nav == 'frictions' %}active{% endif %}" href="/frictions">Friction Profiles</a>
+        <a class="mobile-nav-link {% if active_nav == 'graph' %}active{% endif %}" href="/graph">Reality Graph</a>
         <a class="mobile-nav-link {% if active_nav == 'evidence' %}active{% endif %}" href="/evidence">Evidence</a>
         <a class="mobile-nav-link {% if active_nav == 'groups' %}active{% endif %}" href="/groups">Groups</a>
         <a class="mobile-nav-link {% if active_nav == 'candidates' %}active{% endif %}" href="/candidates">Candidates</a>
@@ -81,6 +94,7 @@
 
       <div class="mobile-menu-section">
         <div class="mobile-menu-label">System</div>
+        <a class="mobile-nav-link {% if active_nav == 'operator' %}active{% endif %}" href="/operator">Operator Console</a>
         <a class="mobile-nav-link {% if active_nav == 'validation' %}active{% endif %}" href="/validation">Validation</a>
         <a class="mobile-nav-link {% if active_nav == 'decisions' %}active{% endif %}" href="/decisions">Decisions</a>
         <a class="mobile-nav-link {% if active_nav == 'metrics' %}active{% endif %}" href="/metrics">Metrics</a>

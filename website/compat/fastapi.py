@@ -22,7 +22,7 @@ import inspect
 from typing import Any, Callable, List
 
 try:  # pragma: no cover - exercised only when FastAPI is installed.
-    from fastapi import APIRouter, FastAPI, HTTPException, Request, Depends
+    from fastapi import APIRouter, FastAPI, HTTPException, Request, Depends, Form
     from fastapi.responses import HTMLResponse, Response
     from fastapi.staticfiles import StaticFiles
     from fastapi.templating import Jinja2Templates
@@ -36,6 +36,13 @@ except ImportError:  # pragma: no cover - fallback is validated by smoke tests.
     from starlette.staticfiles import StaticFiles
     from starlette.templating import Jinja2Templates
     from starlette.testclient import TestClient
+
+    def Form(default: Any = None):
+        """Small Form facade."""
+        class FormField:
+            def __init__(self, default):
+                self.default = default
+        return FormField(default)
 
     class APIRouter:
         """Small APIRouter-like facade."""
@@ -52,7 +59,19 @@ except ImportError:  # pragma: no cover - fallback is validated by smoke tests.
                     return await self._call_endpoint(func, request, response_class, **kwargs)
 
                 # Store the intent to register this route
-                self.routes.append((path, func, response_class))
+                self.routes.append((path, func, response_class, ["GET"]))
+                return func
+
+            return decorator
+
+        def post(self, path: str, response_class: type[Response] = Response):
+            """Register a POST endpoint using FastAPI-style decorator syntax."""
+
+            def decorator(func: Callable[..., Any]):
+                async def endpoint(request: Request, **kwargs):
+                    return await self._call_endpoint(func, request, response_class, **kwargs)
+
+                self.routes.append((path, func, response_class, ["POST"]))
                 return func
 
             return decorator
@@ -118,60 +137,87 @@ except ImportError:  # pragma: no cover - fallback is validated by smoke tests.
 
         def include_router(self, router: APIRouter):
             """Register all routes from a router."""
-            for path, func, response_class in router.routes:
-                self.get(path, response_class)(func)
+            for path, func, response_class, methods in router.routes:
+                if "POST" in methods:
+                    self.post(path, response_class)(func)
+                else:
+                    self.get(path, response_class)(func)
 
         def get(self, path: str, response_class: type[Response] = Response):
             """Register a GET endpoint using FastAPI-style decorator syntax."""
 
             def decorator(func: Callable[..., Any]):
                 async def endpoint(request: Request):
-                    kwargs = {}
-                    signature = inspect.signature(func)
-
-                    for name, parameter in signature.parameters.items():
-                        if name == "request":
-                            kwargs[name] = request
-                            continue
-
-                        if name in request.path_params:
-                            raw_value = request.path_params[name]
-                        elif name in request.query_params:
-                            raw_value = request.query_params[name]
-                        elif parameter.default is not inspect._empty:
-                            raw_value = parameter.default
-                        else:
-                            raw_value = None
-
-                        annotation = parameter.annotation
-                        if annotation in (int, "int") and raw_value is not None:
-                            try:
-                                raw_value = int(raw_value)
-                            except (TypeError, ValueError) as exc:
-                                raise HTTPException(
-                                    status_code=422,
-                                    detail=f"Invalid integer parameter: {name}",
-                                ) from exc
-
-                        kwargs[name] = raw_value
-
-                    result = func(**kwargs)
-                    if hasattr(result, "__await__"):
-                        result = await result
-
-                    if isinstance(result, Response):
-                        return result
-
-                    if response_class is HTMLResponse:
-                        return HTMLResponse(result)
-
-                    return response_class(result)
+                    return await self._call_endpoint(func, request, response_class)
 
                 route = Route(path, endpoint=endpoint, methods=["GET"])
                 self.router.routes.append(route)
                 return func
 
             return decorator
+
+        def post(self, path: str, response_class: type[Response] = Response):
+            """Register a POST endpoint using FastAPI-style decorator syntax."""
+
+            def decorator(func: Callable[..., Any]):
+                async def endpoint(request: Request):
+                    return await self._call_endpoint(func, request, response_class)
+
+                route = Route(path, endpoint=endpoint, methods=["POST"])
+                self.router.routes.append(route)
+                return func
+
+            return decorator
+
+        async def _call_endpoint(self, func, request, response_class):
+            kwargs = {}
+            signature = inspect.signature(func)
+            form_data = None
+
+            for name, parameter in signature.parameters.items():
+                if name == "request":
+                    kwargs[name] = request
+                    continue
+
+                # Handle Form data
+                if "FormField" in str(parameter.default):
+                    if form_data is None:
+                        form_data = await request.form()
+                    kwargs[name] = form_data.get(name)
+                    continue
+
+                if name in request.path_params:
+                    raw_value = request.path_params[name]
+                elif name in request.query_params:
+                    raw_value = request.query_params[name]
+                elif parameter.default is not inspect._empty:
+                    raw_value = parameter.default
+                else:
+                    raw_value = None
+
+                annotation = parameter.annotation
+                if annotation in (int, "int") and raw_value is not None:
+                    try:
+                        raw_value = int(raw_value)
+                    except (TypeError, ValueError) as exc:
+                        raise HTTPException(
+                            status_code=422,
+                            detail=f"Invalid integer parameter: {name}",
+                        ) from exc
+
+                kwargs[name] = raw_value
+
+            result = func(**kwargs)
+            if hasattr(result, "__await__"):
+                result = await result
+
+            if isinstance(result, Response):
+                return result
+
+            if response_class is HTMLResponse:
+                return HTMLResponse(result)
+
+            return response_class(result)
 
 def Depends(dependency: Callable[..., Any] = None):
     """Small Depends facade."""
@@ -183,6 +229,7 @@ def Depends(dependency: Callable[..., Any] = None):
 __all__ = [
     "APIRouter",
     "Depends",
+        "Form",
     "FastAPI",
     "HTTPException",
     "HTMLResponse",

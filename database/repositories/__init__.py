@@ -21,8 +21,12 @@ from database.repositories.friction_candidate_repository import (
     FrictionCandidateRepository,
 )
 from database.repositories.friction_profile_repository import FrictionProfileRepository
+from database.repositories.friction_snapshot_repository import FrictionSnapshotRepository
+from database.repositories.friction_relationship_repository import FrictionRelationshipRepository
+from database.repositories.friction_contradiction_repository import FrictionContradictionRepository
 from database.repositories.source_run_repository import SourceRunRepository
 from database.repositories.source_repository import SourceRepository
+from database.repositories.operator_repository import OperatorRepository
 from database.repositories.validation_repository import ValidationRepository
 
 __all__ = [
@@ -31,6 +35,10 @@ __all__ = [
     "EvidenceRepository",
     "FrictionCandidateRepository",
     "FrictionProfileRepository",
+    "FrictionSnapshotRepository",
+    "FrictionRelationshipRepository",
+    "FrictionContradictionRepository",
+    "OperatorRepository",
     "PostRepository",
     "SourceRunRepository",
     "SourceRepository",

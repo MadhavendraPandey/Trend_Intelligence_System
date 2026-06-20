@@ -1,0 +1,93 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+
+{% block content %}
+  <header class="page-header">
+    <h1>Reality Graph</h1>
+    <p class="muted-text">A navigable map of inter-friction relationships and intelligence hubs.</p>
+  </header>
+
+  <div class="split-layout">
+    <div class="split-main">
+      {% call card.panel("Intelligence Connections", "Visualizing 90% neutral relationships.") %}
+        <div class="graph-viewport">
+          <svg width="100%" height="500" viewBox="0 0 800 500" id="reality-graph">
+            <!-- Simplified static graph representation or dynamic SVG links -->
+            <defs>
+              <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="var(--border-strong)" />
+              </marker>
+            </defs>
+
+            {% for rel in all_relationships %}
+              <!-- This is a simplified placement, in a real app we'd use a layout engine -->
+              {% set x1 = (loop.index0 * 150) % 700 + 50 %}
+              {% set y1 = (loop.index0 * 100) % 400 + 50 %}
+              {% set x2 = ((loop.index0 + 1) * 150) % 700 + 50 %}
+              {% set y2 = ((loop.index0 + 1) * 100) % 400 + 50 %}
+
+              <line x1="{{ x1 }}" y1="{{ y1 }}" x2="{{ x2 }}" y2="{{ y2 }}"
+                    stroke="var(--border)" stroke-width="1" />
+            {% endfor %}
+
+            {% for profile in profiles %}
+               {% set x = (loop.index0 * 150) % 700 + 50 %}
+               {% set y = (loop.index0 * 100) % 400 + 50 %}
+               <g class="graph-node" transform="translate({{ x }}, {{ y }})" onclick="window.location='/frictions/{{ profile.profile.id }}'">
+                  <circle r="6" fill="var(--accent)" />
+                  <text y="-10" text-anchor="middle" fill="var(--text)" font-size="10">{{ profile.profile.title[:20] }}...</text>
+               </g>
+            {% endfor %}
+          </svg>
+          <div class="graph-legend">
+             <span class="legend-item"><span class="dot accent"></span> Friction Profile</span>
+             <span class="legend-item"><span class="line"></span> Evidence-backed Relationship</span>
+          </div>
+        </div>
+      {% endcall %}
+    </div>
+
+    <div class="split-side">
+       {% call card.panel("Relationship Directory", "Active inter-friction links.") %}
+          <div class="nested-list">
+             {% for rel in all_relationships %}
+                <div class="nested-row">
+                   <div>
+                      <small class="muted-text">{{ rel.relationship_type }}</small>
+                      <p><strong>{{ rel.from_title }}</strong> ↔ <strong>{{ rel.to_title }}</strong></p>
+                   </div>
+                </div>
+             {% else %}
+                <p class="muted-text">No relationships discovered yet.</p>
+             {% endfor %}
+          </div>
+       {% endcall %}
+    </div>
+  </div>
+
+  <style>
+    .graph-viewport {
+      background: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .graph-node { cursor: pointer; transition: opacity 0.2s; }
+    .graph-node:hover { opacity: 0.8; }
+    .graph-legend {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      display: flex;
+      gap: 16px;
+      background: rgba(0,0,0,0.4);
+      padding: 6px 12px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-soft); }
+    .legend-item .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .legend-item .dot.accent { background: var(--accent); }
+    .legend-item .line { width: 16px; height: 1px; background: var(--border); }
+  </style>
+{% endblock %}

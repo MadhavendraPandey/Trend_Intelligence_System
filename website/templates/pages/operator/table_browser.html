@@ -1,0 +1,86 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+
+{% block content %}
+  <header class="section-header">
+    <div class="breadcrumb">
+       <a href="/operator/explorer">Explorer</a> / {{ table }}
+    </div>
+    <h1>Table Browser: {{ table }}</h1>
+    <p class="muted-text">Browsing {{ total }} records.</p>
+  </header>
+
+  {% call card.panel("Data Grid", "") %}
+    <div class="table-container scrollable">
+      <table class="data-table">
+        <thead>
+          <tr>
+            {% for col in columns %}
+              <th>{{ col }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              {% for col in columns %}
+                <td class="cell-truncate" title="{{ row[col] }}">
+                  {% if col == 'id' or col == 'evidence_id' %}
+                    <a href="/operator/explorer/{{ table }}/{{ row[col] }}">{{ row[col] }}</a>
+                  {% else %}
+                    {{ row[col] }}
+                  {% endif %}
+                </td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      {% if has_prev %}
+        <a href="/operator/explorer/{{ table }}?page={{ page - 1 }}" class="btn">Previous</a>
+      {% else %}
+        <button class="btn disabled" disabled>Previous</button>
+      {% endif %}
+
+      <span class="pagination-info">Page {{ page }}</span>
+
+      {% if has_next %}
+        <a href="/operator/explorer/{{ table }}?page={{ page + 1 }}" class="btn">Next</a>
+      {% else %}
+        <button class="btn disabled" disabled>Next</button>
+      {% endif %}
+    </div>
+  {% endcall %}
+
+  <style>
+    .scrollable { overflow-x: auto; }
+    .cell-truncate {
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 12px;
+    }
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-4);
+      margin-top: var(--space-5);
+    }
+    .pagination-info { font-size: 13px; color: var(--text-muted); }
+    .btn {
+       background: var(--bg-subtle);
+       border: 1px solid var(--border);
+       padding: 6px 12px;
+       border-radius: 6px;
+       text-decoration: none;
+       color: var(--text);
+       font-size: 13px;
+    }
+    .btn.disabled { opacity: 0.5; cursor: not-allowed; }
+  </style>
+{% endblock %}

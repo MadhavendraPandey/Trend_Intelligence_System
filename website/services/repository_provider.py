@@ -26,6 +26,7 @@ from database.repositories import (
     PostRepository,
     SourceRepository,
     SourceRunRepository,
+    OperatorRepository,
 )
 
 
@@ -55,5 +56,6 @@ def get_repositories(request):
         "profiles": FrictionProfileRepository(storage),
         "sources": SourceRepository(storage),
         "runs": SourceRunRepository(storage),
+        "operator": OperatorRepository(storage),
     }
 

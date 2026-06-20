@@ -11,6 +11,38 @@
 
   <div class="detail-grid">
     <section class="stack">
+      {% if summary.fastest_growing %}
+      {% call card.panel("Fastest Growing Frictions", "Profiles with significant recent evidence accumulation.") %}
+        <div class="nested-list no-margin">
+          {% for profile in summary.fastest_growing %}
+          <a href="/frictions/{{ profile.id }}" class="action-row">
+            <div class="flex-1">
+              <strong>{{ profile.title }}</strong>
+              <small>{{ profile.latest_classification_reasoning }}</small>
+            </div>
+            <span class="badge status-active">Growing</span>
+          </a>
+          {% endfor %}
+        </div>
+      {% endcall %}
+      {% endif %}
+
+      {% if summary.most_connected %}
+      {% call card.panel("Most Connected Frictions", "Intelligence hubs with multiple inter-friction relationships.") %}
+        <div class="nested-list no-margin">
+          {% for profile in summary.most_connected %}
+          <a href="/frictions/{{ profile.id }}" class="action-row">
+            <div class="flex-1">
+              <strong>{{ profile.title }}</strong>
+              <small>{{ profile.rel_count }} active relationships</small>
+            </div>
+            <span class="badge status-validated">{{ profile.rel_count }} Links</span>
+          </a>
+          {% endfor %}
+        </div>
+      {% endcall %}
+      {% endif %}
+
       {% call card.panel("Workbench Status", "Current operational state of the intelligence pipeline.") %}
         <div class="nested-list no-margin">
           <div class="status-row">
@@ -63,6 +95,22 @@
     </section>
 
     <section class="stack">
+       {% if summary.most_contradicted %}
+       {% call card.panel("Most Contradicted Frictions", "Profiles with significant conflicting evidence points.") %}
+          <div class="nested-list no-margin">
+            {% for profile in summary.most_contradicted %}
+            <a href="/frictions/{{ profile.id }}" class="action-row">
+               <div class="flex-1">
+                 <strong>{{ profile.title }}</strong>
+                 <small>{{ profile.contradiction_summary }}</small>
+               </div>
+               <span class="badge status-rejected">{{ (profile.contradiction_ratio * 100) | round(1) }}% Contra</span>
+            </a>
+            {% endfor %}
+          </div>
+       {% endcall %}
+       {% endif %}
+
        {% call card.panel("Quick Actions", "Frequent investigation entry points.") %}
           <div class="nested-list no-margin">
             <a href="/frictions" class="action-row">
