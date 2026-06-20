@@ -3,9 +3,9 @@
 
 {% block content %}
   <section class="metric-grid">
-    {{ card.metric("Total Intelligence", summary.total_candidates, "Identified candidates across all runs") }}
+    {{ card.metric("Friction Profiles", summary.total_profiles, "Durable intelligence identities") }}
+    {{ card.metric("Intelligence Signals", summary.total_candidates, "Identified candidates across all runs") }}
     {{ card.metric("Evidence Points", summary.total_evidence, "Verified observations from source data") }}
-    {{ card.metric("Information Groups", summary.total_groups, "Thematic clusters of evidence") }}
     {{ card.metric("Source Posts", summary.total_posts, "Total raw items collected") }}
   </section>
 
@@ -49,9 +49,14 @@
             <div class="funnel-label">Groups</div>
           </div>
           <div class="funnel-arrow">→</div>
-          <div class="funnel-step accent">
+          <div class="funnel-step">
             <div class="funnel-value">{{ summary.total_candidates }}</div>
             <div class="funnel-label">Candidates</div>
+          </div>
+          <div class="funnel-arrow">→</div>
+          <div class="funnel-step accent">
+            <div class="funnel-value">{{ summary.total_profiles }}</div>
+            <div class="funnel-label">Profiles</div>
           </div>
         </div>
       {% endcall %}
@@ -60,6 +65,14 @@
     <section class="stack">
        {% call card.panel("Quick Actions", "Frequent investigation entry points.") %}
           <div class="nested-list no-margin">
+            <a href="/frictions" class="action-row">
+               <div class="action-icon">P</div>
+               <div class="flex-1">
+                 <strong>Inspect Profiles</strong>
+                 <small>Durable evidence-backed friction identities</small>
+               </div>
+               <span class="action-arrow">→</span>
+            </a>
             <a href="/candidates" class="action-row">
                <div class="action-icon">C</div>
                <div class="flex-1">

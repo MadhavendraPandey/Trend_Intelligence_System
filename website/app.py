@@ -19,7 +19,14 @@ from __future__ import annotations
 from pathlib import Path
 
 from website.compat.fastapi import FastAPI, StaticFiles
-from website.routes import candidates, dashboard, evidence, groups, runs
+from website.routes import (
+    candidates,
+    dashboard,
+    evidence,
+    groups,
+    profiles,
+    runs,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -47,6 +54,7 @@ def create_app(db_file=DEFAULT_DB_FILE, migrations_dir=DEFAULT_MIGRATIONS_DIR):
     evidence.register_routes(workbench)
     groups.register_routes(workbench)
     candidates.register_routes(workbench)
+    profiles.register_routes(workbench)
     runs.register_routes(workbench)
 
     return workbench

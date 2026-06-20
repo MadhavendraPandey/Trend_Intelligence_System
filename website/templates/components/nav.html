@@ -23,6 +23,7 @@
     <div class="nav-dropdown">
       <button class="nav-link">Intelligence</button>
       <div class="nav-dropdown-content">
+        <a class="nav-link {% if active_nav == 'intelligence' and page_title == 'Friction Profiles' %}active{% endif %}" href="/frictions">Friction Profiles</a>
         <a class="nav-link {% if active_nav == 'evidence' %}active{% endif %}" href="/evidence">Evidence</a>
         <a class="nav-link {% if active_nav == 'groups' %}active{% endif %}" href="/groups">Groups</a>
         <a class="nav-link {% if active_nav == 'candidates' %}active{% endif %}" href="/candidates">Candidates</a>
@@ -72,6 +73,7 @@
 
       <div class="mobile-menu-section">
         <div class="mobile-menu-label">Intelligence</div>
+        <a class="mobile-nav-link {% if active_nav == 'intelligence' and page_title == 'Friction Profiles' %}active{% endif %}" href="/frictions">Friction Profiles</a>
         <a class="mobile-nav-link {% if active_nav == 'evidence' %}active{% endif %}" href="/evidence">Evidence</a>
         <a class="mobile-nav-link {% if active_nav == 'groups' %}active{% endif %}" href="/groups">Groups</a>
         <a class="mobile-nav-link {% if active_nav == 'candidates' %}active{% endif %}" href="/candidates">Candidates</a>

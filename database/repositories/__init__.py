@@ -20,6 +20,7 @@ from database.repositories.evidence_repository import EvidenceRepository
 from database.repositories.friction_candidate_repository import (
     FrictionCandidateRepository,
 )
+from database.repositories.friction_profile_repository import FrictionProfileRepository
 from database.repositories.source_run_repository import SourceRunRepository
 from database.repositories.source_repository import SourceRepository
 from database.repositories.validation_repository import ValidationRepository
@@ -29,6 +30,7 @@ __all__ = [
     "EvidenceGroupRepository",
     "EvidenceRepository",
     "FrictionCandidateRepository",
+    "FrictionProfileRepository",
     "PostRepository",
     "SourceRunRepository",
     "SourceRepository",

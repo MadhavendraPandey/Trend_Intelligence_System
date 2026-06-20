@@ -33,11 +33,13 @@ from database.repositories import (
     EvidenceGroupRepository,
     EvidenceRepository,
     FrictionCandidateRepository,
+    FrictionProfileRepository,
     PostRepository,
     SourceRepository,
 )
 from modules.friction.services import (
     FrictionCandidateGenerationService,
+    FrictionProfileService,
     FrictionValidationService,
     LLMEvidenceGroupingService,
 )
@@ -58,6 +60,7 @@ class RunSummary:
     evidence_groups_created: int = 0
     candidates_created: int = 0
     candidates_validated: int = 0
+    profiles_synced: int = 0
     dry_run: bool = False
     provider_name: str = "qwen"
     model_name: str = ""
@@ -133,6 +136,7 @@ def initialize_repositories():
         "evidence": EvidenceRepository(storage),
         "evidence_groups": EvidenceGroupRepository(storage),
         "candidates": FrictionCandidateRepository(storage),
+        "profiles": FrictionProfileRepository(storage),
     }
 
 
@@ -157,6 +161,10 @@ def run_pipeline(args):
     )
     validation_service = FrictionValidationService(
         repositories["candidates"]
+    )
+    profile_service = FrictionProfileService(
+        repositories["candidates"],
+        repositories["profiles"]
     )
 
     summary = RunSummary(
@@ -199,6 +207,10 @@ def run_pipeline(args):
             validated = validation_service.validate_all_candidates(status="generated")
             summary.candidates_validated = len(validated)
 
+        # Sync accepted candidates to profiles
+        synced_profiles = profile_service.sync_accepted_candidates()
+        summary.profiles_synced = len(synced_profiles)
+
         return summary
     finally:
         storage.close()
@@ -219,6 +231,7 @@ def print_summary(summary):
     print(f"Evidence Groups Created: {summary.evidence_groups_created}")
     print(f"Candidate Frictions Created: {summary.candidates_created}")
     print(f"Candidate Frictions Validated: {summary.candidates_validated}")
+    print(f"Friction Profiles Synced: {summary.profiles_synced}")
     print(f"Execution Time: {summary.elapsed_seconds:.2f} seconds")
     for message in summary.messages or []:
         print(message)

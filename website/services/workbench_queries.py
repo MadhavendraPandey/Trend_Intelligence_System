@@ -36,6 +36,7 @@ def dashboard_summary(repos):
         "total_evidence": repos["evidence"].count_evidence(),
         "total_groups": repos["groups"].count_groups(),
         "total_candidates": repos["candidates"].count_candidates(),
+        "total_profiles": repos["profiles"].count_profiles(),
         "latest_run": latest_run_label(repos["runs"]),
     }
 
@@ -131,9 +132,68 @@ def candidates_page(repos):
         {
             "candidate": candidate,
             "group_count": repos["candidates"].count_group_links(candidate["id"]),
+            "profile": repos["profiles"].get_profile_by_candidate(candidate["id"]),
         }
         for candidate in candidates
     ]
+
+
+def profiles_page(repos):
+    """Return active friction profiles."""
+    profiles = repos["profiles"].list_profiles(status="active", limit=1000)
+    return [
+        {
+            "profile": profile,
+        }
+        for profile in profiles
+    ]
+
+
+def profile_detail(repos, profile_id):
+    """Return profile data and full traceability chain."""
+    profile = repos["profiles"].get_profile(profile_id)
+    if not profile:
+        return None
+
+    # Use traceability service logic (inlined for query module)
+    trace_groups = []
+    if profile.get("candidate_friction_id"):
+        candidate_id = profile["candidate_friction_id"]
+        group_links = repos["candidates"].list_groups(candidate_id, limit=1000)
+
+        for link in group_links:
+            group = repos["groups"].get_group(link["evidence_group_id"])
+            if not group:
+                continue
+
+            evidence_members = []
+            for m_link in repos["groups"].list_members(group["id"], limit=1000):
+                evidence = repos["evidence"].get_evidence(m_link["evidence_id"])
+                post = (
+                    repos["posts"].get_post(evidence["post_id"]) if evidence else None
+                )
+                source = (
+                    repos["sources"].get_source(post["source_id"]) if post else None
+                )
+                evidence_members.append(
+                    {
+                        "evidence": evidence,
+                        "post": post,
+                        "source": source,
+                    }
+                )
+
+            trace_groups.append(
+                {
+                    "group": group,
+                    "evidence_members": evidence_members,
+                }
+            )
+
+    return {
+        "profile": profile,
+        "trace_groups": trace_groups,
+    }
 
 
 def candidate_detail(repos, candidate_id):
