@@ -38,6 +38,7 @@ from database.repositories import (
 )
 from modules.friction.services import (
     FrictionCandidateGenerationService,
+    FrictionValidationService,
     LLMEvidenceGroupingService,
 )
 from modules.friction.extractors import LLMEvidenceExtractor
@@ -56,6 +57,7 @@ class RunSummary:
     evidence_created: int = 0
     evidence_groups_created: int = 0
     candidates_created: int = 0
+    candidates_validated: int = 0
     dry_run: bool = False
     provider_name: str = "qwen"
     model_name: str = ""
@@ -153,6 +155,9 @@ def run_pipeline(args):
         repositories["candidates"],
         llm_provider=provider,
     )
+    validation_service = FrictionValidationService(
+        repositories["candidates"]
+    )
 
     summary = RunSummary(
         dry_run=bool(args.dry_run),
@@ -183,6 +188,17 @@ def run_pipeline(args):
         )
         summary.candidates_created = len(candidates)
 
+        if candidates:
+            validated = []
+            for cand in candidates:
+                validated.append(validation_service.validate_candidate(cand["id"]))
+            summary.candidates_validated = len(validated)
+        else:
+            # Fallback: Validate all existing 'generated' candidates if none were newly created
+            # this helps catch up if previous runs were partial
+            validated = validation_service.validate_all_candidates(status="generated")
+            summary.candidates_validated = len(validated)
+
         return summary
     finally:
         storage.close()
@@ -202,6 +218,7 @@ def print_summary(summary):
     print(f"Evidence Created: {summary.evidence_created}")
     print(f"Evidence Groups Created: {summary.evidence_groups_created}")
     print(f"Candidate Frictions Created: {summary.candidates_created}")
+    print(f"Candidate Frictions Validated: {summary.candidates_validated}")
     print(f"Execution Time: {summary.elapsed_seconds:.2f} seconds")
     for message in summary.messages or []:
         print(message)

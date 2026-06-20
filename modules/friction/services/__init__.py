@@ -24,6 +24,7 @@ from modules.friction.services.friction_candidate_generation_service import (
     FrictionCandidateGenerationService,
     FrictionCandidateGenerationValidationError,
 )
+from modules.friction.services.validation_service import FrictionValidationService
 from modules.friction.services.llm_evidence_grouping_service import (
     LLMEvidenceGroupingService,
     LLMGroupingValidationError,
@@ -36,4 +37,5 @@ __all__ = [
     "FrictionCandidateGenerationValidationError",
     "LLMEvidenceGroupingService",
     "LLMGroupingValidationError",
+    "FrictionValidationService",
 ]
