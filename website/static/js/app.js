@@ -22,19 +22,23 @@ const selectionMessage = document.getElementById('selectionMessage');
 
 let selectedIntelligence = null;
 
-trendCard.addEventListener('click', () => {
-  selectedIntelligence = 'trend';
-  trendCard.classList.add('selected');
-  frictionCard.classList.remove('selected');
-  updateSelectionMessage();
-});
+if (trendCard) {
+  trendCard.addEventListener('click', () => {
+    selectedIntelligence = 'trend';
+    trendCard.classList.add('selected');
+    frictionCard.classList.remove('selected');
+    updateSelectionMessage();
+  });
+}
 
-frictionCard.addEventListener('click', () => {
-  selectedIntelligence = 'friction';
-  frictionCard.classList.add('selected');
-  trendCard.classList.remove('selected');
-  updateSelectionMessage();
-});
+if (frictionCard) {
+  frictionCard.addEventListener('click', () => {
+    selectedIntelligence = 'friction';
+    frictionCard.classList.add('selected');
+    trendCard.classList.remove('selected');
+    updateSelectionMessage();
+  });
+}
 
 function updateSelectionMessage() {
   if (selectedIntelligence) {
@@ -45,15 +49,35 @@ function updateSelectionMessage() {
 }
 
 // View Reports Button
-viewReportsBtn.addEventListener('click', () => {
-  if (!selectedIntelligence) {
-    selectionMessage.style.display = 'block';
-    return;
-  }
+if (viewReportsBtn) {
+  viewReportsBtn.addEventListener('click', () => {
+    if (!selectedIntelligence) {
+      selectionMessage.style.display = 'block';
+      return;
+    }
 
-  if (selectedIntelligence === 'trend') {
-    window.location.href = '/trend/reports';
-  } else if (selectedIntelligence === 'friction') {
-    window.location.href = '/friction/reports';
-  }
-});
+    if (selectedIntelligence === 'trend') {
+      window.location.href = '/trend/reports';
+    } else if (selectedIntelligence === 'friction') {
+      window.location.href = '/friction/reports';
+    }
+  });
+}
+
+// Report Card Interaction
+const reportCards = document.querySelectorAll('.report-card');
+if (reportCards.length > 0) {
+  reportCards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-5px)';
+      card.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.2)';
+      card.style.borderColor = 'var(--accent-color)';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
+      card.style.boxShadow = 'none';
+      card.style.borderColor = 'rgba(255, 255, 255, 0.05)';
+    });
+  });
+}

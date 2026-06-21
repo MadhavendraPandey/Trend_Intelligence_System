@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}{{ intelligence_type }} Intelligence Reports{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Floating Navigation -->
+  <nav class="floating-nav">
+    <div class="nav-links">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/trend/reports" class="nav-link {% if intelligence_type == 'Trend' %}active{% endif %}">Trend Intelligence</a>
+      <a href="/friction/reports" class="nav-link {% if intelligence_type == 'Friction' %}active{% endif %}">Friction Intelligence</a>
+      <a href="#" class="nav-link">Operator</a>
+    </div>
+    <div class="theme-toggle" id="themeToggle">
+      <span class="sun-icon">☀️</span>
+      <span class="moon-icon">🌙</span>
+    </div>
+  </nav>
+
+  <!-- Top Section -->
+  <section class="top-section">
+    <p class="eyebrow">INTELLIGENCE REPORTS</p>
+    <h1 class="headline">{{ intelligence_type }} Intelligence</h1>
+    <p class="subheadline">Evidence-backed intelligence reports generated from collected observations.</p>
+  </section>
+
+  <!-- Search Section -->
+  <section class="search-section">
+    <div class="search-container">
+      <input type="text" class="search-input" placeholder="Search reports, evidence, sources...">
+    </div>
+  </section>
+
+  <!-- Filters Section -->
+  <section class="filters-section">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="dateRange">Date Range</label>
+        <select id="dateRange" class="filter-select">
+          <option>All Time</option>
+          <option>Last 7 Days</option>
+          <option>Last 30 Days</option>
+          <option>Last 90 Days</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="source">Source</label>
+        <select id="source" class="filter-select">
+          <option>All Sources</option>
+          <option>GitHub</option>
+          <option>Research Papers</option>
+          <option>Industry News</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="sourceType">Source Type</label>
+        <select id="sourceType" class="filter-select">
+          <option>All Types</option>
+          <option>Blog</option>
+          <option>News</option>
+          <option>Research</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="category">Category</label>
+        <select id="category" class="filter-select">
+          <option>All Categories</option>
+          <option>Technology</option>
+          <option>Business</option>
+          <option>Research</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="status">Status</label>
+        <select id="status" class="filter-select">
+          <option>All Statuses</option>
+          <option>Active</option>
+          <option>Inactive</option>
+          <option>Pending</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Report Grid -->
+  <section class="report-grid">
+    {% if reports %}
+      <div class="reports-container">
+        {% for report in reports %}
+        <div class="report-card">
+          <h3 class="report-title">{{ report.title }}</h3>
+          <p class="report-summary">{{ report.summary }}</p>
+          <div class="report-stats">
+            <span>Evidence: {{ report.evidence_count }}</span>
+            <span>Sources: {{ report.source_count }}</span>
+          </div>
+          <div class="report-meta">
+            <span>Updated: {{ report.updated_at }}</span>
+            <span class="status-badge {{ report.status }}">{{ report.status }}</span>
+          </div>
+          <button class="btn btn-secondary open-report-btn">Open Report</button>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <h3>No Reports Found</h3>
+        <p>No intelligence reports match the current filters.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- Pagination -->
+  <section class="pagination-section">
+    <div class="pagination">
+      <button class="btn btn-secondary prev-btn">Previous</button>
+      <span class="page-number">1 of 5</span>
+      <button class="btn btn-secondary next-btn">Next</button>
+    </div>
+  </section>
+</div>
+{% endblock %}
