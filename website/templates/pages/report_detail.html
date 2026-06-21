@@ -61,7 +61,7 @@
             <small>{{ item.source.source_type }} · Observation Count: {{ item.observation_count }} · Last Seen: {{ item.last_seen or "" }}</small>
           </div>
           <div class="row-actions">
-            <a class="action-link" href="/sources/{{ item.source.id }}">Direct Link -></a>
+            <a class="action-link" href="/source/{{ item.source.id }}">Direct Link -></a>
           </div>
         </div>
       {% else %}

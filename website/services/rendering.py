@@ -1,17 +1,4 @@
-"""Template rendering helpers for the Intelligence Workbench.
-
-Purpose:
-    Provide one configured Jinja template environment and consistent context
-    defaults for all server-rendered pages.
-
-Architecture notes:
-    Templates live under `website/templates`. Rendering helpers add active
-    navigation state and application labels, but no intelligence behavior.
-
-Future extension guidance:
-    Add global filters or presentation-only helpers here as the design system
-    matures.
-"""
+"""Template rendering helpers for the Intelligence Workbench."""
 
 from __future__ import annotations
 
@@ -35,7 +22,9 @@ def render(request, template_name, context=None, active="dashboard", title=None)
     if context:
         page_context.update(context)
 
-    try:
-        return templates.TemplateResponse(request, template_name, page_context)
-    except TypeError:
-        return templates.TemplateResponse(template_name, page_context)
+    # Use explicit keyword arguments for compatibility across FastAPI/Starlette versions
+    return templates.TemplateResponse(
+        request=request,
+        name=template_name,
+        context=page_context
+    )
