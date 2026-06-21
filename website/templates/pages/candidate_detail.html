@@ -70,6 +70,9 @@
               {% if item.post %}
                 <small>Post #{{ item.post.id }}: {{ item.post.title }}</small>
               {% endif %}
+              {% if item.source %}
+                <small>Source: {{ item.source.name }} ({{ item.source.source_type }})</small>
+              {% endif %}
             </div>
           {% else %}
             {{ empty.empty_state("No evidence members", "This group has no linked evidence.") }}
@@ -81,4 +84,3 @@
     {% endfor %}
   </section>
 {% endblock %}
-

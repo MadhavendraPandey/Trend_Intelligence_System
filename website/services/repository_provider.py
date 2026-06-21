@@ -27,11 +27,9 @@ from database.repositories import (
     SourceRepository,
     SourceRunRepository,
     OperatorRepository,
+    FrictionSnapshotRepository,
     TrendProfileRepository,
     TrendMetadataRepository,
-    FrictionSnapshotRepository,
-    FrictionRelationshipRepository,
-    FrictionContradictionRepository,
 )
 
 
@@ -62,10 +60,7 @@ def get_repositories(request):
         "sources": SourceRepository(storage),
         "runs": SourceRunRepository(storage),
         "operator": OperatorRepository(storage),
+        "snapshots": FrictionSnapshotRepository(storage),
         "trend_profiles": TrendProfileRepository(storage),
         "trend_metadata": TrendMetadataRepository(storage),
-        "snapshots": FrictionSnapshotRepository(storage),
-        "relationships": FrictionRelationshipRepository(storage),
-        "contradictions": FrictionContradictionRepository(storage),
     }
-

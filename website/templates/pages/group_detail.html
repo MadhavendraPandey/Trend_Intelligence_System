@@ -31,11 +31,15 @@
           <span>Group #{{ group.id }}</span>
           <span>Evidence #{{ item.evidence.evidence_id }}</span>
           <span>Post #{{ item.post.id if item.post else "" }}</span>
+          <span>{{ item.source.name if item.source else "Source" }}</span>
         </div>
         <h3>{{ item.evidence.observation if item.evidence else "" }}</h3>
         {% if item.post %}
           <p>{{ item.post.title }}</p>
           {% if item.post.url %}<a href="{{ item.post.url }}">{{ item.post.url }}</a>{% endif %}
+        {% endif %}
+        {% if item.source %}
+          <p class="muted-text">{{ item.source.name }} ({{ item.source.source_type }})</p>
         {% endif %}
       </article>
     {% else %}
@@ -43,4 +47,3 @@
     {% endfor %}
   </section>
 {% endblock %}
-

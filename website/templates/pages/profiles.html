@@ -27,6 +27,7 @@
             <th>Validation Summary</th>
             <th class="numeric">Evidence</th>
             <th class="numeric">Sources</th>
+            <th class="numeric">Snapshots</th>
           </tr>
         </thead>
         <tbody>
@@ -40,6 +41,7 @@
               <td class="muted-copy">{{ row.profile.validation_summary or "" }}</td>
               <td class="numeric">{{ row.profile.evidence_count }}</td>
               <td class="numeric">{{ row.profile.source_count }}</td>
+              <td class="numeric">{{ row.snapshot_count }}</td>
             </tr>
           {% endfor %}
         </tbody>

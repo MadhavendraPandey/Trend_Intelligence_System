@@ -136,6 +136,33 @@ class SourceRepository:
 
         return [self._to_dict(row) for row in rows]
 
+    def count_sources(self, owner_module=None, active_only=False):
+        """Return the number of sources, optionally filtered by scope."""
+        conditions = []
+        values = []
+
+        if owner_module is not None:
+            conditions.append("owner_module = ?")
+            values.append(owner_module)
+
+        if active_only:
+            conditions.append("is_active = 1")
+
+        where_clause = ""
+        if conditions:
+            where_clause = "WHERE " + " AND ".join(conditions)
+
+        row = self.connection.execute(
+            f"""
+            SELECT COUNT(*)
+            FROM sources
+            {where_clause}
+            """,
+            values,
+        ).fetchone()
+
+        return row[0]
+
     def _to_dict(self, row):
         if row is None:
             return None

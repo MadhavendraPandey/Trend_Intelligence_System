@@ -97,8 +97,19 @@ class SourceRunRepository:
 
         return stats
 
-    def latest_run(self):
+    def latest_run(self, source_id=None):
         """Return the most recent source run, or None when no runs exist."""
+        conditions = []
+        values = []
+
+        if source_id is not None:
+            conditions.append("sr.source_id = ?")
+            values.append(source_id)
+
+        where_clause = ""
+        if conditions:
+            where_clause = "WHERE " + " AND ".join(conditions)
+
         row = self.connection.execute(
             """
             SELECT
@@ -107,9 +118,11 @@ class SourceRunRepository:
                 s.name AS source_name
             FROM source_runs sr
             INNER JOIN sources s ON s.id = sr.source_id
+            {where_clause}
             ORDER BY COALESCE(sr.finished_at, sr.started_at) DESC, sr.id DESC
             LIMIT 1
-            """
+            """.format(where_clause=where_clause),
+            values,
         ).fetchone()
         return self._to_dict(row)
 
@@ -148,13 +161,30 @@ class SourceRunRepository:
         ).fetchall()
         return [self._to_dict(row) for row in rows]
 
-    def count_runs(self):
-        """Return total source run count."""
+    def count_runs(self, source_id=None, status=None):
+        """Return the number of runs, optionally filtered by source or status."""
+        conditions = []
+        values = []
+
+        if source_id is not None:
+            conditions.append("source_id = ?")
+            values.append(source_id)
+
+        if status is not None:
+            conditions.append("status = ?")
+            values.append(status)
+
+        where_clause = ""
+        if conditions:
+            where_clause = "WHERE " + " AND ".join(conditions)
+
         row = self.connection.execute(
-            """
+            f"""
             SELECT COUNT(*)
             FROM source_runs
-            """
+            {where_clause}
+            """,
+            values,
         ).fetchone()
         return row[0]
 

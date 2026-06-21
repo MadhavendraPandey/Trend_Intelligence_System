@@ -33,6 +33,20 @@
         {{ empty.empty_state("Source post unavailable", "The source post could not be found.") }}
       {% endif %}
     {% endcall %}
+
+    {% call card.panel("Source", "The collection origin for this evidence.") %}
+      {% if source %}
+        <dl class="record-list">
+          <dt>ID</dt><dd>#{{ source.id }}</dd>
+          <dt>Name</dt><dd><a href="/sources/{{ source.id }}">{{ source.name }}</a></dd>
+          <dt>Type</dt><dd>{{ source.source_type }}</dd>
+          <dt>Owner</dt><dd>{{ source.owner_module }}</dd>
+          <dt>Base URL</dt><dd>{% if source.base_url %}<a href="{{ source.base_url }}">{{ source.base_url }}</a>{% endif %}</dd>
+        </dl>
+      {% else %}
+        {{ empty.empty_state("Source unavailable", "The source record could not be found.") }}
+      {% endif %}
+    {% endcall %}
   </section>
 
   {% call card.panel("Downstream traceability", "Groups and candidates that currently reference this evidence.") %}
@@ -52,4 +66,3 @@
     {% endfor %}
   {% endcall %}
 {% endblock %}
-

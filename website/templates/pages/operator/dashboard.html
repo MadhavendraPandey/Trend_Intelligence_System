@@ -11,9 +11,10 @@
   <section class="metric-grid">
     {{ card.metric("Database Size", (summary.db_size_mb | string) + " MB", "Total SQLite storage footprint") }}
     {{ card.metric("Total Tables", summary.total_tables, "Introspection metadata") }}
-    {{ card.metric("Friction Profiles", summary.table_counts.friction_profiles, "Friction identities") }}
-    {{ card.metric("Trend Profiles", summary.table_counts.trend_profiles, "Technology signals") }}
-    {{ card.metric("Reality Links", summary.table_counts.friction_relationships + summary.table_counts.trend_relationships, "Total connections") }}
+    {{ card.metric("Sources", summary.table_counts.sources, "Collection origins") }}
+    {{ card.metric("Posts", summary.table_counts.posts, "Canonical observations") }}
+    {{ card.metric("Evidence", summary.table_counts.evidence, "Atomic evidence records") }}
+    {{ card.metric("Profiles", summary.table_counts.friction_profiles, "Durable traceability identities") }}
   </section>
 
   <div class="detail-grid">

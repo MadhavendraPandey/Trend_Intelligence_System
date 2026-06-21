@@ -13,10 +13,10 @@
   <form method="GET" class="search-bar">
     <input type="text" name="q" class="search-input" placeholder="Search observations..." value="{{ query }}">
     <div class="filter-group">
-       <button type="submit" name="type" value="" class="filter-btn {{ 'active' if not source_type }}">All</button>
-       <button type="submit" name="type" value="github" class="filter-btn {{ 'active' if source_type == 'github' }}">GitHub</button>
-       <button type="submit" name="type" value="hackernews" class="filter-btn {{ 'active' if source_type == 'hackernews' }}">HN</button>
-       <button type="submit" name="type" value="arxiv" class="filter-btn {{ 'active' if source_type == 'arxiv' }}">ArXiv</button>
+       <button type="submit" name="source_type" value="" class="filter-btn {{ 'active' if not source_type }}">All</button>
+       <button type="submit" name="source_type" value="github" class="filter-btn {{ 'active' if source_type == 'github' }}">GitHub</button>
+       <button type="submit" name="source_type" value="hackernews" class="filter-btn {{ 'active' if source_type == 'hackernews' }}">HN</button>
+       <button type="submit" name="source_type" value="arxiv" class="filter-btn {{ 'active' if source_type == 'arxiv' }}">ArXiv</button>
     </div>
   </form>
 
@@ -48,9 +48,8 @@
   </section>
 
   <div class="pagination">
-    {% if previous_page %}<a href="/evidence?page={{ previous_page }}&q={{ query }}&type={{ source_type }}" class="btn">Previous</a>{% endif %}
+    {% if previous_page %}<a href="/evidence?page={{ previous_page }}&q={{ query }}&source_type={{ source_type }}" class="btn">Previous</a>{% endif %}
     <span class="pagination-info">Showing {{ rows|length }} of {{ total }} records</span>
-    {% if next_page %}<a href="/evidence?page={{ next_page }}&q={{ query }}&type={{ source_type }}" class="btn">Next</a>{% endif %}
+    {% if next_page %}<a href="/evidence?page={{ next_page }}&q={{ query }}&source_type={{ source_type }}" class="btn">Next</a>{% endif %}
   </div>
 {% endblock %}
-

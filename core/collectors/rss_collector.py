@@ -1,5 +1,4 @@
-# Imports
-
+import sys
 from urllib.parse import urlparse
 from pathlib import Path
 import feedparser
@@ -30,6 +29,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 json_file = PROJECT_ROOT / "articles.json"
 
 SOURCE_TYPE = "rss"
+
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 articles = load_articles(json_file)
 

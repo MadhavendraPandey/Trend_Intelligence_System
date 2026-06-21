@@ -9,6 +9,7 @@ Architecture notes:
     required for the explorer and SQL studio.
 """
 
+import os
 import time
 from core.storage.sqlite_storage import SQLiteStorage
 
@@ -76,6 +77,73 @@ class OperatorRepository:
             (row_id,)
         ).fetchone()
         return dict(row) if row else None
+
+    def get_system_overview(self):
+        """Return a compact snapshot of database health."""
+        db_path = self.storage.db_file
+        db_size_mb = os.path.getsize(db_path) / (1024 * 1024) if os.path.exists(db_path) else 0
+        tables = self.list_tables()
+        counts = {}
+
+        for table in tables:
+            counts[table] = self.connection.execute(
+                f"SELECT COUNT(*) FROM {table};"
+            ).fetchone()[0]
+
+        latest_run = self.connection.execute(
+            "SELECT * FROM source_runs ORDER BY started_at DESC LIMIT 1;"
+        ).fetchone()
+
+        return {
+            "db_size_mb": round(db_size_mb, 2),
+            "table_counts": counts,
+            "latest_run": dict(latest_run) if latest_run else None,
+            "total_tables": len(tables),
+        }
+
+    def detect_orphans(self):
+        """Detect the most useful integrity issues for operators."""
+        orphans = []
+
+        checks = [
+            ("Evidence", "No matching Post", "SELECT COUNT(*) FROM evidence WHERE post_id NOT IN (SELECT id FROM posts);"),
+            (
+                "Evidence Groups",
+                "No members",
+                "SELECT COUNT(*) FROM evidence_groups WHERE id NOT IN (SELECT group_id FROM evidence_group_members);",
+            ),
+            (
+                "Friction Candidates",
+                "No linked Groups",
+                "SELECT COUNT(*) FROM friction_candidates WHERE id NOT IN (SELECT friction_candidate_id FROM friction_candidate_groups);",
+            ),
+            (
+                "Friction Profiles",
+                "Zero evidence count",
+                "SELECT COUNT(*) FROM friction_profiles WHERE evidence_count = 0;",
+            ),
+            (
+                "Trend Profiles",
+                "Missing theme classification",
+                "SELECT COUNT(*) FROM trend_profiles WHERE theme IS NULL OR theme = '';",
+            ),
+        ]
+
+        for entity, issue, sql in checks:
+            count = self.connection.execute(sql).fetchone()[0]
+            if count > 0:
+                orphans.append({"entity": entity, "issue": issue, "count": count})
+
+        return orphans
+
+    def get_storage_stats(self):
+        """Return table sizes ordered from largest to smallest."""
+        stats = []
+        for table in self.list_tables():
+            count = self.connection.execute(f"SELECT COUNT(*) FROM {table};").fetchone()[0]
+            stats.append({"table": table, "rows": count})
+
+        return sorted(stats, key=lambda item: item["rows"], reverse=True)
 
     def execute_operator_sql(self, sql_text):
         """Execute a read-only SQL query and log history."""

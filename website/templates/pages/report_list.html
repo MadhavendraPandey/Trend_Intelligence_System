@@ -1,0 +1,67 @@
+{% extends "layouts/app.html" %}
+{% import "components/table.html" as table %}
+{% import "components/empty_state.html" as empty %}
+
+{% block content %}
+  <header class="section-header">
+    <p class="eyebrow">{{ report_type }} Intelligence</p>
+    <h1>{{ report_type }} Reports</h1>
+    <p class="muted-text">Evidence-backed reports with direct traceability to evidence and sources.</p>
+  </header>
+
+  <form method="GET" class="search-bar">
+    <input type="search" name="q" class="search-input" placeholder="Search reports..." value="{{ query }}">
+    <select name="source_type" class="filter-select">
+      <option value="" {% if not source_type %}selected{% endif %}>All source types</option>
+      <option value="github" {% if source_type == 'github' %}selected{% endif %}>GitHub</option>
+      <option value="hackernews" {% if source_type == 'hackernews' %}selected{% endif %}>Hacker News</option>
+      <option value="arxiv" {% if source_type == 'arxiv' %}selected{% endif %}>ArXiv</option>
+      <option value="rss" {% if source_type == 'rss' %}selected{% endif %}>RSS</option>
+    </select>
+    <select name="sort" class="filter-select">
+      <option value="updated_desc" {% if sort == 'updated_desc' %}selected{% endif %}>Last Updated</option>
+      <option value="title_asc" {% if sort == 'title_asc' %}selected{% endif %}>Title A-Z</option>
+      <option value="title_desc" {% if sort == 'title_desc' %}selected{% endif %}>Title Z-A</option>
+      <option value="evidence_desc" {% if sort == 'evidence_desc' %}selected{% endif %}>Evidence Count</option>
+    </select>
+    <button type="submit" class="btn">Apply</button>
+  </form>
+
+  <section class="panel">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Summary</th>
+          <th class="numeric">Evidence</th>
+          <th class="numeric">Sources</th>
+          <th>Last Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td>
+              <div class="primary-cell">
+                <a href="/{{ 'trends' if report_type == 'Trend' else 'frictions' }}/{{ row.report.id }}">{{ row.report.title }}</a>
+                <small class="muted-text">{{ row.report_type }}</small>
+              </div>
+            </td>
+            <td class="muted-copy">{{ row.summary }}</td>
+            <td class="numeric">{{ row.evidence_count }}</td>
+            <td class="numeric">{{ row.source_count }}</td>
+            <td>{{ row.last_updated or "" }}</td>
+          </tr>
+        {% else %}
+          {{ table.empty_row(5, "No reports found.") }}
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <div class="pagination">
+    {% if previous_page %}<a class="btn" href="?page={{ previous_page }}&q={{ query }}&source_type={{ source_type }}&sort={{ sort }}">Previous</a>{% endif %}
+    <span class="pagination-info">Showing {{ rows|length }} of {{ total }} reports</span>
+    {% if next_page %}<a class="btn" href="?page={{ next_page }}&q={{ query }}&source_type={{ source_type }}&sort={{ sort }}">Next</a>{% endif %}
+  </div>
+{% endblock %}

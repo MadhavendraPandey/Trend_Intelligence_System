@@ -10,7 +10,6 @@ from __future__ import annotations
 from website.compat.fastapi import HTMLResponse, HTTPException, Request, Form
 from website.services.rendering import render
 from website.services.repository_provider import repository_scope
-from modules.friction.services.operator_service import OperatorService
 
 
 def register_routes(app):
@@ -19,9 +18,8 @@ def register_routes(app):
     @app.get("/operator", response_class=HTMLResponse)
     def operator_dashboard(request: Request):
         with repository_scope(request) as repos:
-            op_service = OperatorService(repos["operator"], repos["storage"])
-            summary = op_service.get_system_overview()
-            orphans = op_service.detect_orphans()
+            summary = repos["operator"].get_system_overview()
+            orphans = repos["operator"].detect_orphans()
 
         return render(
             request,
@@ -108,9 +106,8 @@ def register_routes(app):
     @app.get("/operator/quality", response_class=HTMLResponse)
     def quality_dashboard(request: Request):
         with repository_scope(request) as repos:
-            op_service = OperatorService(repos["operator"], repos["storage"])
-            orphans = op_service.detect_orphans()
-            stats = op_service.get_storage_stats()
+            orphans = repos["operator"].detect_orphans()
+            stats = repos["operator"].get_storage_stats()
 
         return render(
             request,

@@ -19,9 +19,13 @@
       <div class="workspace">
         <header class="topbar">
           <div>
-            <p class="eyebrow">Intelligence Workbench</p>
+            <p class="eyebrow">Intelligence Platform</p>
             <h1>{{ page_title }}</h1>
           </div>
+          <form class="search-bar topbar-search" action="/search" method="get">
+            <input type="search" name="q" placeholder="Search reports, evidence, sources" value="{{ request.query_params.get('q', '') if request else '' }}">
+            <button type="submit">Search</button>
+          </form>
           <div class="topbar-actions">
             <span class="system-pill">V2.0</span>
             <span class="system-pill muted-pill">SQLite</span>

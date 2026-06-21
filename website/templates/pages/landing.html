@@ -1,0 +1,26 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+
+{% block content %}
+  <section class="section-header">
+    <p class="eyebrow">Intelligence Platform</p>
+    <h1>Intelligence Platform</h1>
+    <p class="muted-text">This platform analyzes large volumes of collected information and organizes it into evidence-backed intelligence reports.</p>
+    <p class="muted-text">Two primary intelligence domains are available: Trend Intelligence and Friction Intelligence.</p>
+  </section>
+
+  <section class="landing-grid">
+    {% for item in cards %}
+      <a href="{{ item.href }}" class="landing-card landing-card-{{ item.tone }}">
+        <div class="landing-card-body">
+          <p class="eyebrow">{{ item.title }}</p>
+          <h2>{{ item.title }}</h2>
+          <p>{{ item.description }}</p>
+        </div>
+        <div class="landing-card-footer">
+          <span class="btn">{{ item.button }}</span>
+        </div>
+      </a>
+    {% endfor %}
+  </section>
+{% endblock %}

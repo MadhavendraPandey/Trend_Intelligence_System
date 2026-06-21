@@ -191,13 +191,30 @@ class PostRepository:
         ).fetchone()
         return self._to_dict(row)
 
-    def count_posts(self):
-        """Return the total number of posts."""
+    def count_posts(self, source_id=None, source_type=None):
+        """Return the number of posts, optionally filtered by source."""
+        conditions = []
+        values = []
+
+        if source_id is not None:
+            conditions.append("source_id = ?")
+            values.append(source_id)
+
+        if source_type is not None:
+            conditions.append("source_type = ?")
+            values.append(source_type)
+
+        where_clause = ""
+        if conditions:
+            where_clause = "WHERE " + " AND ".join(conditions)
+
         row = self.connection.execute(
-            """
+            f"""
             SELECT COUNT(*)
             FROM posts
-            """
+            {where_clause}
+            """,
+            values,
         ).fetchone()
         return row[0]
 
