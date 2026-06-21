@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <!-- Floating Navigation -->
+  <nav class="floating-nav">
+    <div class="nav-links">
+      <a href="#" class="nav-link active">Home</a>
+      <a href="#" class="nav-link">Trend Intelligence</a>
+      <a href="#" class="nav-link">Friction Intelligence</a>
+      <a href="#" class="nav-link">Operator</a>
+    </div>
+    <div class="theme-toggle" id="themeToggle">
+      <span class="sun-icon">☀️</span>
+      <span class="moon-icon">🌙</span>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <p class="eyebrow">INTELLIGENCE PLATFORM</p>
+      <h1 class="headline">Discover What Is Changing.<br>Discover What Is Broken.</h1>
+      <p class="subheadline">Transform thousands of observations into evidence-backed Trend Intelligence and Friction Intelligence reports.</p>
+      <div class="hero-buttons">
+        <button class="btn btn-primary">Explore Intelligence</button>
+        <button class="btn btn-secondary">Learn More</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <h2 class="section-title">How It Works</h2>
+    <div class="cards-container">
+      <div class="card">
+        <h3 class="card-title">Collect</h3>
+        <p class="card-description">Gather information from multiple sources.</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Quality</h3>
+        <p class="card-description">Filter noise and low-quality observations.</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Group</h3>
+        <p class="card-description">Identify recurring patterns and signals.</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Report</h3>
+        <p class="card-description">Generate evidence-backed intelligence reports.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Intelligence Selection -->
+  <section class="intelligence-selection">
+    <h2 class="section-title">Intelligence Selection</h2>
+    <div class="cards-container">
+      <div class="intelli-card" id="trendCard">
+        <h3 class="card-title">Trend Intelligence</h3>
+        <p class="card-description">Discover emerging technologies, research directions, developer movements, and market shifts.</p>
+      </div>
+      <div class="intelli-card" id="frictionCard">
+        <h3 class="card-title">Friction Intelligence</h3>
+        <p class="card-description">Discover recurring problems, workflow failures, bottlenecks, and unmet needs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta">
+    <button class="btn btn-primary" id="viewReportsBtn">View Reports</button>
+    <p class="selection-message" id="selectionMessage">Please select an intelligence domain.</p>
+  </section>
+</div>
+{% endblock %}
