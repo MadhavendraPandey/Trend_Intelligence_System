@@ -1,8 +1,0 @@
-{% macro status(value) -%}
-  <span class="badge status-{{ (value or 'unknown')|lower|replace(' ', '-') }}">{{ value or "unknown" }}</span>
-{%- endmacro %}
-
-{% macro label(value) -%}
-  <span class="badge neutral">{{ value }}</span>
-{%- endmacro %}
-
