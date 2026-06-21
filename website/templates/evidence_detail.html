@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Evidence Detail - Intelligence Platform{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Top Section -->
+  <div class="top-section">
+    <div class="eyebrow">EVIDENCE</div>
+    <h1 class="headline">{{ evidence.id }}</h1>
+    
+    <div class="metadata-row">
+      <span class="date">Published: {{ evidence.published_at.strftime('%Y-%m-%d') if evidence.published_at else 'Unknown' }}</span>
+      <span class="source">Source: {{ evidence.source_name }}</span>
+      <span class="source-type">Type: {{ evidence.source_type }}</span>
+      <span class="report">Report: {{ evidence.report_title or 'N/A' }}</span>
+      <span class="collected-at">Collected: {{ evidence.collected_at.strftime('%Y-%m-%d %H:%M') if evidence.collected_at else 'Unknown' }}</span>
+    </div>
+  </div>
+
+  <!-- Observation -->
+  <section class="observation">
+    <h2 class="section-title">Observation</h2>
+    <div class="summary-card">
+      <p>{{ evidence.observation }}</p>
+    </div>
+  </section>
+
+  <!-- Context -->
+  <section class="context">
+    <h2 class="section-title">Context</h2>
+    <div class="analysis-content">
+      <p>{{ evidence.context or 'No context provided.' }}</p>
+    </div>
+  </section>
+
+  <!-- Source Information -->
+  <section class="source-information">
+    <h2 class="section-title">Source Information</h2>
+    <div class="source-card">
+      <div class="source-name">{{ evidence.source_name }}</div>
+      <div class="source-type">{{ evidence.source_type }}</div>
+      <div class="source-meta">
+        <div class="author">Author: {{ evidence.author or 'Unknown' }}</div>
+        <div class="published-date">Published: {{ evidence.published_at.strftime('%Y-%m-%d') if evidence.published_at else 'Unknown' }}</div>
+        <div class="collection-date">Collected: {{ evidence.collected_at.strftime('%Y-%m-%d %H:%M') if evidence.collected_at else 'Unknown' }}</div>
+        <div class="original-url">
+          <a href="{{ evidence.original_url }}" target="_blank" rel="noopener noreferrer">Open Original Source</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Report Connection -->
+  {% if evidence.report_title %}
+  <section class="report-connection">
+    <h2 class="section-title">Report Connection</h2>
+    <div class="report-card">
+      <div class="report-title">{{ evidence.report_title }}</div>
+      <div class="report-summary">{{ evidence.report_summary or 'No summary provided.' }}</div>
+      <button class="btn btn-primary open-report-btn" data-report-id="{{ evidence.report_id }}">Open Report</button>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Traceability Chain -->
+  <section class="traceability">
+    <h2 class="section-title">Traceability Chain</h2>
+    <div class="traceability-chain">
+      <div class="trace-item">
+        <span class="item-label">Source</span>
+        <span class="item-name">{{ evidence.source_name }}</span>
+      </div>
+      <div class="trace-arrow">↓</div>
+      <div class="trace-item">
+        <span class="item-label">Evidence</span>
+        <span class="item-name">{{ evidence.id }}</span>
+      </div>
+      <div class="trace-arrow">↓</div>
+      <div class="trace-item">
+        <span class="item-label">Report</span>
+        <span class="item-name">{{ evidence.report_title or 'N/A' }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Metadata -->
+  <section class="metadata">
+    <h2 class="section-title">Metadata</h2>
+    <details class="metadata-details">
+      <summary>View Metadata</summary>
+      <div class="analysis-content">
+        <p><strong>Evidence ID:</strong> {{ evidence.id }}</p>
+        <p><strong>Source ID:</strong> {{ evidence.source_id }}</p>
+        <p><strong>Collection Run:</strong> {{ evidence.collection_run or 'N/A' }}</p>
+        <p><strong>Tags:</strong> {{ evidence.tags or 'None' }}</p>
+        <p><strong>Additional Metadata:</strong> {{ evidence.metadata_json or 'None' }}</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Related Evidence -->
+  {% if related_evidence %}
+  <section class="related-evidence">
+    <h2 class="section-title">Related Evidence</h2>
+    <div class="evidence-container">
+      {% for related in related_evidence %}
+      <div class="evidence-card">
+        <div class="evidence-text">{{ related.observation | truncate(100, True, '...') }}</div>
+        <div class="evidence-meta">
+          <span class="source-name">{{ related.source_name }}</span>
+          <span class="date">{{ related.published_at.strftime('%Y-%m-%d') if related.published_at else 'Unknown' }}</span>
+        </div>
+        <button class="btn btn-secondary view-evidence-btn" data-evidence-id="{{ related.id }}">View Evidence</button>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

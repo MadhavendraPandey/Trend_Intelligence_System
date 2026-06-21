@@ -421,6 +421,30 @@ p {
   font-size: 1.75rem;
 }
 
+/* Metadata Details */
+.metadata-details {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.metadata-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Source Meta */
+.source-meta {
+  margin-top: var(--spacing-sm);
+}
+
+.source-meta > div {
+  margin-bottom: var(--spacing-xs);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .floating-nav {
