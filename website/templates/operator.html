@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Intelligence Operations Center{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Top Section -->
+  <div class="top-section">
+    <div class="eyebrow">OPERATOR</div>
+    <h1 class="headline">Intelligence Operations Center</h1>
+    <p class="subheadline">Monitor, inspect, and manage the intelligence platform.</p>
+  </div>
+
+  <!-- System Status -->
+  <section class="system-status">
+    <h2 class="section-title">System Status</h2>
+    <div class="status-cards">
+      <div class="status-card">
+        <h3>Database Status</h3>
+        <p class="status-indicator">Connected</p>
+      </div>
+      <div class="status-card">
+        <h3>Pipeline Status</h3>
+        <p class="status-indicator">Active</p>
+      </div>
+      <div class="status-card">
+        <h3>Last Collection Run</h3>
+        <p>2023-05-15 14:30:00</p>
+      </div>
+      <div class="status-card">
+        <h3>Last Report Generation</h3>
+        <p>2023-05-15 16:45:00</p>
+      </div>
+      <div class="status-card">
+        <h3>System Health</h3>
+        <p class="status-indicator">Healthy</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="quick-actions">
+    <h2 class="section-title">Quick Actions</h2>
+    <div class="action-cards">
+      <div class="action-card">
+        <h3>SQL Studio</h3>
+        <p class="action-description">Execute and inspect database queries.</p>
+        <button class="btn btn-primary">Open SQL Studio</button>
+      </div>
+      <div class="action-card">
+        <h3>Database Explorer</h3>
+        <p class="action-description">Browse tables and records.</p>
+        <button class="btn btn-primary">Open Explorer</button>
+      </div>
+      <div class="action-card">
+        <h3>Pipeline Monitor</h3>
+        <p class="action-description">Inspect collection and report generation runs.</p>
+        <button class="btn btn-primary">Open Monitor</button>
+      </div>
+      <div class="action-card">
+        <h3>Data Quality</h3>
+        <p class="action-description">Review data quality issues and anomalies.</p>
+        <button class="btn btn-primary">Open Quality</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Activity Section -->
+  <section class="activity-section">
+    <h2 class="section-title">Recent Activity</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-time">16:45:00</div>
+        <div class="timeline-content">
+          <strong>Report Generation</strong> completed successfully
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">14:30:00</div>
+        <div class="timeline-content">
+          <strong>Collection Run</strong> completed successfully
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">12:15:00</div>
+        <div class="timeline-content">
+          <strong>Error</strong> in evidence processing
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">10:30:00</div>
+        <div class="timeline-content">
+          <strong>Warning</strong> about data quality
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Database Overview -->
+  <section class="database-overview">
+    <h2 class="section-title">Database Overview</h2>
+    <div class="overview-cards">
+      <div class="overview-card">
+        <h3>Tables</h3>
+        <p>15</p>
+      </div>
+      <div class="overview-card">
+        <h3>Records</h3>
+        <p>12,456</p>
+      </div>
+      <div class="overview-card">
+        <h3>Sources</h3>
+        <p>8</p>
+      </div>
+      <div class="overview-card">
+        <h3>Evidence</h3>
+        <p>9,234</p>
+      </div>
+      <div class="overview-card">
+        <h3>Reports</h3>
+        <p>127</p>
+      </div>
+      <div class="overview-card">
+        <h3>Collection Runs</h3>
+        <p>42</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pipeline Visualization -->
+  <section class="pipeline-visualization">
+    <h2 class="section-title">Pipeline Flow</h2>
+    <div class="pipeline-flow">
+      <div class="pipeline-step">Collect</div>
+      <div class="pipeline-arrow">↓</div>
+      <div class="pipeline-step">Quality</div>
+      <div class="pipeline-arrow">↓</div>
+      <div class="pipeline-step">Group</div>
+      <div class="pipeline-arrow">↓</div>
+      <div class="pipeline-step">Report</div>
+      <div class="pipeline-arrow">↓</div>
+      <div class="pipeline-step">Evidence</div>
+      <div class="pipeline-arrow">↓</div>
+      <div class="pipeline-step">Source</div>
+    </div>
+  </section>
+
+  <!-- System Notes -->
+  <section class="system-notes">
+    <details>
+      <summary>System Information</summary>
+      <div class="notes-content">
+        <p><strong>Version:</strong> 1.2.3</p>
+        <p><strong>Build Information:</strong> 2023-05-15 08:00:00</p>
+        <p><strong>Configuration:</strong> Production</p>
+        <p><strong>Environment Information:</strong> AWS us-west-2</p>
+      </div>
+    </details>
+  </section>
+</div>
+{% endblock %}

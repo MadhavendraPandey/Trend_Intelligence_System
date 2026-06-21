@@ -115,3 +115,21 @@ if (sourceCards.length > 0) {
     });
   });
 }
+
+// Action Card Interaction
+const actionCards = document.querySelectorAll('.action-card');
+if (actionCards.length > 0) {
+  actionCards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-5px)';
+      card.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.2)';
+      card.style.borderColor = 'var(--accent-color)';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
+      card.style.boxShadow = 'none';
+      card.style.borderColor = 'rgba(255, 255, 255, 0.05)';
+    });
+  });
+}
