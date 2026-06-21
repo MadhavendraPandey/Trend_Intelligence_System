@@ -81,9 +81,10 @@ def paginate(rows, page_num, page_size=PAGE_SIZE):
     }
 
 
-def evidence_page(repos, page_num=1, query=None):
-    """Return evidence explorer data with optional observation search."""
+def evidence_page(repos, page_num=1, query=None, source_type=None):
+    """Return evidence explorer data with search and type filtering."""
     evidence_rows = repos["evidence"].list_evidence(limit=1000, offset=0)
+
     if query:
         term = query.casefold()
         evidence_rows = [
@@ -92,8 +93,12 @@ def evidence_page(repos, page_num=1, query=None):
             if term in (row.get("observation") or "").casefold()
         ]
 
+    if source_type:
+        evidence_rows = [row for row in evidence_rows if row.get("source_type") == source_type]
+
     data = paginate(evidence_rows, page_num)
     data["query"] = query or ""
+    data["source_type"] = source_type or ""
     return data
 
 
@@ -162,9 +167,17 @@ def candidates_page(repos):
     ]
 
 
-def profiles_page(repos):
-    """Return active friction profiles."""
+def profiles_page(repos, query=None, classification=None):
+    """Return active friction profiles with search and classification filter."""
     profiles = repos["profiles"].list_profiles(status="active", limit=1000)
+
+    if query:
+        term = query.casefold()
+        profiles = [p for p in profiles if term in p["title"].casefold() or term in (p.get("description") or "").casefold()]
+
+    if classification:
+        profiles = [p for p in profiles if p.get("latest_classification") == classification]
+
     return [
         {
             "profile": profile,

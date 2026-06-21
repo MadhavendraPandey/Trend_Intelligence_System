@@ -1,0 +1,57 @@
+{% extends "layouts/app.html" %}
+{% import "components/table.html" as table %}
+{% import "components/empty_state.html" as empty %}
+
+{% block content %}
+  <header class="section-header">
+    <p class="eyebrow">Trend Intelligence</p>
+    <h1>Trend Explorer</h1>
+    <p class="muted-text">Searchable directory of technology signals.</p>
+  </header>
+
+  <form method="GET" class="search-bar">
+    <input type="text" name="q" class="search-input" placeholder="Search trends..." value="{{ query }}">
+    <div class="filter-group">
+       <button type="submit" name="domain" value="" class="filter-btn {{ 'active' if not domain }}">All</button>
+       <button type="submit" name="domain" value="Artificial Intelligence" class="filter-btn {{ 'active' if domain == 'Artificial Intelligence' }}">AI</button>
+       <button type="submit" name="domain" value="Cybersecurity" class="filter-btn {{ 'active' if domain == 'Cybersecurity' }}">Security</button>
+    </div>
+  </form>
+
+  <section class="panel">
+    {% if trends %}
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Trend</th>
+            <th>Domain / Theme</th>
+            <th class="numeric">Mentions</th>
+            <th class="numeric">Score</th>
+            <th>Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in trends %}
+            <tr>
+              <td>
+                <div class="primary-cell">
+                  <a href="/trends/{{ t.id }}"><strong>{{ t.title }}</strong></a>
+                  <small class="muted-text d-block">{{ t.summary }}</small>
+                </div>
+              </td>
+              <td>
+                <small>{{ t.domain }}</small><br>
+                <strong>{{ t.theme }}</strong>
+              </td>
+              <td class="numeric">{{ t.mentions }}</td>
+              <td class="numeric">{{ t.trend_score }}</td>
+              <td><span class="badge {{ 'status-accepted' if t.trend_level == 'DOMINANT' else 'status-active' }}">{{ t.trend_level }}</span></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      {{ empty.empty_state("No trends discovered", "Execute the trend pipeline to populate this explorer.") }}
+    {% endif %}
+  </section>
+{% endblock %}

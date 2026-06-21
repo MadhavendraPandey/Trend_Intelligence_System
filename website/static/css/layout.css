@@ -50,7 +50,7 @@
   gap: var(--space-1);
   height: var(--nav-height);
   padding: 0 var(--space-2) 0 var(--space-4);
-  background: var(--surface);
+  background: var(--surfac);
   backdrop-filter: blur(20px) saturate(var(--nav-saturate));
   -webkit-backdrop-filter: blur(20px) saturate(var(--nav-saturate));
   border: 1px solid var(--border);
@@ -124,11 +124,6 @@
 .nav-link:hover {
   color: var(--text);
   background: var(--surface-soft);
-}
-
-.nav-link.active {
-  color: var(--accent-strong);
-  background: var(--accent-soft);
 }
 
 /* Dropdown (Premium Feel) */

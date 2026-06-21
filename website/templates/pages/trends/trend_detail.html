@@ -1,0 +1,122 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+{% import "components/empty_state.html" as empty %}
+
+{% block content %}
+  <header class="section-header">
+    <p class="eyebrow">Trend Profile #{{ trend.id }}</p>
+    <h1>{{ trend.title }}</h1>
+    <p class="muted-text">{{ trend.summary }}</p>
+  </header>
+
+  <div class="split-layout">
+    <div class="split-main">
+      {% call card.panel("Trend Dossier", "Intelligence Metadata") %}
+        <dl class="record-list">
+          <dt>Domain</dt><dd>{{ trend.domain }}</dd>
+          <dt>Theme</dt><dd>{{ trend.theme }}</dd>
+          <dt>Confidence</dt><dd>{{ trend.confidence }}</dd>
+          <dt>Created</dt><dd>{{ trend.created_at }}</dd>
+        </dl>
+      {% endcall %}
+
+      {% call card.panel("Description", "Analytical summary") %}
+         <p>{{ trend.description or "No extended analysis available for this signal." }}</p>
+      {% endcall %}
+    </div>
+
+    <div class="split-side">
+       {% call card.panel("Trend Strength", trend.trend_level) %}
+          <div class="metric-mini">
+             <span class="metric-value">{{ trend.trend_score }}</span>
+             <span class="metric-label">Composite Score</span>
+          </div>
+          <div class="metrics-grid">
+             <div class="metric-mini">
+                <span class="metric-value">{{ trend.mentions }}</span>
+                <span class="metric-label">Mentions</span>
+             </div>
+             <div class="metric-mini">
+                <span class="metric-value">{{ trend.source_count }}</span>
+                <span class="metric-label">Sources</span>
+             </div>
+          </div>
+       {% endcall %}
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-link active" onclick="openTab(event, 'Evidence')">Supporting Evidence</button>
+    <button class="tab-link" onclick="openTab(event, 'Relationships')">Related Trends</button>
+    <button class="tab-link" onclick="openTab(event, 'Chronology')">Chronology</button>
+  </div>
+
+  <section id="Evidence" class="tab-content active stack">
+     <div class="nested-list">
+        {% for e in evidence %}
+           <div class="nested-row">
+              <div class="flex-1">
+                 <strong>Observation #{{ e.evidence_id }}</strong>
+                 <p class="muted-text">{{ e.observation }}</p>
+              </div>
+              <a href="/evidence/{{ e.evidence_id }}" class="badge">Inspect →</a>
+           </div>
+        {% else %}
+           {{ empty.empty_state("No linked evidence", "Direct evidence links for this trend profile are not yet established.") }}
+        {% endfor %}
+     </div>
+  </section>
+
+  <section id="Relationships" class="tab-content stack">
+     <div class="nested-list">
+        {% for item in relationships %}
+           <div class="nested-row">
+              <div class="flex-1">
+                 <strong>{{ item.other.title }}</strong>
+                 <p class="muted-text">{{ item.rel.explanation }}</p>
+              </div>
+              <a href="/trends/{{ item.other.id }}" class="badge">View Related →</a>
+           </div>
+        {% else %}
+           {{ empty.empty_state("No relationships", "Conceptually linked trends have not been discovered yet.") }}
+        {% endfor %}
+     </div>
+  </section>
+
+  <section id="Chronology" class="tab-content stack">
+     <div class="timeline">
+        {% for s in snapshots %}
+           <div class="timeline-item">
+              <div class="timeline-date">{{ s.snapshot_at }}</div>
+              <div class="timeline-content">
+                 <h4>Score: {{ s.trend_score }}</h4>
+                 <div class="trace-inline">
+                    <span class="tag">Mentions: {{ s.mentions }}</span>
+                    <span class="tag">Sources: {{ s.source_count }}</span>
+                 </div>
+              </div>
+           </div>
+        {% else %}
+           {{ empty.empty_state("No history", "Immutable snapshots for this trend will appear here as the pipeline runs.") }}
+        {% endfor %}
+     </div>
+  </section>
+
+  <script>
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tab-content");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+        tabcontent[i].classList.remove("active");
+      }
+      tablinks = document.getElementsByClassName("tab-link");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      document.getElementById(tabName).classList.add("active");
+      evt.currentTarget.className += " active";
+    }
+  </script>
+{% endblock %}

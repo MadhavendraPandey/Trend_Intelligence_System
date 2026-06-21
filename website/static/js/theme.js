@@ -18,10 +18,22 @@
 
     // Light theme icon (sun) vs Dark theme icon (moon)
     if (theme === 'dark') {
-      toggle.innerHTML = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>`;
+      toggle.innerHTML = `<svg style="transform: scale(2.5) translate(-46%, -1%); display: inline-block; vertical-align: middle;"  width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+      <circle cx="12" cy="12" r="4" fill="currentColor"/></svg>`;
     } else {
-      toggle.innerHTML = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`;
+      toggle.innerHTML = `<svg style="transform: scale(2.5) translate(-46%, -1%); display: inline-block; vertical-align: middle;"  width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+      <circle cx="12" cy="12" r="4" fill="currentColor"/></svg>`;
     }
+    toggle.style.width = '35px';
+    toggle.style.height = '35px';
+    toggle.style.display = 'flex';
+    toggle.style.justifyContent = 'center';
+    toggle.style.alignItems = 'center';
+
+
+
+
+
   };
 
   // Immediate set to avoid flash

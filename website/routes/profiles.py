@@ -17,14 +17,18 @@ def register_routes(app):
     """Register profile routes."""
 
     @app.get("/frictions", response_class=HTMLResponse)
-    def list_profiles(request: Request):
+    def list_profiles(request: Request, q: str = None, classification: str = None):
         with repository_scope(request) as repos:
-            profiles = workbench_queries.profiles_page(repos)
+            profiles = workbench_queries.profiles_page(repos, query=q, classification=classification)
 
         return render(
             request,
             "pages/profiles.html",
-            {"profiles": profiles},
+            {
+                "profiles": profiles,
+                "query": q or "",
+                "classification": classification or ""
+            },
             active="frictions",
             title="Friction Profiles",
         )

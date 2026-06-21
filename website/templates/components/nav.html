@@ -9,6 +9,18 @@
   </button>
 
   <div class="nav-links desktop-only">
+    <div class="nav-dropdown">
+      <button class="nav-link active">
+        {% if active_nav == 'trends' %}Trend Intelligence{% else %}Friction Intelligence{% endif %}
+      </button>
+      <div class="nav-dropdown-content">
+        <a class="nav-link" href="/">Friction Workbench</a>
+        <a class="nav-link" href="/trends">Trend Workbench</a>
+      </div>
+    </div>
+
+    <div class="nav-spacer"></div>
+
     <a class="nav-link {% if active_nav == 'dashboard' %}active{% endif %}" href="/">Dashboard</a>
 
     <div class="nav-dropdown">
@@ -20,6 +32,16 @@
       </div>
     </div>
 
+    {% if active_nav == 'trends' %}
+    <div class="nav-dropdown">
+      <button class="nav-link">Discovery</button>
+      <div class="nav-dropdown-content">
+        <a class="nav-link" href="/trends/explorer">Trend Explorer</a>
+        <a class="nav-link" href="/trends/graph">Trend Graph</a>
+        <a class="nav-link" href="/trends/sources">Trend Sources</a>
+      </div>
+    </div>
+    {% else %}
     <div class="nav-dropdown">
       <button class="nav-link">Intelligence</button>
       <div class="nav-dropdown-content">
@@ -30,6 +52,7 @@
         <a class="nav-link {% if active_nav == 'candidates' %}active{% endif %}" href="/candidates">Candidates</a>
       </div>
     </div>
+    {% endif %}
 
     <div class="nav-dropdown">
       <button class="nav-link">System</button>

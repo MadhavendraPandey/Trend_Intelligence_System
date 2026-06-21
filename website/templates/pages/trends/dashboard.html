@@ -1,0 +1,96 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+
+{% block content %}
+  <header class="section-header">
+    <p class="eyebrow">Trend Intelligence</p>
+    <h1>Workspace Overview</h1>
+    <p class="muted-text">Discovered emerging technologies and signals.</p>
+  </header>
+
+  <section class="metric-grid">
+    {{ card.metric("Active Trends", summary.total_trends, "Durable trend profiles") }}
+    {{ card.metric("Emerging", summary.emerging | length, "Weak signals detected") }}
+    {{ card.metric("Dominant", summary.dominant | length, "High-impact technologies") }}
+    {{ card.metric("AI Signals", summary.ai_signals | length, "Domain-specific findings") }}
+  </section>
+
+  <div class="detail-grid">
+    <section class="stack">
+      {% call card.panel("Recent Discovery Cycle", "Latest trend intelligence run.") %}
+         <div class="status-row">
+            <div class="status-indicator active"></div>
+            <div class="flex-1">
+               <strong>Global Trend Analysis</strong>
+               <small>Source audit completed</small>
+            </div>
+            <span class="badge">Operational</span>
+         </div>
+      {% endcall %}
+
+      {% if summary.dominant %}
+      {% call card.panel("Dominant Technologies", "Trends with maximum cross-domain mentions.") %}
+        <div class="nested-list no-margin">
+          {% for trend in summary.dominant %}
+          <a href="/trends/{{ trend.id }}" class="action-row">
+            <div class="flex-1">
+              <strong>{{ trend.title }}</strong>
+              <small>{{ trend.summary }}</small>
+            </div>
+            <span class="badge status-accepted">Dominant</span>
+          </a>
+          {% endfor %}
+        </div>
+      {% endcall %}
+      {% endif %}
+
+      {% if summary.growing %}
+      {% call card.panel("Growing Topics", "Significant evidence accumulation in recent windows.") %}
+        <div class="nested-list no-margin">
+          {% for trend in summary.growing %}
+          <a href="/trends/{{ trend.id }}" class="action-row">
+            <div class="flex-1">
+              <strong>{{ trend.title }}</strong>
+              <small>{{ trend.summary }}</small>
+            </div>
+            <span class="badge status-active">Strong</span>
+          </a>
+          {% endfor %}
+        </div>
+      {% endcall %}
+      {% endif %}
+    </section>
+
+    <section class="stack">
+      {% if summary.ai_signals %}
+      {% call card.panel("AI Intelligence", "Recent discoveries in Artificial Intelligence.") %}
+         <div class="nested-list no-margin">
+           {% for trend in summary.ai_signals %}
+           <a href="/trends/{{ trend.id }}" class="action-row">
+              <div class="flex-1">
+                 <strong>{{ trend.title }}</strong>
+                 <small>{{ trend.theme }}</small>
+              </div>
+           </a>
+           {% endfor %}
+         </div>
+      {% endcall %}
+      {% endif %}
+
+      {% if summary.sec_signals %}
+      {% call card.panel("Cybersecurity Signals", "Emerging threats and defense patterns.") %}
+         <div class="nested-list no-margin">
+           {% for trend in summary.sec_signals %}
+           <a href="/trends/{{ trend.id }}" class="action-row">
+              <div class="flex-1">
+                 <strong>{{ trend.title }}</strong>
+                 <small>{{ trend.theme }}</small>
+              </div>
+           </a>
+           {% endfor %}
+         </div>
+      {% endcall %}
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}

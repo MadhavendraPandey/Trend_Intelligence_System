@@ -1,45 +1,45 @@
 :root {
   color-scheme: dark;
 
-  /* Colors - Dark Theme (Matte Black) */
-  --bg: #000000;
-  --bg-subtle: #0a0a0a;
-  --bg-elevated: #121212;
-  --surface: rgba(18, 18, 18, 0.8);
-  --surface-soft: rgba(255, 255, 255, 0.04);
-  --surface-hover: rgba(255, 255, 255, 0.06);
+  /* Colors - Dark Theme (Monochrome Intelligence) */
+  --bg: #09090b;
+  --bg-subtle: #121212;
+  --bg-elevated: #18181b;
+  --surface: rgba(9, 9, 11, 0.9);
+  --surface-soft: rgba(255, 255, 255, 0.03);
+  --surface-hover: rgba(255, 255, 255, 0.05);
 
-  --border: #262626;
-  --border-strong: #404040;
+  --border: #27272a;
+  --border-strong: #3f3f46;
 
   --text: #fafafa;
-  --text-soft: #a3a3a3;
-  --text-muted: #525252;
+  --text-soft: #a1a1aa;
+  --text-muted: #52525b;
 
-  --accent: #f59e0b;
-  --accent-strong: #fbbf24;
-  --accent-soft: rgba(245, 158, 11, 0.1);
+  --accent: #0040af;
 
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --success: #10b981;
+
+  /* Monochrome status system */
+  --success: #a1a1aa;
+  --warning: #71717a;
+  --danger: #52525b;
 
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
 
-  --glow-color: rgba(245, 158, 11, 0.03);
-  --body-bg: radial-gradient(circle at 50% -20%, var(--glow-color), var(--bg) 70%), var(--bg);
+  --glow-color: rgba(0,0,0,0);
+  --body-bg: radial-gradient(circle at 50% -20%, var(--glow-color), var(--bg) 80%), var(--bg);
   --nav-saturate: 180%;
 
   --font: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
-  --radius: 12px;
-  --radius-sm: 8px;
-  --radius-lg: 16px;
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-lg: 12px;
 
-  --nav-height: 52px; /* Slightly more compact */
-  --content-max: 1200px;
+  --nav-height: 48px;
+  --content-max: 1100px;
 
   /* Spacing Rhythm */
   --space-1: 4px;
@@ -52,38 +52,38 @@
   --space-12: 48px;
 
   /* Motion */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 [data-theme="light"] {
   color-scheme: light;
   --bg: #ffffff;
-  --bg-subtle: #ffffff;
+  --bg-subtle: #fafafa;
   --bg-elevated: #ffffff;
-  --surface: rgba(255, 255, 255, 0.9);
-  --surface-soft: #f5f5f5;
-  --surface-hover: #eeeeee;
+  --surface: rgba(255, 255, 255, 0.95);
+  --surface-soft: #f4f4f5;
+  --surface-hover: #e4e4e7;
 
-  --border: #e5e5e5;
-  --border-strong: #d4d4d4;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
 
-  --text: #000000;
-  --text-soft: #404040;
-  --text-muted: #737373;
+  --text: #09090b;
+  --text-soft: #52525b;
+  --text-muted: #a1a1aa;
 
-  --accent: #000000;
-  --accent-strong: #171717;
-  --accent-soft: #f5f5f5;
+  --accent: #9ca3af;
+  --accent-strong: #7f7f7f;
+  --accent-soft: rgba(0,0,0,0.02);
 
-  --success: #171717;
-  --warning: #404040;
-  --danger: #404040;
+  --success: #52525b;
+  --warning: #71717a;
+  --danger: #a1a1aa;
 
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 
-  --glow-color: rgba(0, 0, 0, 0.02);
+  --glow-color: rgba(0,0,0,0);
   --body-bg: var(--bg);
   --nav-saturate: 100%;
 }
@@ -104,8 +104,8 @@ body {
   background-attachment: fixed;
   color: var(--text);
   font-family: var(--font);
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.5;
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
 }
@@ -117,10 +117,10 @@ a {
 }
 
 a:hover {
-  color: var(--accent-strong);
+  color: var(--text);
 }
 
-/* Ensure smooth transitions for theme-affected properties on key components */
+/* Base interactive transitions */
 .panel,
 .metric-card,
 .nav-floating,
@@ -147,7 +147,7 @@ code {
   background: var(--surface-soft);
   color: var(--text-soft);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 button,

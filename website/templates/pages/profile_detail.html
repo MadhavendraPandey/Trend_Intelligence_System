@@ -4,22 +4,27 @@
 {% import "components/empty_state.html" as empty %}
 
 {% block content %}
+  <header class="section-header">
+    <p class="eyebrow">Intelligence Profile #{{ profile.id }}</p>
+    <h1>{{ profile.title }}</h1>
+    <p class="muted-text">{{ profile.description or "No extended description provided." }}</p>
+  </header>
+
   <div class="split-layout">
     <div class="split-main">
-      {% call card.panel("Friction Profile", "Durable Intelligence Identity") %}
+      {% call card.panel("Profile Dossier", "Discovery Metadata") %}
         <dl class="record-list">
-          <dt>ID</dt><dd>#{{ profile.id }}</dd>
-          <dt>Title</dt><dd>{{ profile.title }}</dd>
-          <dt>Description</dt><dd>{{ profile.description or "" }}</dd>
           <dt>Status</dt><dd>{{ badge.status(profile.status) }}</dd>
-          <dt>Candidate</dt><dd><a href="/candidates/{{ profile.candidate_friction_id }}">Candidate #{{ profile.candidate_friction_id }}</a></dd>
+          <dt>Created</dt><dd>{{ profile.created_at }}</dd>
+          <dt>Updated</dt><dd>{{ profile.updated_at }}</dd>
+          <dt>Reference</dt><dd><a href="/candidates/{{ profile.candidate_friction_id }}">Candidate Signal #{{ profile.candidate_friction_id }}</a></dd>
         </dl>
       {% endcall %}
     </div>
 
     <div class="split-side">
       {% if profile.latest_classification %}
-      {% call card.panel("Maturity Intelligence", profile.latest_classification) %}
+      {% call card.panel("Maturity Intelligence", "Temporal state") %}
         <div class="maturity-status">
            <div class="status-indicator {{ profile.latest_classification | lower }}"></div>
            <strong>{{ profile.latest_classification }}</strong>
@@ -27,15 +32,15 @@
         <p class="summary-text">{{ profile.latest_classification_reasoning }}</p>
         {% if snapshots %}
         <div class="mini-timeline">
-           {% for s in snapshots[:5] %}
-           <div class="timeline-tick" title="{{ s.snapshot_at }}: {{ s.evidence_count }} obs"></div>
+           {% for s in snapshots[:10] %}
+           <div class="timeline-tick {{ 'active' if loop.first }}" title="{{ s.snapshot_at }}: {{ s.evidence_count }} obs"></div>
            {% endfor %}
         </div>
         {% endif %}
       {% endcall %}
       {% endif %}
 
-      {% call card.panel("Validation Proof", "Evidence-backed discovery") %}
+      {% call card.panel("Validation Proof", "Discovery evidence") %}
         <div class="validation-summary">
           <p class="summary-text">{{ profile.validation_summary or "Validation summary pending..." }}</p>
         </div>
@@ -62,10 +67,10 @@
   </div>
 
   <div class="tabs">
-    <button class="tab-link active" onclick="openTab(event, 'Traceability')">Traceability Chain</button>
-    <button class="tab-link" onclick="openTab(event, 'Relationships')">Relationships Graph</button>
-    <button class="tab-link" onclick="openTab(event, 'Timeline')">Evolution Timeline</button>
-    <button class="tab-link" onclick="openTab(event, 'Contradictions')">Contradiction Intelligence</button>
+    <button class="tab-link active" onclick="openTab(event, 'Traceability')">Evidence Chain</button>
+    <button class="tab-link" onclick="openTab(event, 'Relationships')">Context Graph</button>
+    <button class="tab-link" onclick="openTab(event, 'Timeline')">Chronology</button>
+    <button class="tab-link" onclick="openTab(event, 'Contradictions')">Contradictions</button>
   </div>
 
   <section id="Traceability" class="tab-content active stack">

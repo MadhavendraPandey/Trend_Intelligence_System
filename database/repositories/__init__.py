@@ -27,6 +27,8 @@ from database.repositories.friction_contradiction_repository import FrictionCont
 from database.repositories.source_run_repository import SourceRunRepository
 from database.repositories.source_repository import SourceRepository
 from database.repositories.operator_repository import OperatorRepository
+from database.repositories.trend_profile_repository import TrendProfileRepository
+from database.repositories.trend_metadata_repository import TrendMetadataRepository
 from database.repositories.validation_repository import ValidationRepository
 
 __all__ = [
@@ -39,6 +41,8 @@ __all__ = [
     "FrictionRelationshipRepository",
     "FrictionContradictionRepository",
     "OperatorRepository",
+    "TrendProfileRepository",
+    "TrendMetadataRepository",
     "PostRepository",
     "SourceRunRepository",
     "SourceRepository",

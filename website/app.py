@@ -27,6 +27,7 @@ from website.routes import (
     profiles,
     runs,
     operator,
+    trends,
 )
 
 
@@ -58,6 +59,7 @@ def create_app(db_file=DEFAULT_DB_FILE, migrations_dir=DEFAULT_MIGRATIONS_DIR):
     profiles.register_routes(workbench)
     runs.register_routes(workbench)
     operator.register_routes(workbench)
+    trends.register_routes(workbench)
 
     return workbench
 

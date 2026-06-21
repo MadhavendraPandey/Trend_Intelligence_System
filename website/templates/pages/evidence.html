@@ -4,15 +4,23 @@
 {% import "components/badge.html" as badge %}
 
 {% block content %}
-  <section class="page-heading">
-    <div>
-      <p class="eyebrow">Evidence explorer</p>
-      <h2>Atomic observations collected from posts.</h2>
-    </div>
-    {{ search.search_box("/evidence", query, "Search observation text") }}
-  </section>
+  <header class="section-header">
+    <p class="eyebrow">Reality Audit</p>
+    <h1>Evidence Explorer</h1>
+    <p class="muted-text">Atomic observations collected from all sources.</p>
+  </header>
 
-  <section class="table-panel">
+  <form method="GET" class="search-bar">
+    <input type="text" name="q" class="search-input" placeholder="Search observations..." value="{{ query }}">
+    <div class="filter-group">
+       <button type="submit" name="type" value="" class="filter-btn {{ 'active' if not source_type }}">All</button>
+       <button type="submit" name="type" value="github" class="filter-btn {{ 'active' if source_type == 'github' }}">GitHub</button>
+       <button type="submit" name="type" value="hackernews" class="filter-btn {{ 'active' if source_type == 'hackernews' }}">HN</button>
+       <button type="submit" name="type" value="arxiv" class="filter-btn {{ 'active' if source_type == 'arxiv' }}">ArXiv</button>
+    </div>
+  </form>
+
+  <section class="panel">
     <table class="data-table">
       <thead>
         <tr>
@@ -39,10 +47,10 @@
     </table>
   </section>
 
-  <div class="pager">
-    {% if previous_page %}<a href="/evidence?page_num={{ previous_page }}&q={{ query }}">Previous</a>{% endif %}
-    <span>Showing {{ rows|length }} of {{ total }} records</span>
-    {% if next_page %}<a href="/evidence?page_num={{ next_page }}&q={{ query }}">Next</a>{% endif %}
+  <div class="pagination">
+    {% if previous_page %}<a href="/evidence?page={{ previous_page }}&q={{ query }}&type={{ source_type }}" class="btn">Previous</a>{% endif %}
+    <span class="pagination-info">Showing {{ rows|length }} of {{ total }} records</span>
+    {% if next_page %}<a href="/evidence?page={{ next_page }}&q={{ query }}&type={{ source_type }}" class="btn">Next</a>{% endif %}
   </div>
 {% endblock %}
 

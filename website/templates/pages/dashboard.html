@@ -2,11 +2,17 @@
 {% import "components/card.html" as card %}
 
 {% block content %}
+  <header class="section-header">
+    <p class="eyebrow">Intelligence Workbench</p>
+    <h1>Workspace Overview</h1>
+    <p class="muted-text">Real-time status of discovered reality.</p>
+  </header>
+
   <section class="metric-grid">
-    {{ card.metric("Friction Profiles", summary.total_profiles, "Durable intelligence identities") }}
-    {{ card.metric("Intelligence Signals", summary.total_candidates, "Identified candidates across all runs") }}
-    {{ card.metric("Evidence Points", summary.total_evidence, "Verified observations from source data") }}
-    {{ card.metric("Source Posts", summary.total_posts, "Total raw items collected") }}
+    {{ card.metric("Friction Profiles", summary.total_profiles, "Durable discovery identities") }}
+    {{ card.metric("Intelligence Signals", summary.total_candidates, "Identified candidates") }}
+    {{ card.metric("Evidence Points", summary.total_evidence, "Verified observations") }}
+    {{ card.metric("Source Posts", summary.total_posts, "Total items collected") }}
   </section>
 
   <div class="detail-grid">

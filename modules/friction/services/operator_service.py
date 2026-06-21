@@ -70,6 +70,13 @@ class OperatorService:
         if count > 0:
             orphans.append({"entity": "Friction Profiles", "issue": "Zero evidence count", "count": count})
 
+        # Trend profiles without themes
+        count = self.repo.connection.execute(
+            "SELECT COUNT(*) FROM trend_profiles WHERE theme IS NULL OR theme = '';"
+        ).fetchone()[0]
+        if count > 0:
+            orphans.append({"entity": "Trend Profiles", "issue": "Missing theme classification", "count": count})
+
         return orphans
 
     def get_storage_stats(self):

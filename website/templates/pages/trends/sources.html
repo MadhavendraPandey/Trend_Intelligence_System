@@ -1,0 +1,40 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+
+{% block content %}
+  <header class="section-header">
+    <p class="eyebrow">Intelligence Sources</p>
+    <h1>Trend Sources</h1>
+    <p class="muted-text">Inspection of vectors contributing to trend discovery.</p>
+  </header>
+
+  <section class="panel">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Source Name</th>
+          <th>Type</th>
+          <th class="numeric">Observation Count</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in sources %}
+          <tr>
+            <td>
+               <div class="primary-cell">
+                  <strong>{{ row.source.name }}</strong>
+                  <small class="muted-text d-block">{{ row.source.base_url }}</small>
+               </div>
+            </td>
+            <td><span class="badge">{{ row.source.source_type }}</span></td>
+            <td class="numeric">{{ row.observation_count }}</td>
+            <td><span class="badge {{ 'status-active' if row.source.is_active else '' }}">Active</span></td>
+          </tr>
+        {% else %}
+          <tr><td colspan="4" class="muted-text">No trend-contributing sources found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}

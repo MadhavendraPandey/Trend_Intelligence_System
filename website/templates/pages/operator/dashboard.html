@@ -3,6 +3,7 @@
 
 {% block content %}
   <header class="section-header">
+    <p class="eyebrow">Internal Operations</p>
     <h1>System Health</h1>
     <p class="muted-text">Real-time operational awareness for the Friction Intelligence Platform.</p>
   </header>
@@ -10,8 +11,9 @@
   <section class="metric-grid">
     {{ card.metric("Database Size", (summary.db_size_mb | string) + " MB", "Total SQLite storage footprint") }}
     {{ card.metric("Total Tables", summary.total_tables, "Introspection metadata") }}
-    {{ card.metric("Friction Profiles", summary.table_counts.friction_profiles, "Total intelligence hub records") }}
-    {{ card.metric("Reality Links", summary.table_counts.friction_relationships, "Inter-friction connections") }}
+    {{ card.metric("Friction Profiles", summary.table_counts.friction_profiles, "Friction identities") }}
+    {{ card.metric("Trend Profiles", summary.table_counts.trend_profiles, "Technology signals") }}
+    {{ card.metric("Reality Links", summary.table_counts.friction_relationships + summary.table_counts.trend_relationships, "Total connections") }}
   </section>
 
   <div class="detail-grid">
@@ -25,11 +27,11 @@
                 <strong>{{ alert.entity }}</strong>
                 <small>{{ alert.issue }}</small>
               </div>
-              <span class="badge status-failed">{{ alert.count }} records</span>
+              <span class="badge">{{ alert.count }} records</span>
             </div>
           {% else %}
              <div class="empty-inline">
-                <span class="badge status-validated">No quality issues detected</span>
+                <span class="badge">No quality issues detected</span>
              </div>
           {% endfor %}
         </div>

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Evidence | Intelligence Workbench</title>
+    <link rel="stylesheet" href="http://localhost:8000/static/css/tokens.css">
+    <link rel="stylesheet" href="http://localhost:8000/static/css/layout.css">
+    <link rel="stylesheet" href="http://localhost:8000/static/css/components.css">
+    <link rel="stylesheet" href="http://localhost:8000/static/css/pages.css">
+    <script defer src="http://localhost:8000/static/js/theme.js"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="nav-container">
+        <nav class="nav-floating">
+  <a href="/" class="nav-brand">
+    <div class="brand-mark">IW</div>
+    <span class="brand-text">Workbench</span>
+  </a>
+
+  <button id="mobile-menu-toggle" class="nav-link mobile-only" aria-label="Toggle menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+  </button>
+
+  <div class="nav-links desktop-only">
+    <a class="nav-link " href="/">Dashboard</a>
+
+    <div class="nav-dropdown">
+      <button class="nav-link">Data</button>
+      <div class="nav-dropdown-content">
+        <a class="nav-link " href="/sources">Sources</a>
+        <a class="nav-link " href="/posts">Posts</a>
+        <a class="nav-link " href="/runs">Runs</a>
+      </div>
+    </div>
+
+    <div class="nav-dropdown">
+      <button class="nav-link">Intelligence</button>
+      <div class="nav-dropdown-content">
+        <a class="nav-link " href="/frictions">Friction Profiles</a>
+        <a class="nav-link " href="/graph">Reality Graph</a>
+        <a class="nav-link active" href="/evidence">Evidence</a>
+        <a class="nav-link " href="/groups">Groups</a>
+        <a class="nav-link " href="/candidates">Candidates</a>
+      </div>
+    </div>
+
+    <div class="nav-dropdown">
+      <button class="nav-link">System</button>
+      <div class="nav-dropdown-content">
+        <a class="nav-link " href="/validation">Validation</a>
+        <a class="nav-link " href="/decisions">Decisions</a>
+        <a class="nav-link " href="/metrics">Metrics</a>
+        <a class="nav-link " href="/settings">Settings</a>
+      </div>
+    </div>
+
+    <div class="nav-dropdown">
+      <button class="nav-link">Operations</button>
+      <div class="nav-dropdown-content">
+        <a class="nav-link " href="/operator">Operator Console</a>
+        <a class="nav-link" href="/operator/explorer">Data Explorer</a>
+        <a class="nav-link" href="/operator/sql">SQL Studio</a>
+        <a class="nav-link" href="/operator/quality">Data Quality</a>
+        <a class="nav-link" href="/operator/schema">Schema Browser</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-spacer"></div>
+
+  <button id="theme-toggle" class="nav-link theme-toggle-btn" aria-label="Toggle theme">
+    <!-- Icon injected by JS -->
+  </button>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobile-menu" class="mobile-menu-overlay">
+  <div class="mobile-menu-content">
+    <div class="mobile-menu-header">
+      <div class="nav-brand">
+        <div class="brand-mark">IW</div>
+        <span class="brand-text">Workbench</span>
+      </div>
+      <button id="mobile-menu-close" class="nav-link" aria-label="Close menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <div class="mobile-menu-links">
+      <a class="mobile-nav-link " href="/">Dashboard</a>
+
+      <div class="mobile-menu-section">
+        <div class="mobile-menu-label">Data</div>
+        <a class="mobile-nav-link " href="/sources">Sources</a>
+        <a class="mobile-nav-link " href="/posts">Posts</a>
+        <a class="mobile-nav-link " href="/runs">Runs</a>
+      </div>
+
+      <div class="mobile-menu-section">
+        <div class="mobile-menu-label">Intelligence</div>
+        <a class="mobile-nav-link " href="/frictions">Friction Profiles</a>
+        <a class="mobile-nav-link " href="/graph">Reality Graph</a>
+        <a class="mobile-nav-link active" href="/evidence">Evidence</a>
+        <a class="mobile-nav-link " href="/groups">Groups</a>
+        <a class="mobile-nav-link " href="/candidates">Candidates</a>
+      </div>
+
+      <div class="mobile-menu-section">
+        <div class="mobile-menu-label">System</div>
+        <a class="mobile-nav-link " href="/operator">Operator Console</a>
+        <a class="mobile-nav-link " href="/validation">Validation</a>
+        <a class="mobile-nav-link " href="/decisions">Decisions</a>
+        <a class="mobile-nav-link " href="/metrics">Metrics</a>
+        <a class="mobile-nav-link " href="/settings">Settings</a>
+      </div>
+    </div>
+  </div>
+</div>
+      </div>
+
+      <div class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Intelligence Workbench</p>
+            <h1>Evidence</h1>
+          </div>
+          <div class="topbar-actions">
+            <span class="system-pill">V2.0</span>
+            <span class="system-pill muted-pill">SQLite</span>
+          </div>
+        </header>
+
+        <main class="content page-enter">
+
+  <header class="section-header">
+    <p class="eyebrow">Reality Audit</p>
+    <h1>Evidence Explorer</h1>
+    <p class="muted-text">Atomic observations collected from all sources.</p>
+  </header>
+
+  <form method="GET" class="search-bar">
+    <input type="text" name="q" class="search-input" placeholder="Search observations..." value="">
+    <div class="filter-group">
+       <button type="submit" name="type" value="" class="filter-btn ">All</button>
+       <button type="submit" name="type" value="github" class="filter-btn active">GitHub</button>
+       <button type="submit" name="type" value="hackernews" class="filter-btn ">HN</button>
+       <button type="submit" name="type" value="arxiv" class="filter-btn ">ArXiv</button>
+    </div>
+  </form>
+
+  <section class="panel">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Format</th>
+          <th>Observation</th>
+          <th>Source</th>
+          <th>Captured</th>
+        </tr>
+      </thead>
+      <tbody>
+
+          <tr>
+    <td colspan="5" class="empty-cell">No evidence found.</td>
+  </tr>
+
+      </tbody>
+    </table>
+  </section>
+
+  <div class="pagination">
+
+    <span class="pagination-info">Showing 0 of 0 records</span>
+
+  </div>
+
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

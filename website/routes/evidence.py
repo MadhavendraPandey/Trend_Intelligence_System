@@ -24,14 +24,14 @@ def register_routes(app):
     """Register evidence routes."""
 
     @app.get("/evidence", response_class=HTMLResponse)
-    def evidence_explorer(request: Request, page_num: int = 1, q: str | None = None):
+    def list_evidence(request: Request, page: int = 1, q: str = None, type: str = None):
         with repository_scope(request) as repos:
-            page_data = workbench_queries.evidence_page(repos, page_num, q)
+            data = workbench_queries.evidence_page(repos, page_num=page, query=q, source_type=type)
 
         return render(
             request,
             "pages/evidence.html",
-            page_data,
+            data,
             active="evidence",
             title="Evidence",
         )

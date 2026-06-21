@@ -3,12 +3,20 @@
 {% import "components/empty_state.html" as empty %}
 
 {% block content %}
-  <header class="page-heading">
-    <div>
-      <p class="eyebrow">Intelligence Discovery</p>
-      <h2>Friction Profiles</h2>
-    </div>
+  <header class="section-header">
+    <p class="eyebrow">Intelligence Discovery</p>
+    <h1>Friction Profiles</h1>
+    <p class="muted-text">Audited and persistent discovery identities.</p>
   </header>
+
+  <form method="GET" class="search-bar">
+    <input type="text" name="q" class="search-input" placeholder="Search profiles..." value="{{ query }}">
+    <div class="filter-group">
+       <button type="submit" name="classification" value="" class="filter-btn {{ 'active' if not classification }}">All</button>
+       <button type="submit" name="classification" value="GROWING" class="filter-btn {{ 'active' if classification == 'GROWING' }}">Growing</button>
+       <button type="submit" name="classification" value="EMERGING" class="filter-btn {{ 'active' if classification == 'EMERGING' }}">Emerging</button>
+    </div>
+  </form>
 
   <section class="panel">
     {% if profiles %}
