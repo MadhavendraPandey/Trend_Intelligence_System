@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}{{ report.title }} - Intelligence Report{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Floating Navigation -->
+  <nav class="floating-nav">
+    <div class="nav-links">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/trend/reports" class="nav-link {% if intelligence_type == 'Trend' %}active{% endif %}">Trend Intelligence</a>
+      <a href="/friction/reports" class="nav-link {% if intelligence_type == 'Friction' %}active{% endif %}">Friction Intelligence</a>
+      <a href="#" class="nav-link">Operator</a>
+    </div>
+    <div class="theme-toggle" id="themeToggle">
+      <span class="sun-icon">☀️</span>
+      <span class="moon-icon">🌙</span>
+    </div>
+  </nav>
+
+  <!-- Top Section -->
+  <section class="top-section">
+    <p class="eyebrow">INTELLIGENCE REPORT</p>
+    <h1 class="headline">{{ report.title }}</h1>
+    
+    <div class="metadata-row">
+      <span>Evidence: {{ report.evidence_count }}</span>
+      <span>Sources: {{ report.source_count }}</span>
+      <span>Created: {{ report.created_at }}</span>
+      <span>Updated: {{ report.updated_at }}</span>
+    </div>
+  </section>
+
+  <!-- Executive Summary -->
+  <section class="executive-summary">
+    <div class="summary-card">
+      <h2 class="section-title">Executive Summary</h2>
+      <p>{{ report.summary }}</p>
+    </div>
+  </section>
+
+  <!-- Analysis Section -->
+  <section class="analysis-section">
+    <h2 class="section-title">Analysis</h2>
+    <div class="analysis-content">
+      {{ report.analysis_content|safe }}
+    </div>
+  </section>
+
+  <!-- Key Observations -->
+  <section class="key-observations">
+    <h2 class="section-title">Key Observations</h2>
+    <div class="observations-container">
+      {% for observation in report.observations %}
+      <div class="observation-card">
+        <h3 class="observation-title">{{ observation.title }}</h3>
+        <p class="observation-description">{{ observation.description }}</p>
+        <div class="observation-meta">
+          <span>Evidence: {{ observation.evidence_count }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Supporting Evidence -->
+  <section class="supporting-evidence">
+    <h2 class="section-title">Supporting Evidence</h2>
+    <div class="evidence-container">
+      {% for evidence in report.evidence_list %}
+      <div class="evidence-card">
+        <p class="evidence-text">{{ evidence.text }}</p>
+        <div class="evidence-meta">
+          <span class="source-name">{{ evidence.source_name }}</span>
+          <span class="source-type">{{ evidence.source_type }}</span>
+          <span class="date">{{ evidence.date }}</span>
+          <span class="evidence-id">ID: {{ evidence.id }}</span>
+        </div>
+        <button class="btn btn-secondary view-evidence-btn" data-evidence-id="{{ evidence.id }}">View Evidence</button>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Source Overview -->
+  <section class="source-overview">
+    <h2 class="section-title">Source Overview</h2>
+    <div class="sources-container">
+      {% for source in report.sources %}
+      <div class="source-card">
+        <h3 class="source-name">{{ source.name }}</h3>
+        <p class="source-type">{{ source.type }}</p>
+        <p class="evidence-count">Evidence: {{ source.evidence_count }}</p>
+        <a href="{{ source.link }}" class="btn btn-secondary" target="_blank">View Source</a>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Traceability -->
+  <section class="traceability">
+    <h2 class="section-title">Traceability</h2>
+    <div class="traceability-chain">
+      <div class="trace-item">
+        <span class="item-label">Report</span>
+        <span class="item-name">{{ report.title }}</span>
+      </div>
+      <div class="trace-arrow">↓</div>
+      <div class="trace-item">
+        <span class="item-label">Evidence</span>
+        <span class="item-name">{{ report.evidence_count }} items</span>
+      </div>
+      <div class="trace-arrow">↓</div>
+      <div class="trace-item">
+        <span class="item-label">Sources</span>
+        <span class="item-name">{{ report.source_count }} sources</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Reports -->
+  <section class="related-reports">
+    <h2 class="section-title">Related Reports</h2>
+    <div class="reports-container">
+      {% for related_report in report.related_reports %}
+      <div class="report-card">
+        <h3 class="report-title">{{ related_report.title }}</h3>
+        <p class="report-summary">{{ related_report.summary }}</p>
+        <button class="btn btn-secondary open-report-btn" data-report-id="{{ related_report.id }}">Open Report</button>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

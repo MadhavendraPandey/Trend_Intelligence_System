@@ -14,53 +14,27 @@ themeToggle.addEventListener('click', () => {
   }
 });
 
-// Intelligence Card Selection
-const trendCard = document.getElementById('trendCard');
-const frictionCard = document.getElementById('frictionCard');
-const viewReportsBtn = document.getElementById('viewReportsBtn');
-const selectionMessage = document.getElementById('selectionMessage');
-
-let selectedIntelligence = null;
-
-if (trendCard) {
-  trendCard.addEventListener('click', () => {
-    selectedIntelligence = 'trend';
-    trendCard.classList.add('selected');
-    frictionCard.classList.remove('selected');
-    updateSelectionMessage();
+// View Evidence Button
+const viewEvidenceBtns = document.querySelectorAll('.view-evidence-btn');
+if (viewEvidenceBtns.length > 0) {
+  viewEvidenceBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const evidenceId = btn.getAttribute('data-evidence-id');
+      // In a real implementation, this would navigate to the evidence detail page
+      console.log(`Viewing evidence: ${evidenceId}`);
+    });
   });
 }
 
-if (frictionCard) {
-  frictionCard.addEventListener('click', () => {
-    selectedIntelligence = 'friction';
-    frictionCard.classList.add('selected');
-    trendCard.classList.remove('selected');
-    updateSelectionMessage();
-  });
-}
-
-function updateSelectionMessage() {
-  if (selectedIntelligence) {
-    selectionMessage.style.display = 'none';
-  } else {
-    selectionMessage.style.display = 'block';
-  }
-}
-
-// View Reports Button
-if (viewReportsBtn) {
-  viewReportsBtn.addEventListener('click', () => {
-    if (!selectedIntelligence) {
-      selectionMessage.style.display = 'block';
-      return;
-    }
-
-    if (selectedIntelligence === 'trend') {
-      window.location.href = '/trend/reports';
-    } else if (selectedIntelligence === 'friction') {
-      window.location.href = '/friction/reports';
-    }
+// Open Report Button
+const openReportBtns = document.querySelectorAll('.open-report-btn');
+if (openReportBtns.length > 0) {
+  openReportBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const reportId = btn.getAttribute('data-report-id');
+      // In a real implementation, this would navigate to the report detail page
+      console.log(`Opening report: ${reportId}`);
+    });
   });
 }
 
@@ -68,6 +42,24 @@ if (viewReportsBtn) {
 const reportCards = document.querySelectorAll('.report-card');
 if (reportCards.length > 0) {
   reportCards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-5px)';
+      card.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.2)';
+      card.style.borderColor = 'var(--accent-color)';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
+      card.style.boxShadow = 'none';
+      card.style.borderColor = 'rgba(255, 255, 255, 0.05)';
+    });
+  });
+}
+
+// Evidence Card Interaction
+const evidenceCards = document.querySelectorAll('.evidence-card');
+if (evidenceCards.length > 0) {
+  evidenceCards.forEach(card => {
     card.addEventListener('mouseenter', () => {
       card.style.transform = 'translateY(-5px)';
       card.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.2)';
