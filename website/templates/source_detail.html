@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Source Detail - {{ source.name }}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% block content %}
+    <!-- Top Section -->
+    <div class="top-section">
+        <div class="container">
+            <div class="eyebrow">SOURCE</div>
+            <h1 class="headline">{{ source.name }}</h1>
+            <div class="metadata-row">
+                <span>{{ source.type }}</span>
+                <span>{{ source.posts_count }} posts collected</span>
+                <span>{{ source.evidence_count }} evidence items generated</span>
+                <span>{{ source.reports_count }} reports supported</span>
+                <span>Last activity: {{ source.last_activity }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Source Overview -->
+    <section class="source-overview">
+        <div class="container">
+            <h2 class="section-title">Source Overview</h2>
+            <div class="source-card">
+                <p>{{ source.description or "No description available." }}</p>
+                {% if source.reliability_notes %}
+                    <div class="reliability-notes">
+                        <strong>Reliability Notes:</strong>
+                        <p>{{ source.reliability_notes }}</p>
+                    </div>
+                {% endif %}
+                <div class="source-meta">
+                    <div>Collection Frequency: {{ source.collection_frequency or "Unknown" }}</div>
+                    <div>First Seen: {{ source.first_seen }}</div>
+                    <div>Last Seen: {{ source.last_seen }}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Source Statistics -->
+    <section class="source-statistics">
+        <div class="container">
+            <h2 class="section-title">Source Statistics</h2>
+            <div class="metadata-details">
+                <div>Posts Collected: {{ source.posts_count }}</div>
+                <div>Evidence Items Generated: {{ source.evidence_count }}</div>
+                <div>Reports Influenced: {{ source.reports_count }}</div>
+                <div>Latest Collection Run: {{ source.last_collection_run or "Never" }}</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Supported Reports -->
+    <section class="supported-reports">
+        <div class="container">
+            <h2 class="section-title">Supported Reports</h2>
+            <div class="reports-container">
+                {% for report in reports %}
+                <div class="report-card">
+                    <h3 class="report-title">{{ report.title }}</h3>
+                    <p class="report-summary">{{ report.summary }}</p>
+                    <div class="evidence-count">Evidence Items: {{ report.evidence_count }}</div>
+                    <button class="btn btn-primary open-report-btn" data-report-id="{{ report.id }}">Open Report</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Evidence Generated -->
+    <section class="evidence-generated">
+        <div class="container">
+            <h2 class="section-title">Evidence Generated</h2>
+            <div class="evidence-container">
+                {% for evidence in evidence_list %}
+                <div class="evidence-card">
+                    <p class="evidence-text">{{ evidence.text }}</p>
+                    <div class="evidence-meta">
+                        <span class="date">{{ evidence.date }}</span>
+                    </div>
+                    <button class="btn btn-secondary view-evidence-btn" data-evidence-id="{{ evidence.id }}">View Evidence</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Collected Posts -->
+    <section class="collected-posts">
+        <div class="container">
+            <h2 class="section-title">Collected Posts</h2>
+            <div class="posts-container">
+                {% for post in posts %}
+                <div class="post-card">
+                    <h3>{{ post.title }}</h3>
+                    <div class="post-meta">
+                        <span class="date">{{ post.date }}</span>
+                        <span class="author">by {{ post.author }}</span>
+                    </div>
+                    <button class="btn btn-secondary view-original-btn" data-post-id="{{ post.id }}">View Original</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Traceability -->
+    <section class="traceability">
+        <div class="container">
+            <h2 class="section-title">Traceability</h2>
+            <div class="traceability-chain">
+                <div class="trace-item">
+                    <span class="item-label">Source</span>
+                    <span class="item-name">{{ source.name }}</span>
+                </div>
+                <div class="trace-arrow">↓</div>
+                <div class="trace-item">
+                    <span class="item-label">Evidence</span>
+                    <span class="item-name">{{ evidence_count }} items</span>
+                </div>
+                <div class="trace-arrow">↓</div>
+                <div class="trace-item">
+                    <span class="item-label">Report</span>
+                    <span class="item-name">{{ reports_count }} reports</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Sources -->
+    <section class="related-sources">
+        <div class="container">
+            <h2 class="section-title">Related Sources</h2>
+            <div class="sources-container">
+                {% for related_source in related_sources %}
+                <div class="source-card">
+                    <h3 class="source-name">{{ related_source.name }}</h3>
+                    <div class="source-type">{{ related_source.type }}</div>
+                    <button class="btn btn-secondary open-source-btn" data-source-id="{{ related_source.id }}">Open Source</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endblock %}
+    
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
