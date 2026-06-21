@@ -1,0 +1,55 @@
+{% extends "layouts/app.html" %}
+{% import "components/search.html" as search %}
+{% import "components/table.html" as table %}
+{% import "components/badge.html" as badge %}
+
+{% block content %}
+  <header class="section-header">
+    <p class="eyebrow">Reality Audit</p>
+    <h1>Evidence Explorer</h1>
+    <p class="muted-text">Atomic observations collected from all sources.</p>
+  </header>
+
+  <form method="GET" class="search-bar">
+    <input type="text" name="q" class="search-input" placeholder="Search observations..." value="{{ query }}">
+    <div class="filter-group">
+       <button type="submit" name="source_type" value="" class="filter-btn {{ 'active' if not source_type }}">All</button>
+       <button type="submit" name="source_type" value="github" class="filter-btn {{ 'active' if source_type == 'github' }}">GitHub</button>
+       <button type="submit" name="source_type" value="hackernews" class="filter-btn {{ 'active' if source_type == 'hackernews' }}">HN</button>
+       <button type="submit" name="source_type" value="arxiv" class="filter-btn {{ 'active' if source_type == 'arxiv' }}">ArXiv</button>
+    </div>
+  </form>
+
+  <section class="panel">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Format</th>
+          <th>Observation</th>
+          <th>Source</th>
+          <th>Captured</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td><a href="/evidence/{{ row.evidence_id }}">#{{ row.evidence_id }}</a></td>
+            <td>{{ badge.label(row.evidence_type) }}</td>
+            <td class="wide-cell">{{ row.observation }}</td>
+            <td>{{ row.source_type or "unknown" }}</td>
+            <td>{{ row.captured_at or "" }}</td>
+          </tr>
+        {% else %}
+          {{ table.empty_row(5, "No evidence found.") }}
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <div class="pagination">
+    {% if previous_page %}<a href="/evidence?page={{ previous_page }}&q={{ query }}&source_type={{ source_type }}" class="btn">Previous</a>{% endif %}
+    <span class="pagination-info">Showing {{ rows|length }} of {{ total }} records</span>
+    {% if next_page %}<a href="/evidence?page={{ next_page }}&q={{ query }}&source_type={{ source_type }}" class="btn">Next</a>{% endif %}
+  </div>
+{% endblock %}

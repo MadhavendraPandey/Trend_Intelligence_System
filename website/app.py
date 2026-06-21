@@ -1,99 +1,52 @@
-from fastapi import FastAPI, Request
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
+"""Application factory for the Intelligence Workbench.
 
-app = FastAPI()
+Purpose:
+    Create the FastAPI application that serves the read-only, server-rendered
+    intelligence inspection UI.
 
-app.mount("/static", StaticFiles(directory="website/static"), name="static")
+Architecture notes:
+    FastAPI remains both backend and web server. Routes render Jinja templates,
+    services coordinate read-only view data, repositories own database access,
+    and SQLite remains the durable source of truth.
 
-templates = Jinja2Templates(directory="website/templates")
+Future extension guidance:
+    Register new route modules here as workbench sections mature. Keep
+    intelligence generation outside the website package.
+"""
 
+from __future__ import annotations
 
-@app.get("/")
-def home(request: Request):
-    return templates.TemplateResponse("landing.html", {"request": request})
+from pathlib import Path
 
-
-@app.get("/trend/reports")
-def trend_reports(request: Request):
-    # Mock data
-    mock_reports = [
-        {"id": 1, "title": "Trend Report 1", "date": "2023-01-01"},
-        {"id": 2, "title": "Trend Report 2", "date": "2023-01-02"},
-    ]
-    return templates.TemplateResponse("trend_reports.html", {
-        "request": request,
-        "reports": mock_reports
-    })
+from website.compat.fastapi import FastAPI, StaticFiles
+from website.routes import intelligence, operator
 
 
-@app.get("/friction/reports")
-def friction_reports(request: Request):
-    # Mock data
-    mock_reports = [
-        {"id": 1, "title": "Friction Report 1", "date": "2023-01-01"},
-        {"id": 2, "title": "Friction Report 2", "date": "2023-01-02"},
-    ]
-    return templates.TemplateResponse("friction_reports.html", {
-        "request": request,
-        "reports": mock_reports
-    })
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+WEBSITE_ROOT = Path(__file__).resolve().parent
+DEFAULT_DB_FILE = PROJECT_ROOT / "database" / "intelligence_platform.sqlite"
+DEFAULT_MIGRATIONS_DIR = PROJECT_ROOT / "database" / "migrations"
 
 
-@app.get("/report/{id}")
-def report_detail(request: Request, id: int):
-    # Mock data
-    mock_report = {
-        "id": id,
-        "title": f"Report {id}",
-        "content": "This is the content of report number " + str(id),
-        "date": "2023-01-01"
-    }
-    return templates.TemplateResponse("report_detail.html", {
-        "request": request,
-        "report": mock_report
-    })
+def create_app(db_file=DEFAULT_DB_FILE, migrations_dir=DEFAULT_MIGRATIONS_DIR):
+    """Create and configure the read-only Intelligence Workbench app."""
+    workbench = FastAPI(
+        title="Intelligence Workbench",
+        version="2.0.0",
+    )
+    workbench.state.db_file = Path(db_file)
+    workbench.state.migrations_dir = Path(migrations_dir)
+
+    workbench.mount(
+        "/static",
+        StaticFiles(directory=WEBSITE_ROOT / "static"),
+        name="static",
+    )
+
+    intelligence.register_routes(workbench)
+    operator.register_routes(workbench)
+
+    return workbench
 
 
-@app.get("/evidence/{id}")
-def evidence_detail(request: Request, id: int):
-    # Mock data
-    mock_evidence = {
-        "id": id,
-        "title": f"Evidence {id}",
-        "content": "This is the content of evidence number " + str(id),
-        "date": "2023-01-01"
-    }
-    return templates.TemplateResponse("evidence_detail.html", {
-        "request": request,
-        "evidence": mock_evidence
-    })
-
-
-@app.get("/source/{id}")
-def source_detail(request: Request, id: int):
-    # Mock data
-    mock_source = {
-        "id": id,
-        "name": f"Source {id}",
-        "url": "https://example.com",
-        "type": "Web Source"
-    }
-    return templates.TemplateResponse("source_detail.html", {
-        "request": request,
-        "source": mock_source
-    })
-
-
-@app.get("/operator")
-def operator_dashboard(request: Request):
-    # Mock data
-    mock_data = {
-        "users": 100,
-        "reports_generated": 50,
-        "evidence_count": 200
-    }
-    return templates.TemplateResponse("operator_dashboard.html", {
-        "request": request,
-        "data": mock_data
-    })
+app = create_app()

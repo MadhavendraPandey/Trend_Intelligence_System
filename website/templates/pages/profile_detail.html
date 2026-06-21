@@ -1,0 +1,98 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+{% import "components/badge.html" as badge %}
+{% import "components/empty_state.html" as empty %}
+
+{% block content %}
+  <header class="section-header">
+    <p class="eyebrow">Intelligence Profile #{{ profile.id }}</p>
+    <h1>{{ profile.title }}</h1>
+    <p class="muted-text">{{ profile.description or "No extended description provided." }}</p>
+  </header>
+
+  <section class="detail-grid">
+    {% call card.panel("Profile summary", "Discovery metadata and validation summary.") %}
+      <dl class="record-list">
+        <dt>Status</dt><dd>{{ badge.status(profile.status) }}</dd>
+        <dt>Created</dt><dd>{{ profile.created_at }}</dd>
+        <dt>Updated</dt><dd>{{ profile.updated_at }}</dd>
+        <dt>Reference</dt><dd><a href="/candidates/{{ profile.candidate_friction_id }}">Candidate Signal #{{ profile.candidate_friction_id }}</a></dd>
+        <dt>Validation</dt><dd>{{ profile.validation_summary or "Validation summary pending..." }}</dd>
+      </dl>
+    {% endcall %}
+
+    {% call card.panel("Evidence counts", "Current evidence-backed totals.") %}
+      <div class="metrics-grid">
+        <div class="metric-mini">
+          <span class="metric-value">{{ profile.evidence_count }}</span>
+          <span class="metric-label">Observations</span>
+        </div>
+        <div class="metric-mini">
+          <span class="metric-value">{{ profile.source_count }}</span>
+          <span class="metric-label">Sources</span>
+        </div>
+        <div class="metric-mini">
+          <span class="metric-value">{{ profile.group_count }}</span>
+          <span class="metric-label">Groups</span>
+        </div>
+        <div class="metric-mini">
+          <span class="metric-value">{{ profile.post_count }}</span>
+          <span class="metric-label">Posts</span>
+        </div>
+      </div>
+    {% endcall %}
+  </section>
+
+  {% call card.panel("History", "Immutable snapshots and supporting evidence chains.") %}
+    {% if snapshots %}
+      <div class="mini-timeline">
+        {% for s in snapshots[:10] %}
+          <div class="timeline-tick {{ 'active' if loop.first }}" title="{{ s.snapshot_at }}: {{ s.evidence_count }} obs"></div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endcall %}
+
+  <section class="stack">
+    {% for trace in trace_groups %}
+      <article class="trace-card">
+        <div class="trace-strip">
+          <span>Profile #{{ profile.id }}</span>
+          <span>Group #{{ trace.group.id }}</span>
+          <span>Evidence</span>
+          <span>Post</span>
+          <span>Source</span>
+        </div>
+
+        <h3><a href="/groups/{{ trace.group.id }}">{{ trace.group.title }}</a></h3>
+        <p>{{ trace.group.description or "" }}</p>
+
+        <div class="nested-list">
+          {% for item in trace.evidence_members %}
+            <div class="nested-row">
+              <div>
+                <strong>Evidence #{{ item.evidence.evidence_id }}</strong>
+                <p class="observation-text">{{ item.evidence.observation }}</p>
+                <div class="trace-inline">
+                  {% if item.post %}
+                    <span class="tag">Post: {{ item.post.title }}</span>
+                  {% endif %}
+                  {% if item.source %}
+                    <span class="tag">Source: {{ item.source.name }} ({{ item.source.source_type }})</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="row-actions">
+                <a href="/evidence/{{ item.evidence.evidence_id }}" class="action-link">Inspect Evidence -></a>
+              </div>
+            </div>
+          {% else %}
+            {{ empty.empty_state("No evidence members", "This group has no linked evidence.") }}
+          {% endfor %}
+        </div>
+      </article>
+    {% else %}
+      {{ empty.empty_state("No supporting groups", "This profile has no evidence group links.") }}
+    {% endfor %}
+  </section>
+{% endblock %}

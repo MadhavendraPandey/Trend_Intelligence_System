@@ -1,29 +1,29 @@
 {
     "generated_at": "2026-06-21",
     "overview": {
-        "total_articles": 1290,
-        "analyzed_articles": 100,
+        "total_articles": 1334,
+        "analyzed_articles": 150,
         "source_counts": {
             "rss": 405,
-            "github": 715,
-            "hackernews": 59,
+            "github": 751,
+            "hackernews": 67,
             "arxiv": 111
         }
     },
     "collection_funnel": {
         "rss": {
-            "seen": 36548,
-            "duplicates_removed": 7925,
-            "quality_removed": 435,
-            "irrelevant_removed": 25875,
+            "seen": 38781,
+            "duplicates_removed": 8261,
+            "quality_removed": 457,
+            "irrelevant_removed": 27750,
             "stored": 2310
         },
         "github": {
-            "seen": 12993,
-            "duplicates_removed": 6141,
-            "quality_removed": 66,
-            "irrelevant_removed": 4496,
-            "stored": 2290
+            "seen": 13797,
+            "duplicates_removed": 6632,
+            "quality_removed": 73,
+            "irrelevant_removed": 4766,
+            "stored": 2326
         },
         "reddit": {
             "seen": 0,
@@ -33,17 +33,17 @@
             "stored": 0
         },
         "hackernews": {
-            "seen": 1800,
-            "duplicates_removed": 273,
-            "quality_removed": 7,
-            "irrelevant_removed": 1416,
-            "stored": 104
+            "seen": 1920,
+            "duplicates_removed": 291,
+            "quality_removed": 8,
+            "irrelevant_removed": 1509,
+            "stored": 112
         },
         "arxiv": {
-            "seen": 1625,
-            "duplicates_removed": 668,
+            "seen": 1725,
+            "duplicates_removed": 721,
             "quality_removed": 14,
-            "irrelevant_removed": 697,
+            "irrelevant_removed": 744,
             "stored": 246
         }
     },
@@ -52,7 +52,7 @@
             "domain": "Artificial Intelligence",
             "theme": "Foundation Models",
             "topic": "Large Language Models",
-            "mentions": 643,
+            "mentions": 674,
             "source_count": 4,
             "category_count": 8,
             "source_types": [
@@ -81,7 +81,7 @@
                 "foundation model",
                 "large language model"
             ],
-            "trend_score": 723,
+            "trend_score": 754,
             "trend_level": "DOMINANT",
             "confidence": "HIGH",
             "rank": 1
@@ -90,7 +90,7 @@
             "domain": "Artificial Intelligence",
             "theme": "Agentic Systems",
             "topic": "AI Agents",
-            "mentions": 382,
+            "mentions": 403,
             "source_count": 4,
             "category_count": 8,
             "source_types": [
@@ -121,7 +121,7 @@
                 "autogen",
                 "crewai"
             ],
-            "trend_score": 462,
+            "trend_score": 483,
             "trend_level": "DOMINANT",
             "confidence": "HIGH",
             "rank": 2
@@ -130,7 +130,7 @@
             "domain": "Artificial Intelligence",
             "theme": "Knowledge Systems",
             "topic": "RAG",
-            "mentions": 109,
+            "mentions": 118,
             "source_count": 4,
             "category_count": 6,
             "source_types": [
@@ -153,7 +153,7 @@
                 "vector database",
                 "pinecone"
             ],
-            "trend_score": 179,
+            "trend_score": 188,
             "trend_level": "DOMINANT",
             "confidence": "HIGH",
             "rank": 3
@@ -162,7 +162,7 @@
             "domain": "Artificial Intelligence",
             "theme": "Local AI",
             "topic": "Local LLMs",
-            "mentions": 46,
+            "mentions": 51,
             "source_count": 3,
             "category_count": 5,
             "source_types": [
@@ -183,7 +183,7 @@
                 "llama.cpp",
                 "local llm"
             ],
-            "trend_score": 101,
+            "trend_score": 106,
             "trend_level": "DOMINANT",
             "confidence": "MEDIUM",
             "rank": 4
@@ -192,7 +192,7 @@
             "domain": "Automation",
             "theme": "Workflow Automation",
             "topic": "Browser Automation",
-            "mentions": 51,
+            "mentions": 52,
             "source_count": 2,
             "category_count": 5,
             "source_types": [
@@ -211,7 +211,7 @@
                 "browser automation",
                 "selenium"
             ],
-            "trend_score": 96,
+            "trend_score": 97,
             "trend_level": "STRONG",
             "confidence": "MEDIUM",
             "rank": 5
@@ -220,7 +220,7 @@
             "domain": "Cybersecurity",
             "theme": "Offensive Security",
             "topic": "OSINT",
-            "mentions": 35,
+            "mentions": 37,
             "source_count": 3,
             "category_count": 3,
             "source_types": [
@@ -237,7 +237,7 @@
                 "osint",
                 "social engineering"
             ],
-            "trend_score": 80,
+            "trend_score": 82,
             "trend_level": "STRONG",
             "confidence": "MEDIUM",
             "rank": 6
@@ -362,11 +362,11 @@
                 "hackernews",
                 "rss"
             ],
-            "articles": 364,
-            "github_repos": 234,
-            "hn_posts": 16,
+            "articles": 383,
+            "github_repos": 250,
+            "hn_posts": 19,
             "research_present": true,
-            "signal_strength": 8141.61,
+            "signal_strength": 8546.86,
             "signal_level": "VERY_STRONG",
             "confidence": "HIGH",
             "reason": "research backing, multi-source coverage, strong community engagement",
@@ -383,11 +383,11 @@
                 "hackernews",
                 "rss"
             ],
-            "articles": 51,
-            "github_repos": 45,
+            "articles": 53,
+            "github_repos": 47,
             "hn_posts": 1,
             "research_present": true,
-            "signal_strength": 1659.11,
+            "signal_strength": 1682.86,
             "signal_level": "VERY_STRONG",
             "confidence": "HIGH",
             "reason": "research backing, multi-source coverage, strong community engagement",
@@ -530,10 +530,10 @@
             "domain": "Artificial Intelligence",
             "theme": "Agentic Systems",
             "topic": "AI Agents",
-            "trend_score": 462,
-            "signal_strength": 8141.61,
+            "trend_score": 483,
+            "signal_strength": 8546.86,
             "acceleration_score": 0,
-            "opportunity_score": 2581.08,
+            "opportunity_score": 2708.96,
             "opportunity_level": "BREAKOUT",
             "confidence": "MEDIUM",
             "reason": "Driven primarily by signal strength",
@@ -543,10 +543,10 @@
             "domain": "Cybersecurity",
             "theme": "Defensive Security",
             "topic": "Threat Intelligence",
-            "trend_score": 57,
-            "signal_strength": 1659.11,
+            "trend_score": 58,
+            "signal_strength": 1682.86,
             "acceleration_score": 0,
-            "opportunity_score": 514.83,
+            "opportunity_score": 522.26,
             "opportunity_level": "BREAKOUT",
             "confidence": "MEDIUM",
             "reason": "Driven primarily by signal strength",
@@ -556,10 +556,10 @@
             "domain": "Artificial Intelligence",
             "theme": "Foundation Models",
             "topic": "Large Language Models",
-            "trend_score": 723,
+            "trend_score": 754,
             "signal_strength": 0,
             "acceleration_score": 0,
-            "opportunity_score": 216.9,
+            "opportunity_score": 226.2,
             "opportunity_level": "BREAKOUT",
             "confidence": "LOW",
             "reason": "Driven primarily by trend activity",
@@ -582,10 +582,10 @@
             "domain": "Artificial Intelligence",
             "theme": "Knowledge Systems",
             "topic": "RAG",
-            "trend_score": 179,
+            "trend_score": 188,
             "signal_strength": 0,
             "acceleration_score": 0,
-            "opportunity_score": 53.7,
+            "opportunity_score": 56.4,
             "opportunity_level": "LOW_PRIORITY",
             "confidence": "LOW",
             "reason": "Driven primarily by trend activity",
@@ -595,10 +595,10 @@
             "domain": "Artificial Intelligence",
             "theme": "Local AI",
             "topic": "Local LLMs",
-            "trend_score": 101,
+            "trend_score": 106,
             "signal_strength": 0,
             "acceleration_score": 0,
-            "opportunity_score": 30.3,
+            "opportunity_score": 31.8,
             "opportunity_level": "LOW_PRIORITY",
             "confidence": "LOW",
             "reason": "Driven primarily by trend activity",
@@ -608,10 +608,10 @@
             "domain": "Automation",
             "theme": "Workflow Automation",
             "topic": "Browser Automation",
-            "trend_score": 96,
+            "trend_score": 97,
             "signal_strength": 0,
             "acceleration_score": 0,
-            "opportunity_score": 28.8,
+            "opportunity_score": 29.1,
             "opportunity_level": "LOW_PRIORITY",
             "confidence": "LOW",
             "reason": "Driven primarily by trend activity",
@@ -621,10 +621,10 @@
             "domain": "Cybersecurity",
             "theme": "Offensive Security",
             "topic": "OSINT",
-            "trend_score": 80,
+            "trend_score": 82,
             "signal_strength": 0,
             "acceleration_score": 0,
-            "opportunity_score": 24.0,
+            "opportunity_score": 24.6,
             "opportunity_level": "LOW_PRIORITY",
             "confidence": "LOW",
             "reason": "Driven primarily by trend activity",

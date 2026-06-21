@@ -1,0 +1,86 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+{% import "components/badge.html" as badge %}
+{% import "components/empty_state.html" as empty %}
+
+{% block content %}
+  <div class="split-layout">
+    <div class="split-main">
+      {% call card.panel("Candidate", "Candidate -> Group -> Evidence -> Post") %}
+        <dl class="record-list">
+          <dt>ID</dt><dd>#{{ candidate.id }}</dd>
+          <dt>Title</dt><dd>{{ candidate.title }}</dd>
+          <dt>Description</dt><dd>{{ candidate.description or "" }}</dd>
+          <dt>Status</dt><dd>{{ badge.status(candidate.status) }}</dd>
+          <dt>Metadata</dt><dd><code>{{ candidate.metadata_json or "{}" }}</code></dd>
+        </dl>
+      {% endcall %}
+    </div>
+
+    <div class="split-side">
+      {% call card.panel("Validation Proof", "Evidence-backed discovery") %}
+        <div class="validation-summary">
+          <p class="summary-text">{{ candidate.validation_summary or "Validation summary pending..." }}</p>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-mini">
+            <span class="metric-value">{{ candidate.evidence_count }}</span>
+            <span class="metric-label">Observations</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value">{{ candidate.source_count }}</span>
+            <span class="metric-label">Sources</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value">{{ candidate.group_count }}</span>
+            <span class="metric-label">Groups</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-value">{{ candidate.post_count }}</span>
+            <span class="metric-label">Posts</span>
+          </div>
+          {% if candidate.contradiction_count > 0 %}
+            <div class="metric-mini danger">
+              <span class="metric-value">{{ candidate.contradiction_count }}</span>
+              <span class="metric-label">Contradictions</span>
+            </div>
+          {% endif %}
+        </div>
+      {% endcall %}
+    </div>
+  </div>
+
+  <section class="stack">
+    {% for trace in trace_groups %}
+      <article class="trace-card">
+        <div class="trace-strip">
+          <span>Candidate #{{ candidate.id }}</span>
+          <span>Group #{{ trace.group.id }}</span>
+          <span>Evidence</span>
+          <span>Post</span>
+        </div>
+        <h3><a href="/groups/{{ trace.group.id }}">{{ trace.group.title }}</a></h3>
+        <p>{{ trace.group.description or "" }}</p>
+
+        <div class="nested-list">
+          {% for item in trace.evidence_members %}
+            <div class="nested-row">
+              <a href="/evidence/{{ item.evidence.evidence_id }}">Evidence #{{ item.evidence.evidence_id }}</a>
+              <span>{{ item.evidence.observation }}</span>
+              {% if item.post %}
+                <small>Post #{{ item.post.id }}: {{ item.post.title }}</small>
+              {% endif %}
+              {% if item.source %}
+                <small>Source: {{ item.source.name }} ({{ item.source.source_type }})</small>
+              {% endif %}
+            </div>
+          {% else %}
+            {{ empty.empty_state("No evidence members", "This group has no linked evidence.") }}
+          {% endfor %}
+        </div>
+      </article>
+    {% else %}
+      {{ empty.empty_state("No supporting groups", "This candidate has no evidence group links.") }}
+    {% endfor %}
+  </section>
+{% endblock %}

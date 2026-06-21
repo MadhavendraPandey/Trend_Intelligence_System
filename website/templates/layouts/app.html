@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page_title }} | Intelligence Workbench</title>
+    <link rel="stylesheet" href="{{ request.url_for('static', path='css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ request.url_for('static', path='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ request.url_for('static', path='css/components.css') }}">
+    <link rel="stylesheet" href="{{ request.url_for('static', path='css/pages.css') }}">
+    <script defer src="{{ request.url_for('static', path='js/theme.js') }}"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="nav-container">
+        {% include "components/nav.html" %}
+      </div>
+
+      <div class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Intelligence Platform</p>
+            <h1>{{ page_title }}</h1>
+          </div>
+          <form class="search-bar topbar-search" action="/search" method="get">
+            <input type="search" name="q" placeholder="Search reports, evidence, sources" value="{{ request.query_params.get('q', '') if request else '' }}">
+            <button type="submit">Search</button>
+          </form>
+          <div class="topbar-actions">
+            <span class="system-pill">V2.0</span>
+            <span class="system-pill muted-pill">SQLite</span>
+          </div>
+        </header>
+
+        <main class="content page-enter">
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

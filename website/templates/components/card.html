@@ -1,0 +1,21 @@
+{% macro panel(title=None, subtitle=None, class_name="") -%}
+  <section class="panel {{ class_name }}">
+    {% if title or subtitle %}
+      <div class="panel-header">
+        {% if title %}<h2>{{ title }}</h2>{% endif %}
+        {% if subtitle %}<p>{{ subtitle }}</p>{% endif %}
+      </div>
+    {% endif %}
+    <div class="panel-body">
+      {{ caller() }}
+    </div>
+  </section>
+{%- endmacro %}
+
+{% macro metric(label, value, note=None) -%}
+  <div class="metric-card">
+    <span>{{ label }}</span>
+    <strong>{{ value }}</strong>
+    {% if note %}<small>{{ note }}</small>{% endif %}
+  </div>
+{%- endmacro %}

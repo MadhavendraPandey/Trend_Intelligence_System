@@ -1,0 +1,96 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+{% import "components/badge.html" as badge %}
+{% import "components/table.html" as table %}
+{% import "components/empty_state.html" as empty %}
+
+{% block content %}
+  <header class="section-header">
+    <p class="eyebrow">Source #{{ source.id }}</p>
+    <h1>{{ source.name }}</h1>
+    <p class="muted-text">{{ source.base_url or "No base URL recorded." }}</p>
+  </header>
+
+  <section class="detail-grid">
+    {% call card.panel("Source metadata", "Collection origin details.") %}
+      <dl class="record-list">
+        <dt>Type</dt><dd>{{ source.source_type }}</dd>
+        <dt>Owner</dt><dd>{{ source.owner_module }}</dd>
+        <dt>Status</dt><dd>{{ badge.status('active' if source.is_active else 'inactive') }}</dd>
+        <dt>Posts</dt><dd>{{ post_count }}</dd>
+        <dt>Runs</dt><dd>{{ run_count }}</dd>
+        <dt>Created</dt><dd>{{ source.created_at }}</dd>
+        <dt>Updated</dt><dd>{{ source.updated_at }}</dd>
+      </dl>
+    {% endcall %}
+
+    {% call card.panel("Latest run", "Most recent collection activity for this source.") %}
+      {% if latest_run %}
+        <dl class="record-list">
+          <dt>ID</dt><dd>#{{ latest_run.id }}</dd>
+          <dt>Status</dt><dd>{{ latest_run.status }}</dd>
+          <dt>Started</dt><dd>{{ latest_run.started_at }}</dd>
+          <dt>Finished</dt><dd>{{ latest_run.finished_at or "" }}</dd>
+          <dt>Seen</dt><dd>{{ latest_run.items_seen }}</dd>
+          <dt>Stored</dt><dd>{{ latest_run.items_stored }}</dd>
+        </dl>
+      {% else %}
+        {{ empty.empty_state("No runs yet", "This source has not been collected yet.") }}
+      {% endif %}
+    {% endcall %}
+  </section>
+
+  {% call card.panel("Recent posts", "Latest source items preserved for traceability.") %}
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Published</th>
+          <th>Captured</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for post in posts %}
+          <tr>
+            <td>#{{ post.id }}</td>
+            <td>{{ post.title }}</td>
+            <td>{{ post.published_at or "" }}</td>
+            <td>{{ post.captured_at or "" }}</td>
+          </tr>
+        {% else %}
+          {{ table.empty_row(4, "No posts found for this source.") }}
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endcall %}
+
+  {% call card.panel("Recent runs", "Operational history for the source.") %}
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Seen</th>
+          <th>Stored</th>
+          <th>Started</th>
+          <th>Finished</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in runs %}
+          <tr>
+            <td>#{{ run.id }}</td>
+            <td>{{ badge.status(run.status) }}</td>
+            <td>{{ run.items_seen }}</td>
+            <td>{{ run.items_stored }}</td>
+            <td>{{ run.started_at }}</td>
+            <td>{{ run.finished_at or "" }}</td>
+          </tr>
+        {% else %}
+          {{ table.empty_row(6, "No runs found for this source.") }}
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endcall %}
+{% endblock %}

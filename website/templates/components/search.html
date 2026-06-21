@@ -1,0 +1,7 @@
+{% macro search_box(action, query="", placeholder="Search") -%}
+  <form class="searchbar" action="{{ action }}" method="get">
+    <input type="search" name="q" value="{{ query }}" placeholder="{{ placeholder }}">
+    <button type="submit">Search</button>
+  </form>
+{%- endmacro %}
+

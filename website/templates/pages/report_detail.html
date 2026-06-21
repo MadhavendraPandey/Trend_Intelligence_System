@@ -1,0 +1,72 @@
+{% extends "layouts/app.html" %}
+{% import "components/card.html" as card %}
+{% import "components/badge.html" as badge %}
+{% import "components/empty_state.html" as empty %}
+
+{% block content %}
+  <header class="section-header">
+    <p class="eyebrow">{{ report_type }} Report</p>
+    <h1>{{ report.title }}</h1>
+    <p class="muted-text">{{ executive_summary }}</p>
+  </header>
+
+  <section class="detail-grid">
+    {% call card.panel("Report detail", "Core report metadata.") %}
+      <dl class="record-list">
+        <dt>Title</dt><dd>{{ report.title }}</dd>
+        <dt>Executive Summary</dt><dd>{{ executive_summary }}</dd>
+        <dt>Description</dt><dd>{{ description or "" }}</dd>
+        <dt>Evidence Count</dt><dd>{{ evidence_count }}</dd>
+        <dt>Source Count</dt><dd>{{ source_count }}</dd>
+        <dt>Created Date</dt><dd>{{ created_at or "" }}</dd>
+        <dt>Updated Date</dt><dd>{{ updated_at or "" }}</dd>
+      </dl>
+    {% endcall %}
+
+    {% call card.panel("Why this report exists", "Supporting evidence at a glance.") %}
+      <div class="nested-list no-margin">
+        {% for item in evidence_items %}
+          <article class="nested-row">
+            <div class="flex-1">
+              <strong>{{ item.evidence.observation }}</strong>
+              <p class="muted-text">{{ badge.label(item.evidence.evidence_type) }} · {{ item.evidence.published_at or item.evidence.captured_at or "" }}</p>
+              <div class="trace-inline">
+                {% if item.source %}
+                  <span class="tag">{{ item.source.name }}</span>
+                  <span class="tag">{{ item.source.source_type }}</span>
+                {% endif %}
+              </div>
+            </div>
+            <div class="row-actions">
+              {% if item.evidence.source_url %}
+                <a class="action-link" href="{{ item.evidence.source_url }}">Direct Link -></a>
+              {% elif item.post and item.post.url %}
+                <a class="action-link" href="{{ item.post.url }}">Direct Link -></a>
+              {% endif %}
+            </div>
+          </article>
+        {% else %}
+          {{ empty.empty_state("No supporting evidence", "This report does not have linked evidence yet.") }}
+        {% endfor %}
+      </div>
+    {% endcall %}
+  </section>
+
+  {% call card.panel("Supporting sources", "Every source contributing to the report.") %}
+    <div class="nested-list no-margin">
+      {% for item in sources %}
+        <div class="status-row">
+          <div class="flex-1">
+            <strong>{{ item.source.name }}</strong>
+            <small>{{ item.source.source_type }} · Observation Count: {{ item.observation_count }} · Last Seen: {{ item.last_seen or "" }}</small>
+          </div>
+          <div class="row-actions">
+            <a class="action-link" href="/source/{{ item.source.id }}">Direct Link -></a>
+          </div>
+        </div>
+      {% else %}
+        {{ empty.empty_state("No supporting sources", "This report does not have linked sources yet.") }}
+      {% endfor %}
+    </div>
+  {% endcall %}
+{% endblock %}

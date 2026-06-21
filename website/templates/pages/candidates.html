@@ -1,0 +1,40 @@
+{% extends "layouts/app.html" %}
+{% import "components/table.html" as table %}
+{% import "components/badge.html" as badge %}
+
+{% block content %}
+  <section class="page-heading">
+    <div>
+      <p class="eyebrow">Candidate frictions</p>
+      <h2>Generated hypotheses that remain traceable to evidence groups.</h2>
+    </div>
+  </section>
+
+  <section class="table-panel">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Groups</th>
+          <th>Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in candidate_rows %}
+          <tr>
+            <td><a href="/candidates/{{ row.candidate.id }}">#{{ row.candidate.id }}</a></td>
+            <td class="wide-cell">{{ row.candidate.title }}</td>
+            <td>{{ badge.status(row.candidate.status) }}</td>
+            <td>{{ row.group_count }}</td>
+            <td>{{ row.candidate.updated_at }}</td>
+          </tr>
+        {% else %}
+          {{ table.empty_row(5, "No candidate frictions found.") }}
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}
+
