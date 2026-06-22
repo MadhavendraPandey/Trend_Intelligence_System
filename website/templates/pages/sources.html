@@ -1,26 +1,22 @@
 {% extends "layouts/app.html" %}
 {% import "components/table.html" as table %}
-{% import "components/badge.html" as badge %}
-{% import "components/empty_state.html" as empty %}
 
 {% block content %}
   <header class="section-header">
-    <p class="eyebrow">Source Traceability</p>
+    <p class="eyebrow">Intelligence Artifacts</p>
     <h1>Sources</h1>
-    <p class="muted-text">Collection origins, recent runs, and current post volume.</p>
+    <p class="muted-text">Managed collection points for intelligence gathering.</p>
   </header>
 
   <section class="panel">
     <table class="data-table">
       <thead>
         <tr>
-          <th>Source</th>
+          <th>Name</th>
           <th>Type</th>
-          <th>Owner</th>
-          <th>Status</th>
           <th class="numeric">Posts</th>
           <th class="numeric">Runs</th>
-          <th>Latest Run</th>
+          <th>Latest Activity</th>
         </tr>
       </thead>
       <tbody>
@@ -28,25 +24,23 @@
           <tr>
             <td>
               <div class="primary-cell">
-                <a href="/sources/{{ row.source.id }}">{{ row.source.name }}</a>
-                <small class="muted-text">{{ row.source.base_url or "" }}</small>
+                <a href="/source/{{ row.source.id }}">{{ row.source.name }}</a>
+                <small class="muted-text">{{ row.source.base_url }}</small>
               </div>
             </td>
-            <td>{{ row.source.source_type }}</td>
-            <td>{{ row.source.owner_module }}</td>
-            <td>{{ badge.status('active' if row.source.is_active else 'inactive') }}</td>
+            <td><span class="badge">{{ row.source.source_type }}</span></td>
             <td class="numeric">{{ row.post_count }}</td>
             <td class="numeric">{{ row.run_count }}</td>
             <td>
               {% if row.latest_run %}
-                <span class="muted-text">{{ row.latest_run.status }} @ {{ row.latest_run.started_at }}</span>
+                {{ row.latest_run.completed_at or row.latest_run.started_at }}
               {% else %}
-                <span class="muted-text">No runs yet</span>
+                <span class="muted-text">Never run</span>
               {% endif %}
             </td>
           </tr>
         {% else %}
-          {{ table.empty_row(7, "No sources found.") }}
+          {{ table.empty_row(5, "No sources found.") }}
         {% endfor %}
       </tbody>
     </table>

@@ -1,68 +1,64 @@
 {% extends "layouts/app.html" %}
 {% import "components/card.html" as card %}
-{% import "components/badge.html" as badge %}
-{% import "components/empty_state.html" as empty %}
 
 {% block content %}
+  <header class="section-header">
+    <p class="eyebrow">Evidence Detail</p>
+    <h1>{{ evidence.observation | truncate(50) }}</h1>
+    <p class="muted-text">Traceability identity: {{ evidence.evidence_id }}</p>
+  </header>
+
   <section class="detail-grid">
-    {% call card.panel("Evidence record", "Atomic observation and source reference.") %}
-      <dl class="record-list">
-        <dt>ID</dt><dd>#{{ evidence.evidence_id }}</dd>
-        <dt>Format</dt><dd>{{ badge.label(evidence.evidence_type) }}</dd>
-        <dt>Observation</dt><dd>{{ evidence.observation }}</dd>
-        <dt>Source URL</dt><dd>{% if evidence.source_url %}<a href="{{ evidence.source_url }}">{{ evidence.source_url }}</a>{% endif %}</dd>
-        <dt>Source type</dt><dd>{{ evidence.source_type or "" }}</dd>
-        <dt>Author</dt><dd>{{ evidence.author or "" }}</dd>
-        <dt>Published</dt><dd>{{ evidence.published_at or "" }}</dd>
-        <dt>Captured</dt><dd>{{ evidence.captured_at or "" }}</dd>
-        <dt>Context</dt><dd>{{ evidence.context or "" }}</dd>
-        <dt>Metadata</dt><dd><code>{{ evidence.metadata_json or "{}" }}</code></dd>
-      </dl>
+    {% call card.panel("Observation", "The atomic fact recorded.") %}
+       <div class="content-box">
+          <p class="large-copy">{{ evidence.observation }}</p>
+          <div class="spacer-md"></div>
+          <p class="eyebrow">Raw Content</p>
+          <div class="code-block">{{ evidence.content or "No content available." }}</div>
+       </div>
     {% endcall %}
 
-    {% call card.panel("Source post", "The post that produced this observation.") %}
-      {% if post %}
+    <div class="stack">
+      {% call card.panel("Source metadata", "Origin of the evidence.") %}
         <dl class="record-list">
-          <dt>Post ID</dt><dd>#{{ post.id }}</dd>
-          <dt>Title</dt><dd>{{ post.title }}</dd>
-          <dt>URL</dt><dd>{% if post.url %}<a href="{{ post.url }}">{{ post.url }}</a>{% endif %}</dd>
-          <dt>Source</dt><dd>{{ post.source_type }}</dd>
-          <dt>Content</dt><dd>{{ post.content or "" }}</dd>
+          <dt>Source Name</dt>
+          <dd>
+            {% if source %}
+              <a href="{{ url_for('source_detail', source_id=source.id) }}">{{ source.name }}</a>
+            {% else %}
+              Unknown
+            {% endif %}
+          </dd>
+          <dt>Source Type</dt><dd>{{ source.source_type if source else "Unknown" }}</dd>
+          <dt>Evidence Type</dt><dd><span class="badge">{{ evidence.evidence_type }}</span></dd>
+          <dt>Collected At</dt><dd>{{ evidence.captured_at or "" }}</dd>
+          <dt>Published At</dt><dd>{{ evidence.published_at or "" }}</dd>
         </dl>
-      {% else %}
-        {{ empty.empty_state("Source post unavailable", "The source post could not be found.") }}
-      {% endif %}
-    {% endcall %}
-
-    {% call card.panel("Source", "The collection origin for this evidence.") %}
-      {% if source %}
-        <dl class="record-list">
-          <dt>ID</dt><dd>#{{ source.id }}</dd>
-          <dt>Name</dt><dd><a href="/sources/{{ source.id }}">{{ source.name }}</a></dd>
-          <dt>Type</dt><dd>{{ source.source_type }}</dd>
-          <dt>Owner</dt><dd>{{ source.owner_module }}</dd>
-          <dt>Base URL</dt><dd>{% if source.base_url %}<a href="{{ source.base_url }}">{{ source.base_url }}</a>{% endif %}</dd>
-        </dl>
-      {% else %}
-        {{ empty.empty_state("Source unavailable", "The source record could not be found.") }}
-      {% endif %}
-    {% endcall %}
-  </section>
-
-  {% call card.panel("Downstream traceability", "Groups and candidates that currently reference this evidence.") %}
-    {% for link in group_links %}
-      <div class="trace-block">
-        <a href="/groups/{{ link.group.id }}">Group #{{ link.group.id }}: {{ link.group.title }}</a>
-        {% if link.candidates %}
-          <div class="trace-inline">
-            {% for candidate in link.candidates %}
-              <a href="/candidates/{{ candidate.id }}">Candidate #{{ candidate.id }}</a>
-            {% endfor %}
-          </div>
+        <div class="spacer-md"></div>
+        {% if evidence.source_url %}
+           <a href="{{ evidence.source_url }}" class="btn btn-full" target="_blank">View Original Source</a>
+        {% elif post and post.url %}
+           <a href="{{ post.url }}" class="btn btn-full" target="_blank">View Original Post</a>
         {% endif %}
-      </div>
-    {% else %}
-      {{ empty.empty_state("No downstream links", "This evidence has not been grouped or linked to a candidate.") }}
-    {% endfor %}
-  {% endcall %}
+      {% endcall %}
+
+      {% call card.panel("Intelligence Links", "Associated reports.") %}
+         <div class="nested-list no-margin">
+           {% for link in group_links %}
+             {% for candidate in link.candidates %}
+               <a href="/report/{{ candidate.id }}" class="status-row">
+                 <div class="flex-1">
+                   <strong>{{ candidate.title }}</strong>
+                   <small>Friction Intelligence</small>
+                 </div>
+                 <span class="action-arrow">→</span>
+               </a>
+             {% endfor %}
+           {% else %}
+             <p class="muted-text">No active report links found.</p>
+           {% endfor %}
+         </div>
+      {% endcall %}
+    </div>
+  </section>
 {% endblock %}

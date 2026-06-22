@@ -51,14 +51,14 @@ def landing_cards():
         {
             "title": "Trend Intelligence",
             "description": "Discover what is changing. Analyze emerging technologies, tools, research, startups, and signals.",
-            "href": "/trends",
+            "href": "/trend/reports",
             "button": "Explore Trends",
             "tone": "trend",
         },
         {
             "title": "Friction Intelligence",
             "description": "Discover recurring problems and unmet needs. Analyze repeated complaints, blockers, failures, and pain points.",
-            "href": "/frictions",
+            "href": "/friction/reports",
             "button": "Explore Frictions",
             "tone": "friction",
         },

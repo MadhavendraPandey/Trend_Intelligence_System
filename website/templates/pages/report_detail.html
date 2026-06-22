@@ -14,8 +14,22 @@
     {% call card.panel("Report detail", "Core report metadata.") %}
       <dl class="record-list">
         <dt>Title</dt><dd>{{ report.title }}</dd>
-        <dt>Executive Summary</dt><dd>{{ executive_summary }}</dd>
-        <dt>Description</dt><dd>{{ description or "" }}</dd>
+        {% if report_type == 'Trend' %}
+          <dt>Topic</dt><dd>{{ trend.topic }}</dd>
+          <dt>Domain</dt><dd>{{ trend.domain }}</dd>
+          <dt>Theme</dt><dd>{{ trend.theme }}</dd>
+          <dt>Trend Level</dt><dd><span class="badge">{{ trend.trend_level }}</span></dd>
+          <dt>Confidence</dt><dd>{{ trend.confidence }}</dd>
+          <dt>Rank</dt><dd>{{ trend.rank }}</dd>
+        {% else %}
+          <dt>Executive Summary</dt><dd>{{ executive_summary }}</dd>
+          <dt>Description</dt><dd>{{ description or "" }}</dd>
+          {% if friction.evolution %}
+            <dt>Evolution</dt><dd><span class="badge">{{ friction.evolution }}</span></dd>
+          {% endif %}
+          <dt>Recurrence Count</dt><dd>{{ friction.recurrence_count }}</dd>
+          <dt>Contradiction Count</dt><dd>{{ friction.contradiction_count }}</dd>
+        {% endif %}
         <dt>Evidence Count</dt><dd>{{ evidence_count }}</dd>
         <dt>Source Count</dt><dd>{{ source_count }}</dd>
         <dt>Created Date</dt><dd>{{ created_at or "" }}</dd>
@@ -23,50 +37,94 @@
       </dl>
     {% endcall %}
 
-    {% call card.panel("Why this report exists", "Supporting evidence at a glance.") %}
-      <div class="nested-list no-margin">
-        {% for item in evidence_items %}
-          <article class="nested-row">
-            <div class="flex-1">
-              <strong>{{ item.evidence.observation }}</strong>
-              <p class="muted-text">{{ badge.label(item.evidence.evidence_type) }} · {{ item.evidence.published_at or item.evidence.captured_at or "" }}</p>
-              <div class="trace-inline">
-                {% if item.source %}
-                  <span class="tag">{{ item.source.name }}</span>
-                  <span class="tag">{{ item.source.source_type }}</span>
-                {% endif %}
-              </div>
+    {% if report_type == 'Trend' %}
+      {% call card.panel("Entities & Categories", "Identified key players and classifications.") %}
+        <div class="stack gap-md">
+          <div>
+            <p class="eyebrow">Top Entities</p>
+            <div class="tag-cloud">
+              {% for entity in trend.top_entities %}
+                <span class="tag">{{ entity }}</span>
+              {% endfor %}
             </div>
-            <div class="row-actions">
-              {% if item.evidence.source_url %}
-                <a class="action-link" href="{{ item.evidence.source_url }}">Direct Link -></a>
-              {% elif item.post and item.post.url %}
-                <a class="action-link" href="{{ item.post.url }}">Direct Link -></a>
-              {% endif %}
+          </div>
+          <div>
+            <p class="eyebrow">Categories</p>
+            <div class="tag-cloud">
+              {% for cat in trend.categories %}
+                <span class="tag tag-outline">{{ cat }}</span>
+              {% endfor %}
             </div>
-          </article>
-        {% else %}
-          {{ empty.empty_state("No supporting evidence", "This report does not have linked evidence yet.") }}
+          </div>
+        </div>
+      {% endcall %}
+    {% elif report_type == 'Friction' %}
+      <div class="stack">
+        {% call card.panel("Traceability Chain", "Direct links to atomic evidence.") %}
+          <div class="nested-list no-margin">
+            {% for item in evidence_items %}
+              <article class="nested-row">
+                <div class="flex-1">
+                  <strong><a href="/evidence/{{ item.evidence.evidence_id }}">{{ item.evidence.observation | truncate(100) }}</a></strong>
+                  <p class="muted-text">{{ item.evidence.evidence_type }} · {{ item.evidence.published_at or item.evidence.captured_at }}</p>
+                  {% if item.source %}
+                    <div class="trace-inline">
+                       <span class="tag">{{ item.source.name }}</span>
+                    </div>
+                  {% endif %}
+                </div>
+              </article>
+            {% else %}
+               {{ empty.empty_state("No evidence found", "No supporting evidence links for this friction.") }}
+            {% endfor %}
+          </div>
+        {% endcall %}
+
+        {% if friction.relationships %}
+          {% call card.panel("Relationships", "Connections to other frictions.") %}
+            <div class="nested-list no-margin">
+              {% for rel in friction.relationships %}
+                <a href="/report/friction-{{ rel.id }}" class="status-row">
+                  <div class="flex-1">
+                    <strong>{{ rel.title }}</strong>
+                    <small>{{ rel.type }}</small>
+                  </div>
+                  <span class="action-arrow">→</span>
+                </a>
+              {% endfor %}
+            </div>
+          {% endcall %}
+        {% endif %}
+
+        {% if friction.contradictions %}
+           {% call card.panel("Contradictions", "Evidence challenging this friction.") %}
+             <div class="nested-list no-margin">
+               {% for contra in friction.contradictions %}
+                 <article class="nested-row border-error">
+                   <div class="flex-1">
+                     <strong>{{ contra.observation | truncate(100) }}</strong>
+                     <p class="muted-text">Reasoning: {{ contra.reasoning }}</p>
+                     <span class="tag tag-outline">{{ contra.source_type }}</span>
+                   </div>
+                   <div class="row-actions">
+                      <a href="/evidence/{{ contra.evidence_id }}" class="action-link">View Evidence</a>
+                   </div>
+                 </article>
+               {% endfor %}
+             </div>
+           {% endcall %}
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+
+  {% if report_type == 'Trend' %}
+    {% call card.panel("Source Coverage", "Cross-source validation.") %}
+      <div class="tag-cloud">
+        {% for stype in trend.source_types %}
+          <span class="badge">{{ stype }}</span>
         {% endfor %}
       </div>
     {% endcall %}
-  </section>
-
-  {% call card.panel("Supporting sources", "Every source contributing to the report.") %}
-    <div class="nested-list no-margin">
-      {% for item in sources %}
-        <div class="status-row">
-          <div class="flex-1">
-            <strong>{{ item.source.name }}</strong>
-            <small>{{ item.source.source_type }} · Observation Count: {{ item.observation_count }} · Last Seen: {{ item.last_seen or "" }}</small>
-          </div>
-          <div class="row-actions">
-            <a class="action-link" href="/source/{{ item.source.id }}">Direct Link -></a>
-          </div>
-        </div>
-      {% else %}
-        {{ empty.empty_state("No supporting sources", "This report does not have linked sources yet.") }}
-      {% endfor %}
-    </div>
-  {% endcall %}
+  {% endif %}
 {% endblock %}

@@ -9,6 +9,40 @@
     <p class="muted-text">Evidence-backed reports with direct traceability to evidence and sources.</p>
   </header>
 
+  {% if report_type == 'Trend' %}
+  <section class="panel no-margin">
+    <div class="panel-header">
+      <h2>Top Signals</h2>
+      <p class="muted-text">Consolidated signal strength across all sources.</p>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Topic</th>
+          <th>Domain</th>
+          <th>Level</th>
+          <th class="numeric">Articles</th>
+          <th class="numeric">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for signal in signals %}
+          <tr>
+            <td><strong>{{ signal.topic }}</strong></td>
+            <td>{{ signal.domain }}</td>
+            <td><span class="badge">{{ signal.signal_level }}</span></td>
+            <td class="numeric">{{ signal.articles }}</td>
+            <td class="numeric">{{ signal.signal_strength | round(1) }}</td>
+          </tr>
+        {% else %}
+          {{ table.empty_row(5, "No signals found.") }}
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  <div class="spacer-lg"></div>
+  {% endif %}
+
   <form method="GET" class="search-bar">
     <input type="search" name="q" class="search-input" placeholder="Search reports..." value="{{ query }}">
     <select name="source_type" class="filter-select">
@@ -32,6 +66,9 @@
       <thead>
         <tr>
           <th>Title</th>
+          {% if report_type == 'Trend' %}
+          <th>Level</th>
+          {% endif %}
           <th>Summary</th>
           <th class="numeric">Evidence</th>
           <th class="numeric">Sources</th>
@@ -47,13 +84,16 @@
                 <small class="muted-text">{{ row.report_type }}</small>
               </div>
             </td>
+            {% if report_type == 'Trend' %}
+            <td><span class="badge">{{ row.trend_data.trend_level }}</span></td>
+            {% endif %}
             <td class="muted-copy">{{ row.summary }}</td>
             <td class="numeric">{{ row.evidence_count }}</td>
             <td class="numeric">{{ row.source_count }}</td>
             <td>{{ row.last_updated or "" }}</td>
           </tr>
         {% else %}
-          {{ table.empty_row(5, "No reports found.") }}
+          {{ table.empty_row(6 if report_type == 'Trend' else 5, "No reports found.") }}
         {% endfor %}
       </tbody>
     </table>

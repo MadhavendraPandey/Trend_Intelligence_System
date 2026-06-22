@@ -16,7 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 
 sqlite_file = PROJECT_ROOT / "database" / "intelligence_platform.sqlite"
 
-reports_dir = PROJECT_ROOT / "reports"
+reports_dir = PROJECT_ROOT / "modules" / "trend" / "reports"
 
 daily_reports_dir = reports_dir / "daily"
 
