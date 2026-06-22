@@ -50,6 +50,7 @@ from modules.friction.services import (
     ContradictionService,
 )
 from modules.friction.extractors import LLMEvidenceExtractor
+from modules.friction.reports.friction_reporter import FrictionReporter
 
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -73,6 +74,7 @@ class RunSummary:
     model_name: str = ""
     limit: Optional[int] = None
     elapsed_seconds: float = 0.0
+    report_files: Optional[List[str]] = None
     messages: Optional[List[str]] = None
 
     def add_message(self, message):
@@ -141,6 +143,7 @@ def initialize_repositories():
         "sources": SourceRepository(storage),
         "posts": PostRepository(storage),
         "evidence": EvidenceRepository(storage),
+        "groups": EvidenceGroupRepository(storage),
         "evidence_groups": EvidenceGroupRepository(storage),
         "candidates": FrictionCandidateRepository(storage),
         "profiles": FrictionProfileRepository(storage),
@@ -244,6 +247,11 @@ def run_pipeline(args):
             contradiction_service.sync_contradictions_for_profile(pid)
             summary.maturity_updates += 1
 
+        # Generate Friction Reports
+        reporter = FrictionReporter(repositories)
+        json_path, md_path = reporter.generate_reports()
+        summary.report_files = [str(json_path), str(md_path)]
+
         return summary
     finally:
         storage.close()
@@ -266,6 +274,10 @@ def print_summary(summary):
     print(f"Candidate Frictions Validated: {summary.candidates_validated}")
     print(f"Friction Profiles Synced: {summary.profiles_synced}")
     print(f"Maturity Layer Updates: {summary.maturity_updates}")
+    if summary.report_files:
+        print("Reports Generated:")
+        for rf in summary.report_files:
+            print(f"  - {rf}")
     print(f"Execution Time: {summary.elapsed_seconds:.2f} seconds")
     for message in summary.messages or []:
         print(message)

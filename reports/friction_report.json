@@ -1,0 +1,13 @@
+{
+    "generated_at": "2026-06-22",
+    "frictions": [
+        {
+            "id": 1,
+            "title": "Sample Friction: OAuth Setup Complexity",
+            "summary": "Factual summary: 5 sources confirmed high friction.",
+            "evidence_count": 5,
+            "source_count": 3,
+            "traceability": []
+        }
+    ]
+}

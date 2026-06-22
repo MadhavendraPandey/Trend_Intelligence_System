@@ -76,15 +76,37 @@ def register_routes(app):
         sort: str = "updated_desc",
         page: int = 1,
     ):
-        with repository_scope(request) as repos:
-            data = workbench_queries.report_list(
-                repos,
-                domain="friction",
-                q=q,
-                source_type=source_type,
-                sort=sort,
-                page=page,
-            )
+        import json
+        from pathlib import Path
+
+        report_path = Path("reports/friction_report.json")
+        rows = []
+        if report_path.exists():
+            report_data = json.loads(report_path.read_text(encoding="utf-8"))
+            for friction in report_data.get("frictions", []):
+                rows.append({
+                    "report": {
+                        "id": friction["id"],
+                        "title": friction["title"],
+                    },
+                    "summary": friction["summary"],
+                    "evidence_count": friction["evidence_count"],
+                    "source_count": friction["source_count"],
+                    "last_updated": report_data.get("generated_at"),
+                    "report_type": "Friction"
+                })
+
+        data = {
+            "rows": rows,
+            "page": 1,
+            "total": len(rows),
+            "previous_page": None,
+            "next_page": None,
+            "query": q or "",
+            "source_type": source_type or "",
+            "sort": sort,
+            "report_type": "Friction",
+        }
 
         return render(
             request,
@@ -128,17 +150,48 @@ def register_routes(app):
                 "trend": trend
             }
         else:
-            # Handle Friction Report Detail from Database
+            # Handle Friction Report Detail from JSON
             try:
-                profile_id = int(id)
+                friction_id = int(id)
             except ValueError:
                 raise HTTPException(status_code=400, detail="Invalid report ID")
 
-            with repository_scope(request) as repos:
-                detail = workbench_queries.report_detail(repos, "friction", profile_id)
+            import json
+            from pathlib import Path
+            report_path = Path("reports/friction_report.json")
+            if not report_path.exists():
+                # Fallback to database if JSON doesn't exist
+                with repository_scope(request) as repos:
+                    detail = workbench_queries.report_detail(repos, "friction", friction_id)
+                if detail is None:
+                    raise HTTPException(status_code=404, detail="Friction report not found")
+            else:
+                report_data = json.loads(report_path.read_text(encoding="utf-8"))
+                friction = next((f for f in report_data.get("frictions", []) if f["id"] == friction_id), None)
 
-            if detail is None:
-                raise HTTPException(status_code=404, detail="Friction report not found")
+                if not friction:
+                    # Fallback to database
+                    with repository_scope(request) as repos:
+                        detail = workbench_queries.report_detail(repos, "friction", friction_id)
+                    if detail is None:
+                        raise HTTPException(status_code=404, detail="Friction report not found")
+                else:
+                    detail = {
+                        "report": {
+                            "id": id,
+                            "title": friction["title"],
+                        },
+                        "report_type": "Friction",
+                        "executive_summary": friction["summary"],
+                        "description": friction["summary"],
+                        "evidence_count": friction["evidence_count"],
+                        "source_count": friction["source_count"],
+                        "created_at": report_data.get("generated_at"),
+                        "updated_at": report_data.get("generated_at"),
+                        "evidence_items": [],
+                        "sources": [],
+                        "friction": friction
+                    }
 
         return render(
             request,
