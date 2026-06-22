@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from website.compat.fastapi import HTMLResponse, HTTPException, Request
-from website.services import mock_queries as workbench_queries
+from website.services import workbench_queries, trend_report_loader
+from website.services.repository_provider import repository_scope
 from website.services.rendering import render
 
 
@@ -27,13 +28,37 @@ def register_routes(app):
         sort: str = "updated_desc",
         page: int = 1,
     ):
-        data = workbench_queries.report_list(
-            domain="trend",
-            q=q,
-            source_type=source_type,
-            sort=sort,
-            page=page,
-        )
+        report_data = trend_report_loader.load_latest_report()
+
+        # Transform JSON report data into structure expected by report_list.html
+        rows = []
+        if report_data:
+            for trend in report_data.get("top_trends", []):
+                rows.append({
+                    "report": {
+                        "id": f"trend-{trend['rank']}",
+                        "title": trend["topic"],
+                    },
+                    "summary": f"{trend['theme']} in {trend['domain']}",
+                    "evidence_count": trend.get("mentions", 0),
+                    "source_count": trend.get("source_count", 0),
+                    "last_updated": report_data.get("generated_at"),
+                    "report_type": "Trend",
+                    "trend_data": trend  # Pass extra data for detail
+                })
+
+        data = {
+            "rows": rows,
+            "page": 1,
+            "total": len(rows),
+            "previous_page": None,
+            "next_page": None,
+            "query": q or "",
+            "source_type": source_type or "",
+            "sort": sort,
+            "report_type": "Trend",
+            "signals": report_data.get("top_signals", []) if report_data else []
+        }
 
         return render(
             request,
@@ -51,13 +76,15 @@ def register_routes(app):
         sort: str = "updated_desc",
         page: int = 1,
     ):
-        data = workbench_queries.report_list(
-            domain="friction",
-            q=q,
-            source_type=source_type,
-            sort=sort,
-            page=page,
-        )
+        with repository_scope(request) as repos:
+            data = workbench_queries.report_list(
+                repos,
+                domain="friction",
+                q=q,
+                source_type=source_type,
+                sort=sort,
+                page=page,
+            )
 
         return render(
             request,
@@ -68,13 +95,50 @@ def register_routes(app):
         )
 
     @app.get("/report/{id}", response_class=HTMLResponse)
-    def unified_report_detail(request: Request, id: int):
-        # In mock mode, we'll try to find it in either domain
-        # For simplicity, we just use friction as a default mock
-        detail = workbench_queries.report_detail("friction", id)
+    def unified_report_detail(request: Request, id: str):
+        if id.startswith("trend-"):
+            # Handle Trend Report Detail from JSON
+            try:
+                rank = int(id.replace("trend-", ""))
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid trend ID")
 
-        if detail is None:
-            raise HTTPException(status_code=404, detail="Report not found")
+            report_data = trend_report_loader.load_latest_report()
+            if not report_data:
+                raise HTTPException(status_code=404, detail="Trend report not found")
+
+            trend = next((t for t in report_data.get("top_trends", []) if t["rank"] == rank), None)
+            if not trend:
+                raise HTTPException(status_code=404, detail="Trend not found")
+
+            detail = {
+                "report": {
+                    "id": id,
+                    "title": trend["topic"],
+                },
+                "report_type": "Trend",
+                "executive_summary": f"Emerging trend in {trend['domain']}: {trend['theme']}",
+                "description": f"Detailed analysis of {trend['topic']}. Trend level: {trend['trend_level']}. Confidence: {trend['confidence']}.",
+                "evidence_count": trend.get("mentions", 0),
+                "source_count": trend.get("source_count", 0),
+                "created_at": report_data.get("generated_at"),
+                "updated_at": report_data.get("generated_at"),
+                "evidence_items": [], # Trends from JSON don't have atomic evidence links yet
+                "sources": [], # We could map source_types if needed
+                "trend": trend
+            }
+        else:
+            # Handle Friction Report Detail from Database
+            try:
+                profile_id = int(id)
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid report ID")
+
+            with repository_scope(request) as repos:
+                detail = workbench_queries.report_detail(repos, "friction", profile_id)
+
+            if detail is None:
+                raise HTTPException(status_code=404, detail="Friction report not found")
 
         return render(
             request,
@@ -84,9 +148,28 @@ def register_routes(app):
             title=detail["report"]["title"],
         )
 
+    @app.get("/evidence", response_class=HTMLResponse)
+    def evidence_index(request: Request, page: int = 1, q: str = None, source_type: str = None):
+        with repository_scope(request) as repos:
+            data = workbench_queries.evidence_page(
+                repos,
+                page_num=page,
+                query=q,
+                source_type=source_type,
+            )
+
+        return render(
+            request,
+            "pages/evidence.html",
+            data,
+            active="landing",
+            title="Evidence",
+        )
+
     @app.get("/evidence/{evidence_id}", response_class=HTMLResponse)
     def evidence_detail(request: Request, evidence_id: int):
-        detail = workbench_queries.evidence_detail(evidence_id)
+        with repository_scope(request) as repos:
+            detail = workbench_queries.evidence_detail(repos, evidence_id)
 
         if detail["evidence"] is None:
             raise HTTPException(status_code=404, detail="Evidence not found")
@@ -99,9 +182,23 @@ def register_routes(app):
             title=f"Evidence {evidence_id}",
         )
 
+    @app.get("/sources", response_class=HTMLResponse)
+    def sources_index(request: Request):
+        with repository_scope(request) as repos:
+            source_rows = workbench_queries.sources_page(repos)
+
+        return render(
+            request,
+            "pages/sources.html",
+            {"source_rows": source_rows},
+            active="landing",
+            title="Sources",
+        )
+
     @app.get("/source/{source_id}", response_class=HTMLResponse)
     def source_detail(request: Request, source_id: int):
-        detail = workbench_queries.source_detail(source_id)
+        with repository_scope(request) as repos:
+            detail = workbench_queries.source_detail(repos, source_id)
 
         if detail is None:
             raise HTTPException(status_code=404, detail="Source not found")
