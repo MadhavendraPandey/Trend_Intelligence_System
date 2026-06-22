@@ -1,79 +1,69 @@
+"""Root entry point for the Intelligence Platform.
+
+Sequences the trend pipeline (collect -> analyze -> report) and the friction
+pipeline (extraction -> grouping -> candidates -> validation -> profiles ->
+report) from a single command. Each module still owns its own runner; this
+script only decides the order they run in.
+"""
+
 import argparse
 import subprocess
 import sys
 import time
-from pathlib import Path
 
-from modules.trend.config import COMMANDS, FULL_SEQUENCE, PROJECT_ROOT
+from modules.trend.config import FULL_SEQUENCE as TREND_SEQUENCE, PROJECT_ROOT
+from modules.trend.runner import print_separator, run_script
+
+FRICTION_STEP = "friction"
+FULL_SEQUENCE = list(TREND_SEQUENCE) + [FRICTION_STEP]
 
 
-def print_separator():
-    print("=" * 70)
-
-
-def run_script(mode):
-    script_name = COMMANDS[mode]
-    script_path = PROJECT_ROOT / script_name
-
+def run_friction_step():
     print()
     print_separator()
-    print(f"Starting {mode}: {script_name}")
+    print(f"Starting {FRICTION_STEP}: modules.friction.runner")
     print_separator()
 
-    if not script_path.exists():
-        print(f"Missing script: {script_path}")
-        return 1
-
-    try:
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(script_path),
-            ],
-            cwd=PROJECT_ROOT,
-            check=False,
-        )
-
-    except KeyboardInterrupt:
-        print(f"\nInterrupted while running {mode}.")
-        return 130
-
-    except Exception as error:
-        print(f"{mode} failed before starting: {error}")
-        return 1
+    result = subprocess.run(
+        [sys.executable, "-m", "modules.friction.runner"],
+        cwd=PROJECT_ROOT,
+        check=False,
+    )
 
     if result.returncode != 0:
-        print(f"{mode} failed with exit code {result.returncode}")
+        print(f"{FRICTION_STEP} failed with exit code {result.returncode}")
     else:
-        print(f"{mode} completed successfully")
+        print(f"{FRICTION_STEP} completed successfully")
 
     return result.returncode
 
 
+def run_step(step):
+    if step == FRICTION_STEP:
+        return run_friction_step()
+
+    return run_script(step)
+
+
 def run_mode(mode):
-    if mode == "full":
-        failures = []
+    sequence = FULL_SEQUENCE if mode == "full" else [mode]
+    failures = []
 
-        for step in FULL_SEQUENCE:
-            return_code = run_script(step)
+    for step in sequence:
+        return_code = run_step(step)
 
-            if return_code != 0:
-                failures.append((step, return_code))
+        if return_code != 0:
+            failures.append((step, return_code))
+
+            if mode == "full":
                 break
 
-        return failures
-
-    return_code = run_script(mode)
-
-    if return_code != 0:
-        return [(mode, return_code)]
-
-    return []
+    return failures
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Trend Intelligence System entry point"
+        description="Intelligence Platform entry point"
     )
     parser.add_argument(
         "mode",
@@ -83,6 +73,7 @@ def parse_args():
             "collect",
             "analyze",
             "report",
+            "friction",
             "full",
         ],
         help="Pipeline mode to run",
@@ -96,7 +87,7 @@ def main():
     start_time = time.perf_counter()
 
     print_separator()
-    print("TREND INTELLIGENCE SYSTEM")
+    print("INTELLIGENCE PLATFORM")
     print_separator()
     print(f"Mode: {args.mode}")
 
@@ -111,8 +102,8 @@ def main():
 
     if failures:
         print("Status: FAILED")
-        for mode, return_code in failures:
-            print(f"- {mode}: exit code {return_code}")
+        for step, return_code in failures:
+            print(f"- {step}: exit code {return_code}")
         return 1
 
     print("Status: SUCCESS")

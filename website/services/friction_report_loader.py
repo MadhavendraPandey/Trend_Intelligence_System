@@ -1,28 +1,19 @@
-import json
-from pathlib import Path
+"""Presentation-layer access to friction reports.
 
-REPORTS_DIR = Path("reports/friction")
+The website does not generate or store friction reports — it only reads the
+artifacts that modules.friction.reports owns. All loading logic lives there.
+"""
 
-def get_latest_report_path():
-    if not REPORTS_DIR.exists():
-        return None
+from modules.friction.reports.loader import (
+    get_latest_report_path,
+    get_report_by_date,
+    list_all_reports,
+    load_latest_report,
+)
 
-    json_files = list(REPORTS_DIR.glob("*_friction_report.json"))
-    if not json_files:
-        # Check for canonical name
-        canonical = REPORTS_DIR / "friction_report.json"
-        return canonical if canonical.exists() else None
-
-    json_files.sort(reverse=True)
-    return json_files[0]
-
-def load_latest_report():
-    path = get_latest_report_path()
-    if not path:
-        return None
-
-    try:
-        with open(path, "r") as f:
-            return json.load(f)
-    except Exception:
-        return None
+__all__ = [
+    "get_latest_report_path",
+    "get_report_by_date",
+    "list_all_reports",
+    "load_latest_report",
+]

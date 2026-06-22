@@ -14,17 +14,15 @@ from database.repositories import (
     FrictionContradictionRepository,
     EvidenceGroupRepository,
     FrictionCandidateRepository,
-    PostRepository,
+    PostRepository
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 sqlite_file = PROJECT_ROOT / "database" / "intelligence_platform.sqlite"
 reports_dir = PROJECT_ROOT / "modules" / "friction" / "reports"
 
-
 def ensure_report_directories():
     reports_dir.mkdir(parents=True, exist_ok=True)
-
 
 def build_friction_report_data():
     storage = SQLiteStorage(db_file=sqlite_file)
@@ -49,7 +47,7 @@ def build_friction_report_data():
                 "total_evidence": evidence_repo.count_evidence(),
                 "total_sources": source_repo.count_sources(),
             },
-            "top_frictions": [],
+            "top_frictions": []
         }
 
         for profile in profiles:
@@ -72,14 +70,11 @@ def build_friction_report_data():
                             ev = evidence_repo.get_evidence(ev_id)
                             if ev:
                                 post = post_repo.get_post(ev["post_id"])
-                                source = (
-                                    source_repo.get_source(post["source_id"])
-                                    if post
-                                    else None
-                                )
-                                supporting_evidence.append(
-                                    {"evidence": ev, "source": source}
-                                )
+                                source = source_repo.get_source(post["source_id"]) if post else None
+                                supporting_evidence.append({
+                                    "evidence": ev,
+                                    "source": source
+                                })
 
             # Basic info
             friction_item = {
@@ -95,7 +90,7 @@ def build_friction_report_data():
                 "evolution": None,
                 "relationships": [],
                 "contradictions": [],
-                "supporting_evidence": supporting_evidence,
+                "supporting_evidence": supporting_evidence
             }
 
             # Evolution (latest snapshot)
@@ -106,39 +101,30 @@ def build_friction_report_data():
             # Relationships
             rels = rel_repo.list_for_profile(pid)
             for rel in rels:
-                other_id = (
-                    rel["to_profile_id"]
-                    if rel["from_profile_id"] == pid
-                    else rel["from_profile_id"]
-                )
+                other_id = rel["to_profile_id"] if rel["from_profile_id"] == pid else rel["from_profile_id"]
                 other = profile_repo.get_profile(other_id)
                 if other:
-                    friction_item["relationships"].append(
-                        {
-                            "id": other_id,
-                            "title": other["title"],
-                            "type": rel["relationship_type"],
-                        }
-                    )
+                    friction_item["relationships"].append({
+                        "id": other_id,
+                        "title": other["title"],
+                        "type": rel["relationship_type"]
+                    })
 
             # Contradictions
             contras = contra_repo.list_for_profile(pid)
             for contra in contras:
-                friction_item["contradictions"].append(
-                    {
-                        "evidence_id": contra["evidence_id"],
-                        "observation": contra["observation"],
-                        "reasoning": contra["reasoning"],
-                        "source_type": contra["source_type"],
-                    }
-                )
+                friction_item["contradictions"].append({
+                    "evidence_id": contra["evidence_id"],
+                    "observation": contra["observation"],
+                    "reasoning": contra["reasoning"],
+                    "source_type": contra["source_type"]
+                })
 
             report_data["top_frictions"].append(friction_item)
 
         return report_data
     finally:
         storage.close()
-
 
 def build_markdown_report(data):
     lines = [
@@ -151,7 +137,7 @@ def build_markdown_report(data):
         f"- Total Sources: {data['overview']['total_sources']}",
         "",
         "## Top Frictions",
-        "",
+        ""
     ]
 
     for f in data["top_frictions"]:
@@ -161,12 +147,11 @@ def build_markdown_report(data):
         lines.append(f"- Source Count: {f['source_count']}")
         lines.append(f"- Recurrence Count: {f['recurrence_count']}")
         lines.append(f"- Contradiction Count: {f['contradiction_count']}")
-        if f["evolution"]:
+        if f['evolution']:
             lines.append(f"- Evolution: {f['evolution']}")
         lines.append("")
 
     return "\n".join(lines)
-
 
 def generate_report():
     ensure_report_directories()
@@ -191,7 +176,6 @@ def generate_report():
         f.write(build_markdown_report(data))
 
     print(f"Friction report generated at {json_path}")
-
 
 if __name__ == "__main__":
     generate_report()

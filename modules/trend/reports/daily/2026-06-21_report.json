@@ -1,0 +1,53 @@
+{
+    "generated_at": "2026-06-21",
+    "overview": {
+        "total_articles": 0,
+        "analyzed_articles": 0,
+        "source_counts": {}
+    },
+    "collection_funnel": {
+        "rss": {
+            "seen": 0,
+            "duplicates_removed": 0,
+            "quality_removed": 0,
+            "irrelevant_removed": 0,
+            "stored": 0
+        },
+        "github": {
+            "seen": 0,
+            "duplicates_removed": 0,
+            "quality_removed": 0,
+            "irrelevant_removed": 0,
+            "stored": 0
+        },
+        "reddit": {
+            "seen": 0,
+            "duplicates_removed": 0,
+            "quality_removed": 0,
+            "irrelevant_removed": 0,
+            "stored": 0
+        },
+        "hackernews": {
+            "seen": 0,
+            "duplicates_removed": 0,
+            "quality_removed": 0,
+            "irrelevant_removed": 0,
+            "stored": 0
+        },
+        "arxiv": {
+            "seen": 0,
+            "duplicates_removed": 0,
+            "quality_removed": 0,
+            "irrelevant_removed": 0,
+            "stored": 0
+        }
+    },
+    "top_trends": [],
+    "top_signals": [],
+    "top_opportunities": [],
+    "recommendations": {
+        "build": [],
+        "learn": [],
+        "monitor": []
+    }
+}

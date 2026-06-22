@@ -22,27 +22,17 @@ def run_command(command):
 
 
 def run_daily_pipeline():
-    failures = []
-    commands = [
-        [sys.executable, "main_collector.py"],
-        [sys.executable, "analyzer.py"],
-        [sys.executable, "reporter.py"],
-    ]
+    command = [sys.executable, "main.py", "full"]
+    return_code = run_command(command)
 
-    for command in commands:
-        return_code = run_command(command)
-
-        if return_code != 0:
-            failures.append(command)
-
-    return failures
+    return [command] if return_code != 0 else []
 
 
 def run_weekly_brief():
     return run_command(
         [
             sys.executable,
-            "reports/weekly_brief.py",
+            "modules/trend/reports/weekly/weekly_brief.py",
         ]
     )
 
@@ -54,7 +44,7 @@ def main():
         weekly_return_code = run_weekly_brief()
 
         if weekly_return_code != 0:
-            failures.append(["reports/weekly_brief.py"])
+            failures.append(["modules/trend/reports/weekly/weekly_brief.py"])
 
     print()
     print("=" * 70)

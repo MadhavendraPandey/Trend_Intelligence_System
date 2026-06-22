@@ -96,6 +96,11 @@ def parse_args():
         help="Plan the run without writing evidence, groups, or candidates",
     )
     parser.add_argument(
+        "--skip-report",
+        action="store_true",
+        help="Skip generating a friction report after the pipeline run",
+    )
+    parser.add_argument(
         "--provider",
         default="qwen",
         choices=["qwen", "openai-compatible", "openrouter"],
@@ -284,6 +289,13 @@ def main():
         summary = run_pipeline(args)
         summary.elapsed_seconds = time.perf_counter() - start_time
         print_summary(summary)
+
+        if not args.dry_run and not args.skip_report:
+            sys.path.insert(0, PROJECT_ROOT)
+            from friction_reporter import generate_report
+
+            generate_report()
+
         return 0
     except KeyboardInterrupt:
         print("\nInterrupted.")

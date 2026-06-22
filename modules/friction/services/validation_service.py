@@ -22,16 +22,33 @@ class FrictionValidationService:
 
         self.repository = friction_candidate_repository
 
+    MIN_SOURCES_FOR_ACCEPTANCE = 2
+
     def validate_candidate(self, candidate_id):
-        """Calculate metrics, generate summary, and persist to candidate."""
+        """Calculate metrics, generate summary, and persist to candidate.
+
+        Acceptance is decided by a single observable, evidence-based fact:
+        whether the candidate is corroborated by more than one independent
+        source. This is traceability, not a score - it requires no judgment
+        about importance, quality, or likelihood.
+        """
         metrics = self.repository.calculate_validation_metrics(candidate_id)
         summary = self.generate_summary(metrics)
+        status = self.decide_status(metrics)
 
         return self.repository.update_candidate(
             candidate_id,
             validation_summary=summary,
+            status=status,
             **metrics
         )
+
+    def decide_status(self, metrics):
+        """Multi-source corroboration is accepted; single-source stays under review."""
+        if metrics.get("source_count", 0) >= self.MIN_SOURCES_FOR_ACCEPTANCE:
+            return "accepted"
+
+        return "reviewed"
 
     def validate_all_candidates(self, status=None):
         """Validate all candidates, optionally filtering by status."""

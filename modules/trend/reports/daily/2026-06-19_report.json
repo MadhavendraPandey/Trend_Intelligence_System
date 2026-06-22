@@ -1,0 +1,685 @@
+{
+    "generated_at": "2026-06-19",
+    "overview": {
+        "total_articles": 1145,
+        "analyzed_articles": 100,
+        "source_counts": {
+            "rss": 376,
+            "github": 652,
+            "hackernews": 40,
+            "arxiv": 77
+        }
+    },
+    "collection_funnel": {
+        "rss": {
+            "seen": 29810,
+            "duplicates_removed": 6993,
+            "quality_removed": 369,
+            "irrelevant_removed": 20227,
+            "stored": 2218
+        },
+        "github": {
+            "seen": 11079,
+            "duplicates_removed": 4890,
+            "quality_removed": 60,
+            "irrelevant_removed": 3915,
+            "stored": 2214
+        },
+        "reddit": {
+            "seen": 0,
+            "duplicates_removed": 0,
+            "quality_removed": 0,
+            "irrelevant_removed": 0,
+            "stored": 0
+        },
+        "hackernews": {
+            "seen": 1440,
+            "duplicates_removed": 210,
+            "quality_removed": 1,
+            "irrelevant_removed": 1144,
+            "stored": 85
+        },
+        "arxiv": {
+            "seen": 1325,
+            "duplicates_removed": 543,
+            "quality_removed": 14,
+            "irrelevant_removed": 556,
+            "stored": 212
+        }
+    },
+    "top_trends": [
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Foundation Models",
+            "topic": "Large Language Models",
+            "mentions": 568,
+            "source_count": 4,
+            "category_count": 8,
+            "source_types": [
+                "arxiv",
+                "github",
+                "hackernews",
+                "rss"
+            ],
+            "categories": [
+                "agent_frameworks",
+                "ai",
+                "automation",
+                "business",
+                "cybersecurity",
+                "developer_tools",
+                "startups",
+                "technology"
+            ],
+            "top_entities": [
+                "llm",
+                "claude",
+                "gpt",
+                "llms",
+                "gemini",
+                "llama",
+                "foundation model",
+                "large language model"
+            ],
+            "trend_score": 648,
+            "trend_level": "DOMINANT",
+            "confidence": "HIGH",
+            "rank": 1
+        },
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Agentic Systems",
+            "topic": "AI Agents",
+            "mentions": 340,
+            "source_count": 4,
+            "category_count": 8,
+            "source_types": [
+                "arxiv",
+                "github",
+                "hackernews",
+                "rss"
+            ],
+            "categories": [
+                "agent_frameworks",
+                "ai",
+                "automation",
+                "business",
+                "cybersecurity",
+                "developer_tools",
+                "startups",
+                "technology"
+            ],
+            "top_entities": [
+                "ai agents",
+                "mcp",
+                "ai agent",
+                "langgraph",
+                "agent framework",
+                "agentic ai",
+                "autonomous agent",
+                "agentic workflow",
+                "autogen",
+                "crewai"
+            ],
+            "trend_score": 420,
+            "trend_level": "DOMINANT",
+            "confidence": "HIGH",
+            "rank": 2
+        },
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Knowledge Systems",
+            "topic": "RAG",
+            "mentions": 98,
+            "source_count": 4,
+            "category_count": 6,
+            "source_types": [
+                "arxiv",
+                "github",
+                "hackernews",
+                "rss"
+            ],
+            "categories": [
+                "agent_frameworks",
+                "ai",
+                "automation",
+                "cybersecurity",
+                "developer_tools",
+                "startups"
+            ],
+            "top_entities": [
+                "rag",
+                "embedding model",
+                "vector database",
+                "pinecone"
+            ],
+            "trend_score": 168,
+            "trend_level": "DOMINANT",
+            "confidence": "HIGH",
+            "rank": 3
+        },
+        {
+            "domain": "Automation",
+            "theme": "Workflow Automation",
+            "topic": "Browser Automation",
+            "mentions": 50,
+            "source_count": 2,
+            "category_count": 5,
+            "source_types": [
+                "github",
+                "rss"
+            ],
+            "categories": [
+                "agent_frameworks",
+                "ai",
+                "automation",
+                "cybersecurity",
+                "startups"
+            ],
+            "top_entities": [
+                "playwright",
+                "browser automation",
+                "selenium"
+            ],
+            "trend_score": 95,
+            "trend_level": "STRONG",
+            "confidence": "MEDIUM",
+            "rank": 4
+        },
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Local AI",
+            "topic": "Local LLMs",
+            "mentions": 36,
+            "source_count": 2,
+            "category_count": 5,
+            "source_types": [
+                "github",
+                "rss"
+            ],
+            "categories": [
+                "agent_frameworks",
+                "ai",
+                "automation",
+                "cybersecurity",
+                "developer_tools"
+            ],
+            "top_entities": [
+                "ollama",
+                "vllm",
+                "llama.cpp",
+                "local llm"
+            ],
+            "trend_score": 81,
+            "trend_level": "STRONG",
+            "confidence": "MEDIUM",
+            "rank": 5
+        },
+        {
+            "domain": "Cybersecurity",
+            "theme": "Offensive Security",
+            "topic": "OSINT",
+            "mentions": 34,
+            "source_count": 3,
+            "category_count": 3,
+            "source_types": [
+                "github",
+                "hackernews",
+                "rss"
+            ],
+            "categories": [
+                "ai",
+                "cybersecurity",
+                "startups"
+            ],
+            "top_entities": [
+                "osint",
+                "social engineering"
+            ],
+            "trend_score": 79,
+            "trend_level": "STRONG",
+            "confidence": "MEDIUM",
+            "rank": 6
+        },
+        {
+            "domain": "Developer Ecosystem",
+            "theme": "Developer Tools",
+            "topic": "Developer Productivity",
+            "mentions": 25,
+            "source_count": 2,
+            "category_count": 6,
+            "source_types": [
+                "github",
+                "rss"
+            ],
+            "categories": [
+                "agent_frameworks",
+                "ai",
+                "automation",
+                "cybersecurity",
+                "developer_tools",
+                "startups"
+            ],
+            "top_entities": [
+                "devtools",
+                "developer tools",
+                "developer productivity"
+            ],
+            "trend_score": 75,
+            "trend_level": "STRONG",
+            "confidence": "MEDIUM",
+            "rank": 7
+        },
+        {
+            "domain": "Developer Ecosystem",
+            "theme": "Developer Tools",
+            "topic": "Code Quality",
+            "mentions": 13,
+            "source_count": 3,
+            "category_count": 4,
+            "source_types": [
+                "arxiv",
+                "github",
+                "rss"
+            ],
+            "categories": [
+                "agent_frameworks",
+                "ai",
+                "cybersecurity",
+                "developer_tools"
+            ],
+            "top_entities": [
+                "static analysis",
+                "code quality",
+                "linters"
+            ],
+            "trend_score": 63,
+            "trend_level": "STRONG",
+            "confidence": "MEDIUM",
+            "rank": 8
+        },
+        {
+            "domain": "Automation",
+            "theme": "Workflow Automation",
+            "topic": "RPA",
+            "mentions": 33,
+            "source_count": 1,
+            "category_count": 3,
+            "source_types": [
+                "github"
+            ],
+            "categories": [
+                "agent_frameworks",
+                "ai",
+                "automation"
+            ],
+            "top_entities": [
+                "rpa"
+            ],
+            "trend_score": 58,
+            "trend_level": "EMERGING",
+            "confidence": "LOW",
+            "rank": 9
+        },
+        {
+            "domain": "Startups",
+            "theme": "Business Models",
+            "topic": "AI SaaS",
+            "mentions": 11,
+            "source_count": 2,
+            "category_count": 5,
+            "source_types": [
+                "github",
+                "rss"
+            ],
+            "categories": [
+                "ai",
+                "automation",
+                "cybersecurity",
+                "developer_tools",
+                "startups"
+            ],
+            "top_entities": [
+                "saas"
+            ],
+            "trend_score": 56,
+            "trend_level": "EMERGING",
+            "confidence": "MEDIUM",
+            "rank": 10
+        }
+    ],
+    "top_signals": [
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Agentic Systems",
+            "topic": "AI Agents",
+            "source_count": 4,
+            "sources": [
+                "arxiv",
+                "github",
+                "hackernews",
+                "rss"
+            ],
+            "articles": 315,
+            "github_repos": 212,
+            "hn_posts": 8,
+            "research_present": true,
+            "signal_strength": 7476.04,
+            "signal_level": "VERY_STRONG",
+            "confidence": "HIGH",
+            "reason": "research backing, multi-source coverage, strong community engagement",
+            "rank": 1
+        },
+        {
+            "domain": "Cybersecurity",
+            "theme": "Defensive Security",
+            "topic": "Threat Intelligence",
+            "source_count": 4,
+            "sources": [
+                "arxiv",
+                "github",
+                "hackernews",
+                "rss"
+            ],
+            "articles": 49,
+            "github_repos": 43,
+            "hn_posts": 1,
+            "research_present": true,
+            "signal_strength": 1574.27,
+            "signal_level": "VERY_STRONG",
+            "confidence": "HIGH",
+            "reason": "research backing, multi-source coverage, strong community engagement",
+            "rank": 2
+        },
+        {
+            "domain": "Startups",
+            "theme": "Business Models",
+            "topic": "AI SaaS",
+            "source_count": 2,
+            "sources": [
+                "github",
+                "rss"
+            ],
+            "articles": 5,
+            "github_repos": 3,
+            "hn_posts": 0,
+            "research_present": false,
+            "signal_strength": 208.4,
+            "signal_level": "VERY_STRONG",
+            "confidence": "MEDIUM",
+            "reason": "strong community engagement",
+            "rank": 3
+        },
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Foundation Models",
+            "topic": "Large Language Models",
+            "source_count": 0,
+            "sources": [],
+            "articles": 0,
+            "github_repos": 0,
+            "hn_posts": 0,
+            "research_present": false,
+            "signal_strength": 0,
+            "signal_level": "WEAK",
+            "confidence": "LOW",
+            "reason": "limited validation",
+            "rank": 4
+        },
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Knowledge Systems",
+            "topic": "RAG",
+            "source_count": 0,
+            "sources": [],
+            "articles": 0,
+            "github_repos": 0,
+            "hn_posts": 0,
+            "research_present": false,
+            "signal_strength": 0,
+            "signal_level": "WEAK",
+            "confidence": "LOW",
+            "reason": "limited validation",
+            "rank": 5
+        },
+        {
+            "domain": "Automation",
+            "theme": "Workflow Automation",
+            "topic": "Browser Automation",
+            "source_count": 0,
+            "sources": [],
+            "articles": 0,
+            "github_repos": 0,
+            "hn_posts": 0,
+            "research_present": false,
+            "signal_strength": 0,
+            "signal_level": "WEAK",
+            "confidence": "LOW",
+            "reason": "limited validation",
+            "rank": 6
+        },
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Local AI",
+            "topic": "Local LLMs",
+            "source_count": 0,
+            "sources": [],
+            "articles": 0,
+            "github_repos": 0,
+            "hn_posts": 0,
+            "research_present": false,
+            "signal_strength": 0,
+            "signal_level": "WEAK",
+            "confidence": "LOW",
+            "reason": "limited validation",
+            "rank": 7
+        },
+        {
+            "domain": "Cybersecurity",
+            "theme": "Offensive Security",
+            "topic": "OSINT",
+            "source_count": 0,
+            "sources": [],
+            "articles": 0,
+            "github_repos": 0,
+            "hn_posts": 0,
+            "research_present": false,
+            "signal_strength": 0,
+            "signal_level": "WEAK",
+            "confidence": "LOW",
+            "reason": "limited validation",
+            "rank": 8
+        },
+        {
+            "domain": "Developer Ecosystem",
+            "theme": "Developer Tools",
+            "topic": "Developer Productivity",
+            "source_count": 0,
+            "sources": [],
+            "articles": 0,
+            "github_repos": 0,
+            "hn_posts": 0,
+            "research_present": false,
+            "signal_strength": 0,
+            "signal_level": "WEAK",
+            "confidence": "LOW",
+            "reason": "limited validation",
+            "rank": 9
+        },
+        {
+            "domain": "Developer Ecosystem",
+            "theme": "Developer Tools",
+            "topic": "Code Quality",
+            "source_count": 0,
+            "sources": [],
+            "articles": 0,
+            "github_repos": 0,
+            "hn_posts": 0,
+            "research_present": false,
+            "signal_strength": 0,
+            "signal_level": "WEAK",
+            "confidence": "LOW",
+            "reason": "limited validation",
+            "rank": 10
+        }
+    ],
+    "top_opportunities": [
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Agentic Systems",
+            "topic": "AI Agents",
+            "trend_score": 420,
+            "signal_strength": 7476.04,
+            "acceleration_score": 0,
+            "opportunity_score": 2368.81,
+            "opportunity_level": "BREAKOUT",
+            "confidence": "MEDIUM",
+            "reason": "Driven primarily by signal strength",
+            "rank": 1
+        },
+        {
+            "domain": "Cybersecurity",
+            "theme": "Defensive Security",
+            "topic": "Threat Intelligence",
+            "trend_score": 54,
+            "signal_strength": 1574.27,
+            "acceleration_score": 0,
+            "opportunity_score": 488.48,
+            "opportunity_level": "BREAKOUT",
+            "confidence": "MEDIUM",
+            "reason": "Driven primarily by signal strength",
+            "rank": 2
+        },
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Foundation Models",
+            "topic": "Large Language Models",
+            "trend_score": 648,
+            "signal_strength": 0,
+            "acceleration_score": 0,
+            "opportunity_score": 194.4,
+            "opportunity_level": "BREAKOUT",
+            "confidence": "LOW",
+            "reason": "Driven primarily by trend activity",
+            "rank": 3
+        },
+        {
+            "domain": "Startups",
+            "theme": "Business Models",
+            "topic": "AI SaaS",
+            "trend_score": 56,
+            "signal_strength": 208.4,
+            "acceleration_score": 0,
+            "opportunity_score": 79.32,
+            "opportunity_level": "WATCHLIST",
+            "confidence": "MEDIUM",
+            "reason": "Driven primarily by signal strength",
+            "rank": 4
+        },
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Knowledge Systems",
+            "topic": "RAG",
+            "trend_score": 168,
+            "signal_strength": 0,
+            "acceleration_score": 0,
+            "opportunity_score": 50.4,
+            "opportunity_level": "LOW_PRIORITY",
+            "confidence": "LOW",
+            "reason": "Driven primarily by trend activity",
+            "rank": 5
+        },
+        {
+            "domain": "Automation",
+            "theme": "Workflow Automation",
+            "topic": "Browser Automation",
+            "trend_score": 95,
+            "signal_strength": 0,
+            "acceleration_score": 0,
+            "opportunity_score": 28.5,
+            "opportunity_level": "LOW_PRIORITY",
+            "confidence": "LOW",
+            "reason": "Driven primarily by trend activity",
+            "rank": 6
+        },
+        {
+            "domain": "Artificial Intelligence",
+            "theme": "Local AI",
+            "topic": "Local LLMs",
+            "trend_score": 81,
+            "signal_strength": 0,
+            "acceleration_score": 0,
+            "opportunity_score": 24.3,
+            "opportunity_level": "LOW_PRIORITY",
+            "confidence": "LOW",
+            "reason": "Driven primarily by trend activity",
+            "rank": 7
+        },
+        {
+            "domain": "Cybersecurity",
+            "theme": "Offensive Security",
+            "topic": "OSINT",
+            "trend_score": 79,
+            "signal_strength": 0,
+            "acceleration_score": 0,
+            "opportunity_score": 23.7,
+            "opportunity_level": "LOW_PRIORITY",
+            "confidence": "LOW",
+            "reason": "Driven primarily by trend activity",
+            "rank": 8
+        },
+        {
+            "domain": "Developer Ecosystem",
+            "theme": "Developer Tools",
+            "topic": "Developer Productivity",
+            "trend_score": 75,
+            "signal_strength": 0,
+            "acceleration_score": 0,
+            "opportunity_score": 22.5,
+            "opportunity_level": "LOW_PRIORITY",
+            "confidence": "LOW",
+            "reason": "Driven primarily by trend activity",
+            "rank": 9
+        },
+        {
+            "domain": "Developer Ecosystem",
+            "theme": "Developer Tools",
+            "topic": "Code Quality",
+            "trend_score": 63,
+            "signal_strength": 0,
+            "acceleration_score": 0,
+            "opportunity_score": 18.9,
+            "opportunity_level": "LOW_PRIORITY",
+            "confidence": "LOW",
+            "reason": "Driven primarily by trend activity",
+            "rank": 10
+        }
+    ],
+    "recommendations": {
+        "build": [
+            {
+                "topic": "AI Agents",
+                "recommendation": "BUILD",
+                "reason": "High opportunity score"
+            },
+            {
+                "topic": "Threat Intelligence",
+                "recommendation": "BUILD",
+                "reason": "High opportunity score"
+            },
+            {
+                "topic": "Large Language Models",
+                "recommendation": "BUILD",
+                "reason": "High opportunity score"
+            }
+        ],
+        "learn": [],
+        "monitor": [
+            {
+                "topic": "AI SaaS",
+                "recommendation": "MONITOR",
+                "reason": "Emerging trend worth tracking"
+            }
+        ]
+    }
+}
